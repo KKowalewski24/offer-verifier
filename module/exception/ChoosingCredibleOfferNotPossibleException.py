@@ -1,0 +1,2 @@
+class ChoosingCredibleOfferNotPossibleException(Exception):
+    pass
