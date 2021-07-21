@@ -4,7 +4,7 @@ from module.model.BaseItem import BaseItem
 from module.utils import to_string_class_formatter
 
 
-class Offer(BaseItem):
+class Seller(BaseItem):
 
     def __init__(self, id: str) -> None:
         super().__init__(id)
