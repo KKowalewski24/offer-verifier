@@ -9,6 +9,9 @@ STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 CURRENCY_PLN: str = "PLN"
 
 # ----------------------------------------------------------------------- #
+EBAY_BASE_PATH: str = ""
+
+# ----------------------------------------------------------------------- #
 REQUEST_HEADER: Dict[str, str] = {}
 
 _DIV_ATTRIBUTES: Dict[str, str] = {}

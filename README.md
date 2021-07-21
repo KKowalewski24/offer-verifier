@@ -1,4 +1,4 @@
-# amazon-offer-verifier
+# offer-verifier
 
 #### Install Dependencies
 In main directory run
