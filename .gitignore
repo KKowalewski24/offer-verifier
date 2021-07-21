@@ -142,3 +142,6 @@ cython_debug/
 .idea
 *~
 .mypy_cache
+statistics.txt
+*.pdf
+.results

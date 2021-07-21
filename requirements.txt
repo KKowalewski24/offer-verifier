@@ -1,3 +1,11 @@
+beautifulsoup4
+fpdf
+nameof
 flake8
 pep8-naming
 mypy
+python-dotenv
+requests
+scikit-learn
+numpy
+pandas
