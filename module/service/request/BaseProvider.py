@@ -2,7 +2,7 @@ from abc import ABC
 
 import requests
 
-from module.constants import EBAY_BASE_PATH, REQUEST_HEADER
+from module.constants import REQUEST_HEADER
 
 
 class BaseProvider(ABC):
@@ -14,5 +14,4 @@ class BaseProvider(ABC):
     def _create_session(self) -> requests.Session:
         session: requests.Session = requests.Session()
         session.headers = REQUEST_HEADER
-        session.get(EBAY_BASE_PATH)
         return session

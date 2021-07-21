@@ -3,7 +3,7 @@ from typing import List
 from bs4 import BeautifulSoup
 
 from module.constants import EBAY_SEARCH_PATH, ITEMS_PER_PAGE, PARAM_BRAND_NEW, PARAM_BUY_NOW, \
-    PARAM_PAGE_NUMBER, REQUEST_HEADER
+    PARAM_PAGE_NUMBER
 from module.service.request.BaseProvider import BaseProvider
 
 
@@ -16,6 +16,17 @@ class OfferIdProvider(BaseProvider):
 
     def get_offers_id(self) -> List[str]:
         return []
+
+
+    def _get_pages_number(self) -> str:
+        soup: BeautifulSoup = self._get_beautiful_soup_instance("1")
+        items_number: int = int(soup.find(text=" results for ").parent
+                                .select("span")[0].get_text().replace(",", ""))
+        pages_number: int = int(items_number / ITEMS_PER_PAGE[1])
+        if items_number % ITEMS_PER_PAGE[1] != 0:
+            pages_number += 1
+
+        return str(pages_number)
 
 
     def _get_beautiful_soup_instance(self, page_number: str) -> BeautifulSoup:
