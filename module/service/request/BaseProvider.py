@@ -15,3 +15,4 @@ class BaseProvider(ABC):
         session: requests.Session = requests.Session()
         session.get(EBAY_BASE_PATH, headers=REQUEST_HEADER)
         return session
+    # TODO

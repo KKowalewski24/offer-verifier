@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
-from module.service.request.RequestProvider import RequestProvider
+from module.service.RequestProvider import RequestProvider
 
 
 class OfferVerifier:

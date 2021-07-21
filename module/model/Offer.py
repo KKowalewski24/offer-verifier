@@ -8,7 +8,7 @@ class Offer(BaseItem):
 
     def __init__(self, id: str) -> None:
         super().__init__(id)
-
+    # TODO
 
     def get_features_array(self) -> List:
         return []

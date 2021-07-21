@@ -16,3 +16,4 @@ class RequestProvider:
 
     def get_offers(self) -> List[Offer]:
         return []
+    # TODO
