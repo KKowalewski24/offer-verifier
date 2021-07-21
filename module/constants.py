@@ -9,12 +9,12 @@ STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 CURRENCY_PLN: str = "PLN"
 
 # ----------------------------------------------------------------------- #
-EBAY_BASE_PATH: str = "https://www.ebay.pl/"
-EBAY_SEARCH_PATH: str = "https://www.ebay.pl/sch/i.html?_nkw="
-PARAM_BRAND_NEW: str = "&LH_ItemCondition=3"
+EBAY_BASE_PATH: str = "https://www.ebay.com/"
+EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + "sch/i.html?_nkw="
+PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
+ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
 PARAM_PAGE_NUMBER: str = "&_pgn="
-ITEM_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
 
 # ----------------------------------------------------------------------- #
 REQUEST_HEADER: Dict[str, str] = {

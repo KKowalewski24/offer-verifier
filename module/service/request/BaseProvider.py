@@ -13,6 +13,6 @@ class BaseProvider(ABC):
 
     def _create_session(self) -> requests.Session:
         session: requests.Session = requests.Session()
-        session.get(EBAY_BASE_PATH, headers=REQUEST_HEADER)
+        session.headers = REQUEST_HEADER
+        session.get(EBAY_BASE_PATH)
         return session
-    # TODO
