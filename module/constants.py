@@ -9,12 +9,16 @@ STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 CURRENCY_PLN: str = "PLN"
 
 # ----------------------------------------------------------------------- #
-EBAY_BASE_PATH: str = "https://www.ebay.com/"
-EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + "sch/i.html?_nkw="
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
-ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
+ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=25", 25)
 PARAM_PAGE_NUMBER: str = "&_pgn="
+ITM: str = "itm/"
+PARAM_QUERY = "sch/i.html?_nkw="
+
+EBAY_BASE_PATH: str = "https://www.ebay.com/"
+EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + PARAM_QUERY
+EBAY_ITEM_PATH: str = EBAY_BASE_PATH + ITM
 
 # ----------------------------------------------------------------------- #
 REQUEST_HEADER: Dict[str, str] = {
@@ -32,5 +36,9 @@ REQUEST_HEADER: Dict[str, str] = {
 }
 
 _DIV_ATTRIBUTES: Dict[str, str] = {}
+
+OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
+    "tabindex": "-1"
+}
 
 # ----------------------------------------------------------------------- #
