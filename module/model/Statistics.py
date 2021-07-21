@@ -14,8 +14,9 @@ class Statistics:
         self.davies_bouldin_score = davies_bouldin_score
 
 
-    def to_list(self) -> List[float]:
-        return [self.silhouette_score, self.calinski_harabasz_score, self.davies_bouldin_score]
+    def to_list(self) -> List[str]:
+        properties = [self.silhouette_score, self.calinski_harabasz_score, self.davies_bouldin_score]
+        return [str(prop) for prop in properties]
 
 
     def __str__(self) -> str:

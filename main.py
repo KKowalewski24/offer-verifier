@@ -4,6 +4,8 @@ from argparse import ArgumentParser, Namespace
 
 from dotenv import load_dotenv
 
+from module.interface.UserInterface import UserInterface
+
 """
 """
 
@@ -16,8 +18,8 @@ def main() -> None:
     generate_pdf: bool = args.pdf
     generate_statistics: bool = args.statistics
 
-    # user_interface: UserInterface = UserInterface(search_phrase, generate_pdf, generate_statistics)
-    # user_interface.display_result()
+    user_interface: UserInterface = UserInterface(search_phrase, generate_pdf, generate_statistics)
+    user_interface.display_result()
 
 
 # DEF ------------------------------------------------------------------------ #
