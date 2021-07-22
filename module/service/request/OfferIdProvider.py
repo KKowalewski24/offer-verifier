@@ -25,7 +25,7 @@ class OfferIdProvider(BaseProvider):
 
 
     def _get_offers_id_for_single_page(self, page_number: int) -> List[str]:
-        soup: BeautifulSoup = self._get_beautiful_soup_instance(page_number)
+        soup: BeautifulSoup = self._get_beautiful_soup_instance(self._create_url(page_number))
         return [
             urlparse(a_href.get("href")).path.replace(SLASH_ITM, "")
             for a_href in soup.find_all("a", attrs=OFFERS_ID_A_HREF_ATTRIBUTES)
@@ -33,7 +33,7 @@ class OfferIdProvider(BaseProvider):
 
 
     def _get_pages_number(self) -> int:
-        soup: BeautifulSoup = self._get_beautiful_soup_instance(1)
+        soup: BeautifulSoup = self._get_beautiful_soup_instance(self._create_url(1))
         items_number: int = int(
             soup.find(text=ITEMS_NUMBER_PHRASE).find_parent()
                 .select("span")[0].get_text().replace(",", "")
@@ -44,11 +44,6 @@ class OfferIdProvider(BaseProvider):
             pages_number += 1
 
         return pages_number
-
-
-    def _get_beautiful_soup_instance(self, page_number: int) -> BeautifulSoup:
-        response = self.requests_session.get(self._create_url(page_number))
-        return BeautifulSoup(response.content, "html.parser")
 
 
     def _create_url(self, page_number: int) -> str:
