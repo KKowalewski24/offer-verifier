@@ -9,11 +9,13 @@ STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 CURRENCY_PLN: str = "PLN"
 
 # ----------------------------------------------------------------------- #
+SLASH: str = "/"
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
 ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=25", 25)
 PARAM_PAGE_NUMBER: str = "&_pgn="
 ITM: str = "itm/"
+SLASH_ITM: str = SLASH + ITM
 PARAM_QUERY = "sch/i.html?_nkw="
 
 EBAY_BASE_PATH: str = "https://www.ebay.com/"
@@ -42,3 +44,4 @@ OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
 }
 
 # ----------------------------------------------------------------------- #
+ITEMS_NUMBER_PHRASE: str = " results for "

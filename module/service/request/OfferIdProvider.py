@@ -3,8 +3,8 @@ from typing import List
 from bs4 import BeautifulSoup
 from requests.utils import urlparse
 
-from module.constants import EBAY_SEARCH_PATH, ITEMS_PER_PAGE, ITM, OFFERS_ID_A_HREF_ATTRIBUTES, \
-    PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER
+from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, \
+    OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import remove_duplicates
 
@@ -27,7 +27,7 @@ class OfferIdProvider(BaseProvider):
     def _get_offers_id_for_single_page(self, page_number: int) -> List[str]:
         soup: BeautifulSoup = self._get_beautiful_soup_instance(page_number)
         return [
-            urlparse(a_href.get("href")).path.replace("/" + ITM, "")
+            urlparse(a_href.get("href")).path.replace(SLASH_ITM, "")
             for a_href in soup.find_all("a", attrs=OFFERS_ID_A_HREF_ATTRIBUTES)
         ]
 
@@ -35,7 +35,7 @@ class OfferIdProvider(BaseProvider):
     def _get_pages_number(self) -> int:
         soup: BeautifulSoup = self._get_beautiful_soup_instance(1)
         items_number: int = int(
-            soup.find(text=" results for ").find_parent()
+            soup.find(text=ITEMS_NUMBER_PHRASE).find_parent()
                 .select("span")[0].get_text().replace(",", "")
         )
 
@@ -52,5 +52,5 @@ class OfferIdProvider(BaseProvider):
 
 
     def _create_url(self, page_number: int) -> str:
-        return EBAY_SEARCH_PATH + self.search_phrase + PARAM_BRAND_NEW + \
-               PARAM_BUY_NOW + ITEMS_PER_PAGE[0] + PARAM_PAGE_NUMBER + str(page_number)
+        return (EBAY_SEARCH_PATH + self.search_phrase + PARAM_BRAND_NEW +
+                PARAM_BUY_NOW + ITEMS_PER_PAGE[0] + PARAM_PAGE_NUMBER + str(page_number))
