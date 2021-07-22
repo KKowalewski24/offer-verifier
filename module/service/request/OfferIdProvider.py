@@ -1,7 +1,6 @@
 from typing import List
 
 from bs4 import BeautifulSoup
-from requests.utils import urlparse
 
 from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, \
     OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
@@ -25,15 +24,15 @@ class OfferIdProvider(BaseProvider):
 
 
     def _get_offers_id_for_single_page(self, page_number: int) -> List[str]:
-        soup: BeautifulSoup = self._get_beautiful_soup_instance(self._create_url(page_number))
+        soup: BeautifulSoup = self.get_beautiful_soup_instance(self._create_url(page_number))
         return [
-            urlparse(a_href.get("href")).path.replace(SLASH_ITM, "")
+            self.urlparse_path_replace(a_href.get("href"), SLASH_ITM)
             for a_href in soup.find_all("a", attrs=OFFERS_ID_A_HREF_ATTRIBUTES)
         ]
 
 
     def _get_pages_number(self) -> int:
-        soup: BeautifulSoup = self._get_beautiful_soup_instance(self._create_url(1))
+        soup: BeautifulSoup = self.get_beautiful_soup_instance(self._create_url(1))
         items_number: int = int(
             soup.find(text=ITEMS_NUMBER_PHRASE).find_parent()
                 .select("span")[0].get_text().replace(",", "")

@@ -1,6 +1,8 @@
 from typing import Dict, Tuple
 
 # ----------------------------------------------------------------------- #
+HTML_PARSER: str = "html.parser"
+
 HTTP_OK: int = 200
 UTF_8: str = "UTF-8"
 
@@ -14,9 +16,12 @@ PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
 ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=25", 25)
 PARAM_PAGE_NUMBER: str = "&_pgn="
+PARAM_QUERY = "sch/i.html?_nkw="
+
 ITM: str = "itm/"
 SLASH_ITM: str = SLASH + ITM
-PARAM_QUERY = "sch/i.html?_nkw="
+USR: str = "usr/"
+SLASH_USR: str = SLASH + USR
 
 EBAY_BASE_PATH: str = "https://www.ebay.com/"
 EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + PARAM_QUERY
