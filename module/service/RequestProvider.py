@@ -24,7 +24,9 @@ class RequestProvider:
 
     def _prepare_offer(self, offer_id: str) -> Offer:
         offer_details = self.offer_details_provider.get_offer_details(offer_id)
-        seller_details = self.seller_details_provider.get_seller_details(offer_details["seller_id"])
+        seller_details = self.seller_details_provider.get_seller_details(
+            offer_details["seller"]["seller_id"]
+        )
         return self._map_json_to_offer(offer_details, seller_details)
 
 

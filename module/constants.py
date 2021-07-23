@@ -48,5 +48,8 @@ OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
     "tabindex": "-1"
 }
 
+LEFT_PANEL_ATTRIBUTE: str = "LeftSummaryPanel"
+RIGHT_PANEL_ATTRIBUTE: str = "RightSummaryPanel"
+
 # ----------------------------------------------------------------------- #
 ITEMS_NUMBER_PHRASE: str = " results for "
