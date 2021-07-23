@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Any, Dict, List
 
@@ -36,6 +37,10 @@ def convert_bool_to_string(value: bool) -> str:
     if value:
         return "Yes"
     return "No"
+
+
+def format_json(data: Dict) -> str:
+    return json.dumps(data, indent=4)
 
 
 def to_string_class_formatter(variables: List, variables_names: List,

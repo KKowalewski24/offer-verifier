@@ -48,6 +48,16 @@ OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
     "tabindex": "-1"
 }
 
+OFFERS_PRICE_ATTRIBUTES: Dict[str, str] = {
+    "id": "prcIsum",
+    "itemprop": "price"
+}
+
+OFFERS_IMAGE_ATTRIBUTES: Dict[str, str] = {
+    "id": "icImg",
+    "itemprop": "image"
+}
+
 LEFT_PANEL_ATTRIBUTE: str = "LeftSummaryPanel"
 RIGHT_PANEL_ATTRIBUTE: str = "RightSummaryPanel"
 
