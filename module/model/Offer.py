@@ -9,6 +9,7 @@ class Offer(BaseItem):
 
     def __init__(self, id: str, seller: Seller) -> None:
         super().__init__(id)
+        # TODO
         self.seller = seller
 
 

@@ -3,7 +3,9 @@ from typing import Any, Dict
 from bs4 import BeautifulSoup
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, LEFT_PANEL_ATTRIBUTE, \
-    OFFERS_IMAGE_ATTRIBUTES, OFFERS_PRICE_ATTRIBUTES, RIGHT_PANEL_ATTRIBUTE, SLASH_USR
+    OFFERS_IMAGE_ATTRIBUTES, OFFERS_PRICE_ATTRIBUTES, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
+    RETURNS_OPTION_ATTRIBUTE, RETURNS_OPTION_SPAN_ATTRIBUTE, RETURNS_OPTION_WHY_BUY_ATTRIBUTE, \
+    RIGHT_PANEL_ATTRIBUTE, SLASH_USR
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import remove_new_line_items
 
@@ -18,12 +20,13 @@ class OfferDetailsProvider(BaseProvider):
         soup: BeautifulSoup = self.get_beautiful_soup_instance(EBAY_ITEM_PATH + offer_id)
 
         return {
-            "offer_id": offer_id,
-            "offer_title": self._get_title(soup),
-            "offer_price": self._get_price(soup),
-            "offer_image_url": self._get_image_url(soup),
+            "id": offer_id,
+            "title": self._get_title(soup),
+            "price": self._get_price(soup),
+            "image_url": self._get_image_url(soup),
+            "has_return_option": self._get_return_option(soup),
             "seller": {
-                "seller_id": self._get_seller_id(soup)
+                "id": self._get_seller_id(soup)
             }
         }
 
@@ -38,6 +41,18 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_image_url(self, soup: BeautifulSoup) -> str:
         return str(soup.find(attrs=OFFERS_IMAGE_ATTRIBUTES).get("src"))
+
+
+    def _get_return_option(self, soup: BeautifulSoup) -> bool:
+        returns_phrase: str = (
+            soup.find(id=RETURNS_OPTION_ATTRIBUTE)
+                .find_parent()
+                .find(id=RETURNS_OPTION_SPAN_ATTRIBUTE)
+                .get_text(strip=True)
+        )
+        other_returns_phrase: str = str(soup.find(id=RETURNS_OPTION_WHY_BUY_ATTRIBUTE).get_text())
+
+        return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
 
 
     def _get_seller_id(self, soup: BeautifulSoup) -> str:

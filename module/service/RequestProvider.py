@@ -32,9 +32,10 @@ class RequestProvider:
 
     def _map_json_to_offer(self, offer_details: Dict[str, str],
                            seller_details: Dict[str, str]) -> Offer:
+        # TODO
         return Offer(
-            offer_details["offer_id"],
+            offer_details["id"],
             Seller(
-                seller_details["seller_id"]
+                seller_details["id"]
             )
         )

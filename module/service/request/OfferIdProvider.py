@@ -34,8 +34,11 @@ class OfferIdProvider(BaseProvider):
     def _get_pages_number(self) -> int:
         soup: BeautifulSoup = self.get_beautiful_soup_instance(self._create_url(1))
         items_number: int = int(
-            soup.find(text=ITEMS_NUMBER_PHRASE).find_parent()
-                .select("span")[0].get_text().replace(",", "")
+            soup.find(text=ITEMS_NUMBER_PHRASE)
+                .find_parent()
+                .select("span")[0]
+                .get_text()
+                .replace(",", "")
         )
 
         pages_number: int = int(items_number / ITEMS_PER_PAGE[1])
