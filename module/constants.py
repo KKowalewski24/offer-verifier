@@ -14,7 +14,7 @@ CURRENCY_PLN: str = "PLN"
 SLASH: str = "/"
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
-ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=25", 25)
+ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
 PARAM_PAGE_NUMBER: str = "&_pgn="
 PARAM_QUERY = "sch/i.html?_nkw="
 

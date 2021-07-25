@@ -39,8 +39,10 @@ class OfferIdProvider(BaseProvider):
         )
 
         pages_number: int = int(items_number / ITEMS_PER_PAGE[1])
+        if pages_number < 0:
+            return 0
         if items_number % ITEMS_PER_PAGE[1] != 0:
-            pages_number += 1
+            return pages_number + 1
 
         return pages_number
 
