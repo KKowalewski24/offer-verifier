@@ -42,26 +42,43 @@ REQUEST_HEADER: Dict[str, str] = {
     'accept-language': 'pl-PL,pl;q=0.9',
 }
 
-_DIV_ATTRIBUTES: Dict[str, str] = {}
-
 OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
     "tabindex": "-1"
 }
 
-OFFERS_PRICE_ATTRIBUTES: Dict[str, str] = {
+OFFER_PRICE_ATTRIBUTES: Dict[str, str] = {
     "itemprop": "price"
 }
 
-OFFERS_IMAGE_ATTRIBUTES: Dict[str, str] = {
+OFFER_IMAGE_ATTRIBUTES: Dict[str, str] = {
     "id": "icImg",
     "itemprop": "image"
 }
 
-LEFT_PANEL_ATTRIBUTE: str = "LeftSummaryPanel"
-RIGHT_PANEL_ATTRIBUTE: str = "RightSummaryPanel"
-RETURNS_OPTION_ATTRIBUTE: str = "returnsPlacementHolderId"
-RETURNS_OPTION_SPAN_ATTRIBUTE: str = "vi-ret-accrd-txt"
-RETURNS_OPTION_WHY_BUY_ATTRIBUTE: str = "why2buy"
+OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
+    "role": "tabpanel",
+    "id": "desc_panel"
+}
+
+LEFT_PANEL_ATTRIBUTES: Dict[str, str] = {
+    "id": "LeftSummaryPanel"
+}
+
+RIGHT_PANEL_ATTRIBUTES: Dict[str, str] = {
+    "id": "RightSummaryPanel"
+}
+
+RETURNS_OPTION_ATTRIBUTES: Dict[str, str] = {
+    "id": "returnsPlacementHolderId"
+}
+
+RETURNS_OPTION_SPAN_ATTRIBUTES: Dict[str, str] = {
+    "id": "vi-ret-accrd-txt"
+}
+
+RETURNS_OPTION_WHY_BUY_ATTRIBUTES: Dict[str, str] = {
+    "id": "why2buy"
+}
 
 # ----------------------------------------------------------------------- #
 ITEMS_NUMBER_PHRASE: str = " results for "

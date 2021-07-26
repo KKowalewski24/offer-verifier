@@ -2,10 +2,10 @@ from typing import Any, Dict
 
 from bs4 import BeautifulSoup
 
-from module.constants import EBAY_ITEM_PATH, HTML_PARSER, LEFT_PANEL_ATTRIBUTE, \
-    OFFERS_IMAGE_ATTRIBUTES, OFFERS_PRICE_ATTRIBUTES, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
-    RETURNS_OPTION_ATTRIBUTE, RETURNS_OPTION_SPAN_ATTRIBUTE, RETURNS_OPTION_WHY_BUY_ATTRIBUTE, \
-    RIGHT_PANEL_ATTRIBUTE, SLASH_USR
+from module.constants import EBAY_ITEM_PATH, HTML_PARSER, LEFT_PANEL_ATTRIBUTES, \
+    OFFER_DESCRIPTION_ATTRIBUTES, OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, RETURNS_KEYWORD, \
+    RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, \
+    RETURNS_OPTION_WHY_BUY_ATTRIBUTES, RIGHT_PANEL_ATTRIBUTES, SLASH_USR
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import remove_new_line_items
 
@@ -25,6 +25,7 @@ class OfferDetailsProvider(BaseProvider):
             "price": self._get_price(soup),
             "image_url": self._get_image_url(soup),
             "has_return_option": self._get_return_option(soup),
+            "description_length": self._get_description_length(soup),
             "seller": {
                 "id": self._get_seller_id(soup)
             }
@@ -32,32 +33,37 @@ class OfferDetailsProvider(BaseProvider):
 
 
     def _get_title(self, soup: BeautifulSoup) -> str:
-        return str(list(soup.find(id=LEFT_PANEL_ATTRIBUTE).find("h1").children)[1])
+        return str(list(soup.find(attrs=LEFT_PANEL_ATTRIBUTES).find("h1").children)[1])
 
 
     def _get_price(self, soup: BeautifulSoup) -> str:
-        return str(soup.find(attrs=OFFERS_PRICE_ATTRIBUTES).get("content"))
+        return str(soup.find(attrs=OFFER_PRICE_ATTRIBUTES).get("content"))
 
 
     def _get_image_url(self, soup: BeautifulSoup) -> str:
-        return str(soup.find(attrs=OFFERS_IMAGE_ATTRIBUTES).get("src"))
+        return str(soup.find(attrs=OFFER_IMAGE_ATTRIBUTES).get("src"))
 
 
     def _get_return_option(self, soup: BeautifulSoup) -> bool:
         returns_phrase: str = (
-            soup.find(id=RETURNS_OPTION_ATTRIBUTE)
+            soup.find(attrs=RETURNS_OPTION_ATTRIBUTES)
                 .find_parent()
-                .find(id=RETURNS_OPTION_SPAN_ATTRIBUTE)
+                .find(attrs=RETURNS_OPTION_SPAN_ATTRIBUTES)
                 .get_text(strip=True)
         )
-        other_returns_phrase: str = str(soup.find(id=RETURNS_OPTION_WHY_BUY_ATTRIBUTE).get_text())
+        other_returns_phrase: str = str(soup.find(attrs=RETURNS_OPTION_WHY_BUY_ATTRIBUTES).get_text())
 
         return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
 
 
+    def _get_description_length(self, soup: BeautifulSoup) -> int:
+        print(soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES))
+        return 0
+
+
     def _get_seller_id(self, soup: BeautifulSoup) -> str:
         markup: str = str(
-            remove_new_line_items(list(soup.find(id=RIGHT_PANEL_ATTRIBUTE).children))[2]
+            remove_new_line_items(list(soup.find(attrs=RIGHT_PANEL_ATTRIBUTES).children))[2]
         )
         url: str = BeautifulSoup(markup, HTML_PARSER).find("a").get("href")
         return self.urlparse_path_replace(url, SLASH_USR)
