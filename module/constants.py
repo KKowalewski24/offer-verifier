@@ -56,8 +56,7 @@ OFFER_IMAGE_ATTRIBUTES: Dict[str, str] = {
 }
 
 OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
-    "role": "tabpanel",
-    "id": "desc_panel"
+    "id": "desc_ifr"
 }
 
 LEFT_PANEL_ATTRIBUTES: Dict[str, str] = {

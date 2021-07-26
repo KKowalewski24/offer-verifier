@@ -33,6 +33,10 @@ def remove_new_line_items(items: List[str]) -> List[str]:
     return [item for item in items if item != "\n"]
 
 
+def normalize_text(text: str) -> str:
+    return " ".join(text.split())
+
+
 def convert_bool_to_string(value: bool) -> str:
     if value:
         return "Yes"

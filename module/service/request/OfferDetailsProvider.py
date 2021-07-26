@@ -7,7 +7,7 @@ from module.constants import EBAY_ITEM_PATH, HTML_PARSER, LEFT_PANEL_ATTRIBUTES,
     RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, \
     RETURNS_OPTION_WHY_BUY_ATTRIBUTES, RIGHT_PANEL_ATTRIBUTES, SLASH_USR
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import remove_new_line_items
+from module.utils import normalize_text, remove_new_line_items
 
 
 class OfferDetailsProvider(BaseProvider):
@@ -57,7 +57,12 @@ class OfferDetailsProvider(BaseProvider):
 
 
     def _get_description_length(self, soup: BeautifulSoup) -> int:
-        print(soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES))
+        description_url: str = soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES).get("src")
+        description_soap: BeautifulSoup = self.get_beautiful_soup_instance(description_url)
+
+        if description_soap is not None and len(description_soap) != 0:
+            return len(normalize_text(description_soap.get_text()))
+
         return 0
 
 
