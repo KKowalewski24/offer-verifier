@@ -2,10 +2,10 @@ from typing import Any, Dict
 
 from bs4 import BeautifulSoup
 
-from module.constants import EBAY_ITEM_PATH, HTML_PARSER, LEFT_PANEL_ATTRIBUTES, \
-    OFFER_DESCRIPTION_ATTRIBUTES, OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, RETURNS_KEYWORD, \
-    RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, \
-    RETURNS_OPTION_WHY_BUY_ATTRIBUTES, RIGHT_PANEL_ATTRIBUTES, SLASH_USR
+from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
+    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
+    RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, \
+    SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import normalize_text, remove_new_line_items
 
@@ -33,7 +33,7 @@ class OfferDetailsProvider(BaseProvider):
 
 
     def _get_title(self, soup: BeautifulSoup) -> str:
-        return str(list(soup.find(attrs=LEFT_PANEL_ATTRIBUTES).find("h1").children)[1])
+        return str(list(soup.find(attrs=TITLE_PANEL_ATTRIBUTES).find("h1").children)[1])
 
 
     def _get_price(self, soup: BeautifulSoup) -> str:
@@ -68,7 +68,7 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_seller_id(self, soup: BeautifulSoup) -> str:
         markup: str = str(
-            remove_new_line_items(list(soup.find(attrs=RIGHT_PANEL_ATTRIBUTES).children))[2]
+            remove_new_line_items(list(soup.find(attrs=SELLER_PANEL_ATTRIBUTES).children))[2]
         )
         url: str = BeautifulSoup(markup, HTML_PARSER).find("a").get("href")
         return self.urlparse_path_replace(url, SLASH_USR)

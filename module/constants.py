@@ -59,11 +59,15 @@ OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
     "id": "desc_ifr"
 }
 
-LEFT_PANEL_ATTRIBUTES: Dict[str, str] = {
+OFFER_RATINGS_ATTRIBUTES: Dict[str, str] = {
+    "id": "rwid"
+}
+
+TITLE_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "LeftSummaryPanel"
 }
 
-RIGHT_PANEL_ATTRIBUTES: Dict[str, str] = {
+SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"
 }
 
