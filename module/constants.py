@@ -46,6 +46,10 @@ OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
     "tabindex": "-1"
 }
 
+TITLE_PANEL_ATTRIBUTES: Dict[str, str] = {
+    "id": "LeftSummaryPanel"
+}
+
 OFFER_PRICE_ATTRIBUTES: Dict[str, str] = {
     "itemprop": "price"
 }
@@ -53,22 +57,6 @@ OFFER_PRICE_ATTRIBUTES: Dict[str, str] = {
 OFFER_IMAGE_ATTRIBUTES: Dict[str, str] = {
     "id": "icImg",
     "itemprop": "image"
-}
-
-OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
-    "id": "desc_ifr"
-}
-
-OFFER_RATINGS_ATTRIBUTES: Dict[str, str] = {
-    "id": "rwid"
-}
-
-TITLE_PANEL_ATTRIBUTES: Dict[str, str] = {
-    "id": "LeftSummaryPanel"
-}
-
-SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
-    "id": "RightSummaryPanel"
 }
 
 RETURNS_OPTION_ATTRIBUTES: Dict[str, str] = {
@@ -83,7 +71,25 @@ RETURNS_OPTION_WHY_BUY_ATTRIBUTES: Dict[str, str] = {
     "id": "why2buy"
 }
 
+OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
+    "id": "desc_ifr"
+}
+
+OFFER_RATINGS_ATTRIBUTES: Dict[str, str] = {
+    "id": "rwid"
+}
+
+OFFER_REVIEWS_ATTRIBUTES: Dict[str, str] = {
+    "itemprop": "review",
+    "itemtype": "https://schema.org/Review"
+}
+
+SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
+    "id": "RightSummaryPanel"
+}
+
 # ----------------------------------------------------------------------- #
 ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
 RETURNS_KEYWORD: str = "returns"
+PRODUCT_RATINGS: str = "product ratings"

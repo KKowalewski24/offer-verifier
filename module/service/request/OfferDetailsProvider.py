@@ -1,9 +1,10 @@
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
-    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
+    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_ATTRIBUTES, \
+    PRODUCT_RATINGS, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
     RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, \
     SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
@@ -18,6 +19,7 @@ class OfferDetailsProvider(BaseProvider):
 
     def get_offer_details(self, offer_id: str) -> Dict[str, Any]:
         soup: BeautifulSoup = self.get_beautiful_soup_instance(EBAY_ITEM_PATH + offer_id)
+        product_rating, ratings_number, reviews_number = self._get_ratings(soup)
 
         return {
             "id": offer_id,
@@ -26,6 +28,9 @@ class OfferDetailsProvider(BaseProvider):
             "image_url": self._get_image_url(soup),
             "has_return_option": self._get_return_option(soup),
             "description_length": self._get_description_length(soup),
+            "product_rating": product_rating,
+            "ratings_number": ratings_number,
+            "reviews_number": reviews_number,
             "seller": {
                 "id": self._get_seller_id(soup)
             }
@@ -64,6 +69,27 @@ class OfferDetailsProvider(BaseProvider):
             return len(normalize_text(description_soap.get_text()))
 
         return 0
+
+
+    def _get_ratings(self, soup: BeautifulSoup) -> Tuple[float, int, int]:
+        ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
+        if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
+            ratings_div = ratings_reviews_div.select("div")[0]
+            reviews_div = ratings_reviews_div.select("div")[1]
+
+            product_rating: float = float(normalize_text(
+                ratings_div.select("div")[1].select("span")[0].get_text()
+            ).replace(",", "."))
+
+            ratings_number: int = int(normalize_text(
+                ratings_div.select("div")[1].select("span")[2].get_text()
+            ).replace(PRODUCT_RATINGS, ""))
+
+            # print((ratings_reviews_div.find(attrs=OFFER_REVIEWS_ATTRIBUTES)))
+            reviews_number: int = int(1)
+            return product_rating, ratings_number, reviews_number
+        # If offer has no ratings, neutral value is returned - 3 is neutral
+        return 3, 0, 0
 
 
     def _get_seller_id(self, soup: BeautifulSoup) -> str:
