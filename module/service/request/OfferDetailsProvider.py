@@ -73,18 +73,16 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_ratings(self, soup: BeautifulSoup) -> Tuple[float, int, int]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
+
         if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
-            ratings_div = ratings_reviews_div.select("div")[0]
-            reviews_div = ratings_reviews_div.select("div")[1]
+            ratings_div = ratings_reviews_div.select("div")[0].select("div")[1]
 
-            product_rating: float = float(normalize_text(
-                ratings_div.select("div")[1].select("span")[0].get_text()
-            ).replace(",", "."))
-
-            ratings_number: int = int(normalize_text(
-                ratings_div.select("div")[1].select("span")[2].get_text()
-            ).replace(PRODUCT_RATINGS, ""))
-
+            product_rating: float = float(
+                normalize_text(ratings_div.select("span")[0].get_text()).replace(",", ".")
+            )
+            ratings_number: int = int(
+                normalize_text(ratings_div.select("span")[2].get_text()).replace(PRODUCT_RATINGS, "")
+            )
             reviews_number: int = int(len(ratings_reviews_div.select(".reviews > div")))
 
             return product_rating, ratings_number, reviews_number

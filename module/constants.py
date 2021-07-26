@@ -79,11 +79,6 @@ OFFER_RATINGS_ATTRIBUTES: Dict[str, str] = {
     "id": "rwid"
 }
 
-OFFER_REVIEWS_ATTRIBUTES: Dict[str, str] = {
-    "itemprop": "review",
-    "itemtype": "https://schema.org/Review"
-}
-
 SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"
 }
