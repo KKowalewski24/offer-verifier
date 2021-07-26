@@ -85,9 +85,10 @@ class OfferDetailsProvider(BaseProvider):
                 ratings_div.select("div")[1].select("span")[2].get_text()
             ).replace(PRODUCT_RATINGS, ""))
 
-            # print((ratings_reviews_div.find(attrs=OFFER_REVIEWS_ATTRIBUTES)))
-            reviews_number: int = int(1)
+            reviews_number: int = int(len(ratings_reviews_div.select(".reviews > div")))
+
             return product_rating, ratings_number, reviews_number
+
         # If offer has no ratings, neutral value is returned - 3 is neutral
         return 3, 0, 0
 
