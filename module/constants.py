@@ -89,5 +89,5 @@ ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
 RETURNS_KEYWORD: str = "returns"
 PRODUCT_RATINGS_KEYWORDS: List[str] = [
-    "product", "ratings", "rating"
+    " product", " ratings", " rating"
 ]

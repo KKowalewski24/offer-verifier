@@ -47,6 +47,10 @@ def replace_many(text: str, replaced_texts: List[str], replacing_text: str = "")
     return text
 
 
+def convert_bool_to_json(value: bool) -> str:
+    return str(value).lower()
+
+
 def convert_bool_to_string(value: bool) -> str:
     if value:
         return "Yes"

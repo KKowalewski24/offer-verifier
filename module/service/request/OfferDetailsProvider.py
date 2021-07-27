@@ -8,7 +8,7 @@ from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTR
     RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, SELLER_PANEL_ATTRIBUTES, \
     SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import normalize_text, remove_new_line_items, replace_many
+from module.utils import convert_bool_to_json, normalize_text, remove_new_line_items, replace_many
 
 
 class OfferDetailsProvider(BaseProvider):
@@ -51,7 +51,7 @@ class OfferDetailsProvider(BaseProvider):
         return str(soup.find(attrs=OFFER_IMAGE_ATTRIBUTES).get("src"))
 
 
-    def _get_return_option(self, soup: BeautifulSoup) -> bool:
+    def _get_return_option(self, soup: BeautifulSoup) -> str:
         returns_phrase: str = (
             soup.find(attrs=RETURNS_OPTION_ATTRIBUTES)
                 .find_parent()
@@ -60,34 +60,36 @@ class OfferDetailsProvider(BaseProvider):
         )
         other_returns_phrase: str = str(soup.find(attrs=RETURNS_OPTION_WHY_BUY_ATTRIBUTES).get_text())
 
-        return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
+        return convert_bool_to_json(
+            returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
+        )
 
 
-    def _get_description_length(self, soup: BeautifulSoup) -> int:
+    def _get_description_length(self, soup: BeautifulSoup) -> str:
         description_url: str = soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES).get("src")
         description_soap, is_error_page = self.get_beautiful_soup_instance(description_url)
 
         if not is_error_page and description_soap is not None and len(description_soap) != 0:
-            return len(normalize_text(description_soap.get_text()))
+            return str(len(normalize_text(description_soap.get_text())))
 
-        return 0
+        return str(0)
 
 
-    def _get_ratings(self, soup: BeautifulSoup) -> Tuple[int, float, int]:
+    def _get_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
-        reviews_number: int = 0
+        reviews_number: str = str(0)
         # If offer has no ratings, neutral value is returned - 3 is neutral
-        product_rating: float = 3
-        ratings_number: int = 0
+        product_rating: str = str(3)
+        ratings_number: str = str(0)
 
         if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
-            reviews_number = int(len(ratings_reviews_div.select(".reviews > div")))
+            reviews_number = str(len(ratings_reviews_div.select(".reviews > div")))
             ratings_spans = ratings_reviews_div.select(".ebay-content-wrapper > span")
 
             if ratings_spans is not None and len(ratings_spans) != 0:
-                product_rating = float(normalize_text(ratings_spans[0].get_text()).replace(",", "."))
+                product_rating = normalize_text(ratings_spans[0].get_text()).replace(",", ".")
                 ratings_number_text: str = normalize_text(ratings_spans[1].get_text())
-                ratings_number = int(replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS))
+                ratings_number = replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS)
 
         return reviews_number, product_rating, ratings_number
 
