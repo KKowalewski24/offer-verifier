@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from module.model.Offer import Offer
 from module.model.Seller import Seller
@@ -35,11 +35,19 @@ class RequestProvider:
             return None
 
 
-    def _map_json_to_offer(self, offer_details: Dict[str, str],
-                           seller_details: Dict[str, str]) -> Offer:
+    def _map_json_to_offer(self, offer_details: Dict[str, Any],
+                           seller_details: Dict[str, Any]) -> Offer:
         # TODO
         return Offer(
             offer_details["id"],
+            offer_details["title"],
+            float(offer_details["price"]),
+            offer_details["image_url"],
+            bool(offer_details["has_return_option"]),
+            int(offer_details["description_length"]),
+            int(offer_details["reviews_number"]),
+            float(offer_details["product_rating"]),
+            int(offer_details["ratings_number"]),
             Seller(
                 seller_details["id"]
             )

@@ -51,7 +51,7 @@ class OfferDetailsProvider(BaseProvider):
         return str(soup.find(attrs=OFFER_IMAGE_ATTRIBUTES).get("src"))
 
 
-    def _get_return_option(self, soup: BeautifulSoup) -> str:
+    def _get_return_option(self, soup: BeautifulSoup) -> bool:
         returns_phrase: str = (
             soup.find(attrs=RETURNS_OPTION_ATTRIBUTES)
                 .find_parent()
@@ -60,9 +60,7 @@ class OfferDetailsProvider(BaseProvider):
         )
         other_returns_phrase: str = str(soup.find(attrs=RETURNS_OPTION_WHY_BUY_ATTRIBUTES).get_text())
 
-        return convert_bool_to_json(
-            returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
-        )
+        return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
 
 
     def _get_description_length(self, soup: BeautifulSoup) -> str:
