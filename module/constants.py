@@ -8,7 +8,7 @@ UTF_8: str = "UTF-8"
 
 RESULTS_DIRECTORY: str = "results/"
 STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
-CURRENCY_PLN: str = "PLN"
+CURRENCY_US_DOLLAR: str = "US $"
 
 # ----------------------------------------------------------------------- #
 SLASH: str = "/"

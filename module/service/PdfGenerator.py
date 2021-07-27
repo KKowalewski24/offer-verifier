@@ -2,9 +2,9 @@ from typing import List, Tuple
 
 from fpdf import FPDF
 
-from module.constants import CURRENCY_PLN
+from module.constants import CURRENCY_US_DOLLAR
 from module.model.Offer import Offer
-from module.utils import convert_bool_to_string, get_filename
+from module.utils import get_filename
 
 
 class PDF(FPDF):
@@ -45,13 +45,17 @@ class PdfGenerator:
         self.pdf.lines()
         self.pdf.set_font("Arial", "B", 16)
         self._draw_cell("Offer details", "C")
+
+        self._draw_cell("Offer ID: " + str(offer.id))
+        self._draw_cell("Offer title: " + offer.title)
+        self._draw_cell("Offer price: " + CURRENCY_US_DOLLAR + " " + offer.price)
+        self._draw_cell("Image URL - Click here", link=offer.image_url)
+        self._draw_cell("Option to return item: " + offer.has_return_option)
+        self._draw_cell("Number of reviews: " + offer.reviews_number)
+        self._draw_cell("Ratings of product: " + offer.product_rating)
+        self._draw_cell("Number of ratings: " + offer.ratings_number)
+
         # TODO
-        # self._draw_cell("Offer ID: " + str(offer.id))
-        # self._draw_cell("Offer title: " + offer.title)
-        # self._draw_cell("Offer price: " + str(offer.price) + " " + CURRENCY_PLN)
-        # self._draw_cell("Category ID: " + str(offer.category_id))
-        # self._draw_cell("Image URL - Click here", link=offer.main_image_url)
-        #
         # self._draw_cell("", "C")
         # self._draw_cell("Information about seller", "C")
         # self._draw_cell("Seller ID: " + str(offer.seller.id))

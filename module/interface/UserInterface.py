@@ -1,7 +1,7 @@
 import sys
 from typing import List, Tuple
 
-from module.constants import RESULTS_DIRECTORY, STATISTICS_PATH
+from module.constants import CURRENCY_US_DOLLAR, RESULTS_DIRECTORY, STATISTICS_PATH
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -57,12 +57,15 @@ class UserInterface:
 
     def _display_offer_details(self, offer: Offer, is_verified: bool) -> None:
         # TODO
-        # print("\nOffer details: ")
-        # print("\tOffer ID:", offer.id)
-        # print("\tOffer title:", offer.title)
-        # print("\tOffer price:", offer.price, CURRENCY_PLN)
-        # print("\tCategory ID:", offer.category_id)
-        # print("\tImage URL:", offer.main_image_url)
+        print("\nOffer details: ")
+        print("\tOffer ID:", offer.id)
+        print("\tOffer title:", offer.title)
+        print("\tOffer price:", CURRENCY_US_DOLLAR, offer.price)
+        print("\tImage URL:", offer.image_url)
+        print("\tOption to return item:", offer.has_return_option)
+        print("\tNumber of reviews:", offer.reviews_number)
+        print("\tRatings of product:", offer.product_rating)
+        print("\tNumber of ratings:", offer.ratings_number)
         # print("\tInformation about seller")
         # print("\t\tSeller ID:", offer.seller.id)
         # print("\t\tSeller login:", offer.seller.login)
