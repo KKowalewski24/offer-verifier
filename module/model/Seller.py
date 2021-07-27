@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict
 
 from module.model.BaseItem import BaseItem
 from module.utils import to_string_class_formatter
@@ -11,8 +11,9 @@ class Seller(BaseItem):
         # TODO
 
 
-    def get_features_array(self) -> List:
-        return []
+    def get_features_array(self) -> Dict:
+        features: Dict = {}
+        return features
 
 
     def __str__(self) -> str:

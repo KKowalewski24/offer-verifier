@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict
 
 from nameof import nameof
 
@@ -24,10 +24,18 @@ class Offer(BaseItem):
         self.seller = seller
 
 
-    def get_features_array(self) -> List:
-        return [self.price, self.has_return_option, self.description_length,
-                self.reviews_number, self.product_rating,
-                self.ratings_number] + self.seller.get_features_array()
+    def get_features_array(self) -> Dict:
+        features: Dict = {
+            "price": self.price,
+            "has_return_option": self.has_return_option,
+            "description_length": self.description_length,
+            "reviews_number": self.reviews_number,
+            "product_rating": self.product_rating,
+            "ratings_number": self.ratings_number
+        }
+
+        features.update(self.seller.get_features_array())
+        return features
 
 
     def __str__(self) -> str:
