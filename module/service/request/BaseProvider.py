@@ -1,10 +1,11 @@
 from abc import ABC
+from typing import Tuple
 from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 
-from module.constants import HTML_PARSER, REQUEST_HEADER
+from module.constants import ERROR_PAGE_PHRASE, HTML_PARSER, REQUEST_HEADER
 
 
 class BaseProvider(ABC):
@@ -19,8 +20,10 @@ class BaseProvider(ABC):
         return session
 
 
-    def get_beautiful_soup_instance(self, url: str) -> BeautifulSoup:
-        return BeautifulSoup(self.requests_session.get(url).content, HTML_PARSER)
+    def get_beautiful_soup_instance(self, url: str) -> Tuple[BeautifulSoup, bool]:
+        soup: BeautifulSoup = BeautifulSoup(self.requests_session.get(url).content, HTML_PARSER)
+        is_error_page: bool = ERROR_PAGE_PHRASE in soup.title.string
+        return soup, is_error_page
 
 
     def urlparse_path_replace(self, url: str, replaced_text: str, replacing_text: str = "") -> str:

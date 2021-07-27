@@ -11,5 +11,5 @@ class SellerDetailsProvider(BaseProvider):
 
     def get_seller_details(self, seller_id: str) -> Dict[str, str]:
         return {
-            "seller_id": seller_id
+            "id": seller_id
         }

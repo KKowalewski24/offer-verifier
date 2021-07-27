@@ -29,6 +29,10 @@ def remove_duplicates(items: List[Any]) -> List[Any]:
     return list(set(items))
 
 
+def remove_none_items(items: List[Any]) -> List[Any]:
+    return [item for item in items if item is not None]
+
+
 def remove_new_line_items(items: List[str]) -> List[str]:
     return [item for item in items if item != "\n"]
 

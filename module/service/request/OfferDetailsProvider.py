@@ -18,9 +18,11 @@ class OfferDetailsProvider(BaseProvider):
 
 
     def get_offer_details(self, offer_id: str) -> Dict[str, Any]:
-        soup: BeautifulSoup = self.get_beautiful_soup_instance(EBAY_ITEM_PATH + offer_id)
-        product_rating, ratings_number, reviews_number = self._get_ratings(soup)
+        soup, is_error_page = self.get_beautiful_soup_instance(EBAY_ITEM_PATH + offer_id)
+        if is_error_page:
+            return {}
 
+        product_rating, ratings_number, reviews_number = self._get_ratings(soup)
         return {
             "id": offer_id,
             "title": self._get_title(soup),
@@ -63,9 +65,9 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_description_length(self, soup: BeautifulSoup) -> int:
         description_url: str = soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES).get("src")
-        description_soap: BeautifulSoup = self.get_beautiful_soup_instance(description_url)
+        description_soap, is_error_page = self.get_beautiful_soup_instance(description_url)
 
-        if description_soap is not None and len(description_soap) != 0:
+        if not is_error_page and description_soap is not None and len(description_soap) != 0:
             return len(normalize_text(description_soap.get_text()))
 
         return 0

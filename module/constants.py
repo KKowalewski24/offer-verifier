@@ -84,6 +84,7 @@ SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
 }
 
 # ----------------------------------------------------------------------- #
+ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
 RETURNS_KEYWORD: str = "returns"
