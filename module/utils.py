@@ -37,6 +37,12 @@ def normalize_text(text: str) -> str:
     return " ".join(text.split())
 
 
+def replace_many(text: str, replaced_texts: List[str], replacing_text: str = "") -> str:
+    for replaced_text in replaced_texts:
+        text = text.replace(replaced_text, replacing_text)
+    return text
+
+
 def convert_bool_to_string(value: bool) -> str:
     if value:
         return "Yes"

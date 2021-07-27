@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 # ----------------------------------------------------------------------- #
 HTML_PARSER: str = "html.parser"
@@ -87,4 +87,6 @@ SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
 ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
 RETURNS_KEYWORD: str = "returns"
-PRODUCT_RATINGS: str = "product ratings"
+PRODUCT_RATINGS_KEYWORDS: List[str] = [
+    "product rating", "product ratings"
+]

@@ -4,11 +4,11 @@ from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
     OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_ATTRIBUTES, \
-    PRODUCT_RATINGS, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
-    RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, \
-    SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
+    PRODUCT_RATINGS_KEYWORDS, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, \
+    RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, SELLER_PANEL_ATTRIBUTES, \
+    SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import normalize_text, remove_new_line_items
+from module.utils import normalize_text, remove_new_line_items, replace_many
 
 
 class OfferDetailsProvider(BaseProvider):
@@ -73,22 +73,21 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_ratings(self, soup: BeautifulSoup) -> Tuple[float, int, int]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
-
-        if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
+        try:
             ratings_div = ratings_reviews_div.select("div")[0].select("div")[1]
 
             product_rating: float = float(
                 normalize_text(ratings_div.select("span")[0].get_text()).replace(",", ".")
             )
-            ratings_number: int = int(
-                normalize_text(ratings_div.select("span")[2].get_text()).replace(PRODUCT_RATINGS, "")
-            )
+            ratings_number_text: str = normalize_text(ratings_div.select("span")[2].get_text())
+            ratings_number: int = int(replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS))
             reviews_number: int = int(len(ratings_reviews_div.select(".reviews > div")))
 
             return product_rating, ratings_number, reviews_number
 
-        # If offer has no ratings, neutral value is returned - 3 is neutral
-        return 3, 0, 0
+        except IndexError:
+            # If offer has no ratings, neutral value is returned - 3 is neutral
+            return 3, 0, 0
 
 
     def _get_seller_id(self, soup: BeautifulSoup) -> str:
