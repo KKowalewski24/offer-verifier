@@ -73,21 +73,21 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_ratings(self, soup: BeautifulSoup) -> Tuple[float, int, int]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
-        try:
-            ratings_div = ratings_reviews_div.select("div")[0].select("div")[1]
+        reviews_number: int = 0
+        # If offer has no ratings, neutral value is returned - 3 is neutral
+        product_rating: float = 3
+        ratings_number: int = 0
 
-            product_rating: float = float(
-                normalize_text(ratings_div.select("span")[0].get_text()).replace(",", ".")
-            )
-            ratings_number_text: str = normalize_text(ratings_div.select("span")[2].get_text())
-            ratings_number: int = int(replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS))
-            reviews_number: int = int(len(ratings_reviews_div.select(".reviews > div")))
+        if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
+            reviews_number = int(len(ratings_reviews_div.select(".reviews > div")))
+            ratings_spans = ratings_reviews_div.select(".ebay-content-wrapper > span")
 
-            return product_rating, ratings_number, reviews_number
+            if ratings_spans is not None and len(ratings_spans) != 0:
+                product_rating = float(normalize_text(ratings_spans[0].get_text()).replace(",", "."))
+                ratings_number_text: str = normalize_text(ratings_spans[1].get_text())
+                ratings_number = int(replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS))
 
-        except IndexError:
-            # If offer has no ratings, neutral value is returned - 3 is neutral
-            return 3, 0, 0
+        return product_rating, ratings_number, reviews_number
 
 
     def _get_seller_id(self, soup: BeautifulSoup) -> str:
