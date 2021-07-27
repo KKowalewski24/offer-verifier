@@ -22,7 +22,7 @@ class OfferDetailsProvider(BaseProvider):
         if is_error_page:
             return {}
 
-        product_rating, ratings_number, reviews_number = self._get_ratings(soup)
+        reviews_number, product_rating, ratings_number = self._get_ratings(soup)
         return {
             "id": offer_id,
             "title": self._get_title(soup),
@@ -30,9 +30,9 @@ class OfferDetailsProvider(BaseProvider):
             "image_url": self._get_image_url(soup),
             "has_return_option": self._get_return_option(soup),
             "description_length": self._get_description_length(soup),
+            "reviews_number": reviews_number,
             "product_rating": product_rating,
             "ratings_number": ratings_number,
-            "reviews_number": reviews_number,
             "seller": {
                 "id": self._get_seller_id(soup)
             }
@@ -73,7 +73,7 @@ class OfferDetailsProvider(BaseProvider):
         return 0
 
 
-    def _get_ratings(self, soup: BeautifulSoup) -> Tuple[float, int, int]:
+    def _get_ratings(self, soup: BeautifulSoup) -> Tuple[int, float, int]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
         reviews_number: int = 0
         # If offer has no ratings, neutral value is returned - 3 is neutral
@@ -89,7 +89,7 @@ class OfferDetailsProvider(BaseProvider):
                 ratings_number_text: str = normalize_text(ratings_spans[1].get_text())
                 ratings_number = int(replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS))
 
-        return product_rating, ratings_number, reviews_number
+        return reviews_number, product_rating, ratings_number
 
 
     def _get_seller_id(self, soup: BeautifulSoup) -> str:
