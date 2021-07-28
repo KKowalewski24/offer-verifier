@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from module.model.Offer import Offer
 from module.model.Seller import Seller
+from module.service.Logger import Logger
 from module.service.request.OfferDetailsProvider import OfferDetailsProvider
 from module.service.request.OfferIdProvider import OfferIdProvider
 from module.service.request.SellerDetailsProvider import SellerDetailsProvider
@@ -14,15 +15,18 @@ class RequestProvider:
         self.offer_id_provider: OfferIdProvider = OfferIdProvider(search_phrase)
         self.offer_details_provider: OfferDetailsProvider = OfferDetailsProvider()
         self.seller_details_provider: SellerDetailsProvider = SellerDetailsProvider()
+        self.logger: Logger = Logger()
 
 
     def get_offers(self) -> List[Offer]:
         offers_id: List[str] = self.offer_id_provider.get_offers_id()
         print("Offers to download:", len(offers_id))
+        self.logger.info("Offers to download: " + str(len(offers_id)))
         return remove_none_items([self._prepare_offer(offer_id) for offer_id in offers_id])
 
 
     def _prepare_offer(self, offer_id: str) -> Optional[Offer]:
+        self.logger.info("Preparing offer id: " + offer_id)
         try:
             offer_details = self.offer_details_provider.get_offer_details(offer_id)
             seller_details = self.seller_details_provider.get_seller_details(
@@ -31,6 +35,7 @@ class RequestProvider:
             return self._map_json_to_offer(offer_details, seller_details)
 
         except KeyError:
+            self.logger.error("KeyError")
             return None
 
 

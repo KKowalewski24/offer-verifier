@@ -2,6 +2,7 @@ from typing import Dict, List, Tuple
 
 # ----------------------------------------------------------------------- #
 HTML_PARSER: str = "html.parser"
+LOGS_FILENAME: str = "app.log"
 
 HTTP_OK: int = 200
 UTF_8: str = "UTF-8"

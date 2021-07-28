@@ -6,6 +6,7 @@ from module.exception.VerificationImpossibleException import VerificationImpossi
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.LatexGenerator import LatexGenerator
+from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
 from module.service.PdfGenerator import PdfGenerator
 from module.utils import has_access_to_internet, save_to_file
@@ -15,8 +16,10 @@ class UserInterface:
 
     def __init__(self, search_phrase: str, save_offers: bool,
                  generate_pdf: bool, generate_statistics: bool) -> None:
+        self.logger: Logger = Logger()
         if not has_access_to_internet():
             print("No access to the Internet, program cannot be run")
+            self.logger.error("No access to the Internet, program cannot be run")
             sys.exit()
         print()
 
@@ -44,6 +47,10 @@ class UserInterface:
 
         except VerificationImpossibleException:
             print(
+                "Program cannot decide whether offers are credible or not - both clusters "
+                "have the same number of super sellers"
+            )
+            self.logger.error(
                 "Program cannot decide whether offers are credible or not - both clusters "
                 "have the same number of super sellers"
             )
