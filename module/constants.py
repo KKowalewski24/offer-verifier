@@ -101,6 +101,14 @@ SELLER_MEMBER_INFO: Dict[str, str] = {
     "id": "member_info"
 }
 
+FEEDBACK_OVERALL_RATINGS_CLASS_ATTRIBUTE: Dict[str, str] = {
+    "class": "overall-rating-summary"
+}
+
+FEEDBACK_SELLER_RATINGS_CLASS_ATTRIBUTE: Dict[str, str] = {
+    "class": "dsr-summary"
+}
+
 # ----------------------------------------------------------------------- #
 ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
