@@ -56,11 +56,15 @@ class SellerDetailsProvider(BaseProvider):
 
         if stats_div is not None and len(stats_div) != 0:
             self.logger.info("stats_div exists")
-            feedback_score_span: Tag = stats_div.select("div")[0].select("span")[0].select("a")[1]
-            feedback_score = feedback_score_span.find(text=True, recursive=False).strip()
+            a_href = stats_div.select("div")[0].select("span")[0].select("a")
+            if a_href is not None and len(a_href) > 1:
+                feedback_score_span: Tag = a_href[1]
+                feedback_score = feedback_score_span.find(text=True, recursive=False).strip()
 
             feedback_percent_text: str = stats_div.select("div")[1].get_text()
-            feedback_percentage = normalize_text(feedback_percent_text).replace(POSITIVE_FEEDBACK, "")
+            if feedback_percent_text != "":
+                feedback_percentage = (normalize_text(feedback_percent_text)
+                                       .replace(POSITIVE_FEEDBACK, ""))
 
         return feedback_score, feedback_percentage
 
