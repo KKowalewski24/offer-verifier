@@ -99,6 +99,6 @@ def save_object_to_file(path: str, data: object) -> None:
         pickle.dump(data, file, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def read_object_from_file(path: str) -> object:
+def read_object_from_file(path: str) -> Any:
     with open(path, "rb") as file:
         return pickle.load(file)

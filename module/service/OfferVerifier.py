@@ -26,6 +26,11 @@ class OfferVerifier:
         self.logger.info("Downloading offers, Please wait ...")
         offers: List[Offer] = self.request_provider.get_offers()
 
+        # TODO Uncomment for reading from local files with offers
+        # offers: List[Offer] = list(
+        #     read_object_from_file(glob.glob(RESULTS_DIRECTORY + "*" + PICKLE_EXTENSION))
+        # )
+
         if self.save_offers:
             save_object_to_file(
                 get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
