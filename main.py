@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from module.constants import RESULTS_DIRECTORY
 from module.interface.UserInterface import UserInterface
+from module.service.Logger import Logger
 from module.utils import create_directory
 
 """
@@ -14,6 +15,8 @@ from module.utils import create_directory
 
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
+    logger: Logger = Logger()
+    logger.info("Start program")
     load_dotenv()
     create_directory(RESULTS_DIRECTORY)
 
@@ -22,6 +25,7 @@ def main() -> None:
     save_offers: bool = args.offers
     generate_pdf: bool = args.pdf
     generate_statistics: bool = args.statistics
+    logger.info("Search phrase: " + search_phrase)
 
     user_interface: UserInterface = UserInterface(
         search_phrase, save_offers, generate_pdf, generate_statistics
