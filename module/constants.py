@@ -109,6 +109,22 @@ DETAILED_SELLER_RATINGS_ATTRIBUTES: Dict[str, str] = {
     "class": "dsr-summary"
 }
 
+DETAILED_SELLER_STARS_ONE_ATTRIBUTES: Dict[str, str] = {
+    "data-test-id": "dsr-stars-1"
+}
+
+DETAILED_SELLER_STARS_TWO_ATTRIBUTES: Dict[str, str] = {
+    "data-test-id": "dsr-stars-2"
+}
+
+DETAILED_SELLER_STARS_THREE_ATTRIBUTES: Dict[str, str] = {
+    "data-test-id": "dsr-stars-3"
+}
+
+DETAILED_SELLER_STARS_FOUR_ATTRIBUTES: Dict[str, str] = {
+    "data-test-id": "dsr-stars-4"
+}
+
 # ----------------------------------------------------------------------- #
 ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
@@ -118,3 +134,6 @@ PRODUCT_RATINGS_KEYWORDS: List[str] = [
     " product", " ratings", " rating"
 ]
 POSITIVE_FEEDBACK: str = "% positive feedback"
+DETAILED_CONTENT_EXTRA_WORD: List[str] = [
+    "width: ", "rem"
+]

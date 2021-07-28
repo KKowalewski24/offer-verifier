@@ -2,12 +2,14 @@ from typing import Any, Dict, Tuple
 
 from bs4 import BeautifulSoup, ResultSet, Tag
 
-from module.constants import DETAILED_SELLER_RATINGS_ATTRIBUTES, EBAY_USER_DETAILS_PATH, \
-    EBAY_USER_PATH, FEEDBACK_OVERALL_RATINGS_ATTRIBUTES, POSITIVE_FEEDBACK, \
+from module.constants import DETAILED_CONTENT_EXTRA_WORD, DETAILED_SELLER_RATINGS_ATTRIBUTES, \
+    DETAILED_SELLER_STARS_FOUR_ATTRIBUTES, DETAILED_SELLER_STARS_ONE_ATTRIBUTES, \
+    DETAILED_SELLER_STARS_THREE_ATTRIBUTES, DETAILED_SELLER_STARS_TWO_ATTRIBUTES, \
+    EBAY_USER_DETAILS_PATH, EBAY_USER_PATH, FEEDBACK_OVERALL_RATINGS_ATTRIBUTES, POSITIVE_FEEDBACK, \
     SELLER_BASIC_INFO_ATTRIBUTES, SELLER_MEMBER_INFO_ATTRIBUTES
 from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import normalize_text
+from module.utils import normalize_text, replace_many
 
 
 class SellerDetailsProvider(BaseProvider):
@@ -29,7 +31,8 @@ class SellerDetailsProvider(BaseProvider):
 
         feedback_score, feedback_percentage = self._get_basic_stats(basic_soup)
         positive_ratings, neutral_ratings, negative_ratings = self._get_feedback_ratings(details_soup)
-        self._get_detailed_ratings(details_soup)
+        (accurate_description, reasonable_shipping_cost,
+         shipping_speed, communication) = self._get_detailed_ratings(details_soup)
 
         return {
             "id": seller_id,
@@ -38,7 +41,11 @@ class SellerDetailsProvider(BaseProvider):
             "year_of_joining": self._get_year_of_joining(basic_soup),
             "seller_positive_ratings": positive_ratings,
             "seller_neutral_ratings": neutral_ratings,
-            "seller_negative_ratings": negative_ratings
+            "seller_negative_ratings": negative_ratings,
+            "accurate_description": accurate_description,
+            "reasonable_shipping_cost": reasonable_shipping_cost,
+            "shipping_speed": shipping_speed,
+            "communication": communication,
         }
 
 
@@ -75,17 +82,44 @@ class SellerDetailsProvider(BaseProvider):
 
         if ratings_section is not None and len(ratings_section) != 0:
             table_rows = ratings_section.find("table").find("tbody").select("tr")
-            positive_ratings = self.__get_td_content(table_rows[0])
-            neutral_ratings = self.__get_td_content(table_rows[1])
-            negative_ratings = self.__get_td_content(table_rows[2])
+            positive_ratings = self.__get_feedback_td_content(table_rows[0])
+            neutral_ratings = self.__get_feedback_td_content(table_rows[1])
+            negative_ratings = self.__get_feedback_td_content(table_rows[2])
 
         return positive_ratings, neutral_ratings, negative_ratings
 
 
-    def __get_td_content(self, table_rows: ResultSet) -> str:
+    def __get_feedback_td_content(self, table_rows: ResultSet) -> str:
         return table_rows.select("td")[2].get_text()
 
 
-    def _get_detailed_ratings(self, soup: BeautifulSoup) -> str:
-        soup.find(attrs=DETAILED_SELLER_RATINGS_ATTRIBUTES)
-        return ""
+    def _get_detailed_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str, str]:
+        ratings_section = soup.find(attrs=DETAILED_SELLER_RATINGS_ATTRIBUTES)
+        # If seller has no ratings in selected category, neutral value is returned - 3 is neutral
+        accurate_description: str = str(3)
+        reasonable_shipping_cost: str = str(3)
+        shipping_speed: str = str(3)
+        communication: str = str(3)
+
+        if ratings_section is not None and len(ratings_section) != 0:
+            accurate_description = self.__get_detailed_content(
+                ratings_section, DETAILED_SELLER_STARS_ONE_ATTRIBUTES
+            )
+            reasonable_shipping_cost = self.__get_detailed_content(
+                ratings_section, DETAILED_SELLER_STARS_TWO_ATTRIBUTES
+            )
+            shipping_speed = self.__get_detailed_content(
+                ratings_section, DETAILED_SELLER_STARS_THREE_ATTRIBUTES
+            )
+            communication = self.__get_detailed_content(
+                ratings_section, DETAILED_SELLER_STARS_FOUR_ATTRIBUTES
+            )
+
+        return accurate_description, reasonable_shipping_cost, shipping_speed, communication
+
+
+    def __get_detailed_content(self, ratings_section: Tag, attributes: Dict[str, str]) -> str:
+        return replace_many(
+            ratings_section.find(attrs=attributes).find("span").get("style"),
+            DETAILED_CONTENT_EXTRA_WORD
+        )
