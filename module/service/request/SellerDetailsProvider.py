@@ -2,8 +2,9 @@ from typing import Any, Dict, Tuple
 
 from bs4 import BeautifulSoup, ResultSet, Tag
 
-from module.constants import EBAY_USER_DETAILS_PATH, EBAY_USER_PATH, \
-    FEEDBACK_OVERALL_RATINGS_CLASS_ATTRIBUTE, POSITIVE_FEEDBACK, SELLER_BASIC_INFO, SELLER_MEMBER_INFO
+from module.constants import DETAILED_SELLER_RATINGS_ATTRIBUTES, EBAY_USER_DETAILS_PATH, \
+    EBAY_USER_PATH, FEEDBACK_OVERALL_RATINGS_ATTRIBUTES, POSITIVE_FEEDBACK, \
+    SELLER_BASIC_INFO_ATTRIBUTES, SELLER_MEMBER_INFO_ATTRIBUTES
 from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import normalize_text
@@ -42,7 +43,7 @@ class SellerDetailsProvider(BaseProvider):
 
 
     def _get_basic_stats(self, soup: BeautifulSoup) -> Tuple[str, str]:
-        stats_div = soup.find(attrs=SELLER_BASIC_INFO)
+        stats_div = soup.find(attrs=SELLER_BASIC_INFO_ATTRIBUTES)
         feedback_score: str = str(0)
         feedback_percentage: str = str(0)
 
@@ -57,14 +58,17 @@ class SellerDetailsProvider(BaseProvider):
 
 
     def _get_year_of_joining(self, soup: BeautifulSoup) -> str:
-        member_info_spans = soup.find(attrs=SELLER_MEMBER_INFO).find_all("span", recursive=False)
+        member_info_spans = soup.find(
+            attrs=SELLER_MEMBER_INFO_ATTRIBUTES
+        ).find_all("span", recursive=False)
+
         date_text: str = member_info_spans[4].find_all("span")[1].get_text()
         comma_separator = ", "
         return date_text[date_text.index(comma_separator) + len(comma_separator):]
 
 
     def _get_feedback_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str]:
-        ratings_section = soup.find(attrs=FEEDBACK_OVERALL_RATINGS_CLASS_ATTRIBUTE)
+        ratings_section = soup.find(attrs=FEEDBACK_OVERALL_RATINGS_ATTRIBUTES)
         positive_ratings: str = str(0)
         neutral_ratings: str = str(0)
         negative_ratings: str = str(0)
@@ -83,4 +87,5 @@ class SellerDetailsProvider(BaseProvider):
 
 
     def _get_detailed_ratings(self, soup: BeautifulSoup) -> str:
+        soup.find(attrs=DETAILED_SELLER_RATINGS_ATTRIBUTES)
         return ""

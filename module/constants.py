@@ -93,19 +93,19 @@ SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"
 }
 
-SELLER_BASIC_INFO: Dict[str, str] = {
+SELLER_BASIC_INFO_ATTRIBUTES: Dict[str, str] = {
     "id": "user_info"
 }
 
-SELLER_MEMBER_INFO: Dict[str, str] = {
+SELLER_MEMBER_INFO_ATTRIBUTES: Dict[str, str] = {
     "id": "member_info"
 }
 
-FEEDBACK_OVERALL_RATINGS_CLASS_ATTRIBUTE: Dict[str, str] = {
+FEEDBACK_OVERALL_RATINGS_ATTRIBUTES: Dict[str, str] = {
     "class": "overall-rating-summary"
 }
 
-FEEDBACK_SELLER_RATINGS_CLASS_ATTRIBUTE: Dict[str, str] = {
+DETAILED_SELLER_RATINGS_ATTRIBUTES: Dict[str, str] = {
     "class": "dsr-summary"
 }
 
