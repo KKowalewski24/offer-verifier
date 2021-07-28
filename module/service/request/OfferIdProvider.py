@@ -1,9 +1,8 @@
 from typing import List
 
-from bs4 import BeautifulSoup
-
 from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, \
     OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
+from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import remove_duplicates
 
@@ -12,6 +11,7 @@ class OfferIdProvider(BaseProvider):
 
     def __init__(self, search_phrase: str) -> None:
         super().__init__()
+        self.logger: Logger = Logger()
         self.search_phrase = search_phrase
 
 
@@ -26,6 +26,7 @@ class OfferIdProvider(BaseProvider):
     def _get_offers_id_for_single_page(self, page_number: int) -> List[str]:
         soup, is_error_page = self.get_beautiful_soup_instance(self._create_url(page_number))
         if is_error_page:
+            self.logger.error("Error Page")
             return []
 
         return [
@@ -37,6 +38,7 @@ class OfferIdProvider(BaseProvider):
     def _get_pages_number(self) -> int:
         soup, is_error_page = self.get_beautiful_soup_instance(self._create_url(1))
         if is_error_page:
+            self.logger.error("Error Page")
             return 0
 
         items_number: int = int(
