@@ -2,12 +2,12 @@ from typing import List
 
 from nameof import nameof
 
-from module.model.BaseItem import BaseItem
+from module.model.AnalyzableItem import AnalyzableItem
 from module.model.Seller import Seller
 from module.utils import to_string_class_formatter
 
 
-class Offer(BaseItem):
+class Offer(AnalyzableItem):
 
     def __init__(self, id: str, title: str, price: float, image_url: str,
                  has_return_option: bool, description_length: int, reviews_number: int,
@@ -24,16 +24,20 @@ class Offer(BaseItem):
         self.seller = seller
 
 
-    def get_features_names(self) -> List[str]:
+    def get_feature_names(self) -> List[str]:
         return [nameof(self.price), nameof(self.has_return_option), nameof(self.description_length),
                 nameof(self.reviews_number), nameof(self.product_rating),
-                nameof(self.ratings_number)] + self.seller.get_features_names()
+                nameof(self.ratings_number)] + self.seller.get_feature_names()
 
 
-    def get_features_data(self) -> List:
+    def get_feature_values(self) -> List:
         return [self.price, self.has_return_option, self.description_length,
                 self.reviews_number, self.product_rating,
-                self.ratings_number] + self.seller.get_features_data()
+                self.ratings_number] + self.seller.get_feature_values()
+
+
+    def get_non_numeric_feature_names(self) -> List[str]:
+        return [nameof(self.has_return_option)] + self.seller.get_non_numeric_feature_names()
 
 
     def __str__(self) -> str:

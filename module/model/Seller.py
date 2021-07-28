@@ -1,21 +1,25 @@
 from typing import List
 
-from module.model.BaseItem import BaseItem
+from module.model.AnalyzableItem import AnalyzableItem
 from module.utils import to_string_class_formatter
 
 
-class Seller(BaseItem):
+class Seller(AnalyzableItem):
 
     def __init__(self, id: str) -> None:
         super().__init__(id)
         # TODO
 
 
-    def get_features_names(self) -> List[str]:
+    def get_feature_names(self) -> List[str]:
         return []
 
 
-    def get_features_data(self) -> List:
+    def get_feature_values(self) -> List:
+        return []
+
+
+    def get_non_numeric_feature_names(self) -> List[str]:
         return []
 
 
