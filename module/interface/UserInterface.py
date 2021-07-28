@@ -9,7 +9,7 @@ from module.service.LatexGenerator import LatexGenerator
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
 from module.service.PdfGenerator import PdfGenerator
-from module.utils import has_access_to_internet, save_to_file
+from module.utils import convert_bool_to_string, has_access_to_internet, save_to_file
 
 
 class UserInterface:
@@ -64,7 +64,6 @@ class UserInterface:
 
 
     def _display_offer_details(self, offer: Offer, is_verified: bool) -> None:
-        # TODO
         print("\nOffer details: ")
         print("\tOffer ID:", offer.id)
         print("\tOffer title:", offer.title)
@@ -74,21 +73,24 @@ class UserInterface:
         print("\tNumber of reviews:", offer.product_reviews_number)
         print("\tRatings of product:", offer.product_rating)
         print("\tNumber of ratings:", offer.product_ratings_number)
-        # print("\tInformation about seller")
-        # print("\t\tSeller ID:", offer.seller.id)
-        # print("\t\tSeller login:", offer.seller.login)
-        # print(
-        #     "\t\tIs it 'Super Seller':",
-        #     convert_bool_to_string(offer.seller.is_super_seller)
-        # )
-        # print("\t\tMean rates: ", offer.seller.mean_rates)
-        # print("\t\tNumber of recommendations: ", offer.seller.recommendation_number)
-        # print("\t\tNumber of negative feedback: ", offer.seller.not_recommendation_number)
-        # print("\t\tRecommendations percentage: ", offer.seller.recommendation_percentage)
-        # print(
-        #     "\n\tIs the offer verified as credible:",
-        #     convert_bool_to_string(is_verified)
-        # )
+
+        print("\tInformation about seller")
+        print("\t\tSeller ID:", offer.seller.id)
+        print("\t\tSeller feedback score:", offer.seller.feedback_score)
+        print("\t\tSeller feedback percentage:", offer.seller.seller_feedback_percentage)
+        print("\t\tSeller year of joining:", offer.seller.year_of_joining)
+        print("\t\tSeller positive ratings number:", offer.seller.seller_positive_ratings_number)
+        print("\t\tSeller neutral ratings number:", offer.seller.seller_neutral_ratings_number)
+        print("\t\tSeller negative ratings number:", offer.seller.seller_negative_ratings_number)
+        print("\t\tSeller accurate description:", offer.seller.accurate_description)
+        print("\t\tSeller reasonable shipping cost:", offer.seller.reasonable_shipping_cost)
+        print("\t\tSeller shipping speed:", offer.seller.shipping_speed)
+        print("\t\tSeller communication:", offer.seller.communication)
+
+        print(
+            "\n\tIs the offer verified as credible:",
+            convert_bool_to_string(is_verified)
+        )
 
         pass
 

@@ -4,7 +4,7 @@ from fpdf import FPDF
 
 from module.constants import CURRENCY_US_DOLLAR, PDF_EXTENSION
 from module.model.Offer import Offer
-from module.utils import get_filename
+from module.utils import convert_bool_to_string, get_filename
 
 
 class PDF(FPDF):
@@ -55,25 +55,29 @@ class PdfGenerator:
         self._draw_cell("Ratings of product: " + offer.product_rating)
         self._draw_cell("Number of ratings: " + offer.product_ratings_number)
 
-        # TODO
-        # self._draw_cell("", "C")
-        # self._draw_cell("Information about seller", "C")
-        # self._draw_cell("Seller ID: " + str(offer.seller.id))
-        # self._draw_cell("Seller login: " + offer.seller.login)
-        # self._draw_cell(
-        #     "Is it 'Super Seller': " + convert_bool_to_string(offer.seller.is_super_seller)
-        # )
-        # self._draw_cell("Mean rates: " + str(offer.seller.mean_rates))
-        # self._draw_cell("Number of recommendations: " + str(offer.seller.recommendation_number))
-        # self._draw_cell(
-        #     "Number of negative feedback: " + str(offer.seller.not_recommendation_number)
-        # )
-        # self._draw_cell(
-        #     "Recommendations percentage: " + str(offer.seller.recommendation_percentage)
-        # )
-        # self._draw_cell(
-        #     "Is the offer verified as credible: " + convert_bool_to_string(is_verified)
-        # )
+        self._draw_cell("", "C")
+        self._draw_cell("Information about seller", "C")
+        self._draw_cell("Seller ID: " + str(offer.seller.id))
+        self._draw_cell("Seller feedback score: " + offer.seller.feedback_score)
+        self._draw_cell("Seller feedback percentage: " + offer.seller.seller_feedback_percentage)
+        self._draw_cell("Seller year of joining: " + offer.seller.year_of_joining)
+        self._draw_cell(
+            "Seller positive ratings number: " + offer.seller.seller_positive_ratings_number
+        )
+        self._draw_cell(
+            "Seller neutral ratings number: " + offer.seller.seller_neutral_ratings_number
+        )
+        self._draw_cell(
+            "Seller negative ratings number: " + offer.seller.seller_negative_ratings_number
+        )
+        self._draw_cell("Seller accurate description: " + offer.seller.accurate_description)
+        self._draw_cell("Seller reasonable shipping cost: " + offer.seller.reasonable_shipping_cost)
+        self._draw_cell("Seller shipping speed: " + offer.seller.shipping_speed)
+        self._draw_cell("Seller communication: " + offer.seller.communication)
+
+        self._draw_cell(
+            "Is the offer verified as credible: " + convert_bool_to_string(is_verified)
+        )
 
 
     def _draw_cell(self, text: str, align: str = "", link: str = "") -> None:
