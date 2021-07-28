@@ -3,7 +3,7 @@ from typing import Any, Dict, Tuple
 from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_USER_DETAILS_PATH, EBAY_USER_PATH, POSITIVE_FEEDBACK, \
-    SELLER_BASIC_INFO
+    SELLER_BASIC_INFO, SELLER_MEMBER_INFO
 from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import normalize_text
@@ -30,7 +30,8 @@ class SellerDetailsProvider(BaseProvider):
         return {
             "id": seller_id,
             "feedback_score": feedback_score,
-            "feedback_percentage": feedback_percentage
+            "feedback_percentage": feedback_percentage,
+            "year_of_joining": self._get_year_of_joining(basic_soup)
         }
 
 
@@ -47,3 +48,10 @@ class SellerDetailsProvider(BaseProvider):
             feedback_percentage = normalize_text(feedback_percent_text).replace(POSITIVE_FEEDBACK, "")
 
         return feedback_score, feedback_percentage
+
+
+    def _get_year_of_joining(self, soup: BeautifulSoup) -> str:
+        member_info_spans = soup.find(attrs=SELLER_MEMBER_INFO).find_all("span", recursive=False)
+        date_text: str = member_info_spans[4].find_all("span")[1].get_text()
+        comma_separator = ", "
+        return date_text[date_text.index(comma_separator) + len(comma_separator):]

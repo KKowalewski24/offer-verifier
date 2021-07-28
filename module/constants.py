@@ -97,6 +97,10 @@ SELLER_BASIC_INFO: Dict[str, str] = {
     "id": "user_info"
 }
 
+SELLER_MEMBER_INFO: Dict[str, str] = {
+    "id": "member_info"
+}
+
 # ----------------------------------------------------------------------- #
 ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
