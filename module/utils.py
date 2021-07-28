@@ -75,7 +75,7 @@ def to_string_class_formatter(variables: List, variables_names: List,
 
 
 def get_filename(name: str, extension: str) -> str:
-    return name + "-" + datetime.now().strftime("%H%M%S") + extension
+    return (name + "-" + datetime.now().strftime("%H%M%S") + extension).replace(" ", "")
 
 
 def read_from_text_file(path: str) -> str:

@@ -14,15 +14,18 @@ from module.utils import get_filename, save_object_to_file
 class OfferVerifier:
 
     def __init__(self, search_phrase: str, save_offers: bool) -> None:
-        self.request_provider: RequestProvider = RequestProvider(search_phrase)
+        self.search_phrase = search_phrase
         self.save_offers = save_offers
+        self.request_provider: RequestProvider = RequestProvider(self.search_phrase)
 
 
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         print("Downloading offers, Please wait ...")
         offers: List[Offer] = self.request_provider.get_offers()
         if self.save_offers:
-            save_object_to_file(get_filename(RESULTS_DIRECTORY + OFFERS, PICKLE_EXTENSION), offers)
+            save_object_to_file(get_filename(
+                RESULTS_DIRECTORY + OFFERS + "-" + self.search_phrase, PICKLE_EXTENSION), offers
+            )
 
         print("Downloading offers done!")
         clusterizer: Clusterizer = Clusterizer(offers)
