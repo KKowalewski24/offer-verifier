@@ -55,6 +55,7 @@ class SellerDetailsProvider(BaseProvider):
         feedback_percentage: str = str(0)
 
         if stats_div is not None and len(stats_div) != 0:
+            self.logger.info("stats_div exists")
             feedback_score_span: Tag = stats_div.select("div")[0].select("span")[0].select("a")[1]
             feedback_score = feedback_score_span.find(text=True, recursive=False).strip()
 
@@ -81,6 +82,7 @@ class SellerDetailsProvider(BaseProvider):
         negative_ratings: str = str(0)
 
         if ratings_section is not None and len(ratings_section) != 0:
+            self.logger.info("ratings_section exists")
             table_rows = ratings_section.find("table").find("tbody").select("tr")
             positive_ratings = self.__get_feedback_td_content(table_rows[0])
             neutral_ratings = self.__get_feedback_td_content(table_rows[1])
@@ -102,6 +104,7 @@ class SellerDetailsProvider(BaseProvider):
         communication: str = str(3)
 
         if ratings_section is not None and len(ratings_section) != 0:
+            self.logger.info("ratings_section exists")
             accurate_description = self.__get_detailed_content(
                 ratings_section, DETAILED_SELLER_STARS_ONE_ATTRIBUTES
             )
@@ -121,6 +124,7 @@ class SellerDetailsProvider(BaseProvider):
     def __get_detailed_content(self, ratings_section: Tag, attributes: Dict[str, str]) -> str:
         stars_span: Tag = ratings_section.find(attrs=attributes)
         if stars_span is not None and len(stars_span) != 0:
+            self.logger.info("stars_span exists")
             return replace_many(stars_span.find("span").get("style"), DETAILED_CONTENT_EXTRA_WORD)
 
         return str(3)
