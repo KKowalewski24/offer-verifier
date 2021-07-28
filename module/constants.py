@@ -8,8 +8,8 @@ UTF_8: str = "UTF-8"
 
 RESULTS_DIRECTORY: str = "results/"
 STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
+OFFERS_PATH: str = RESULTS_DIRECTORY + "offers-"
 CURRENCY_US_DOLLAR: str = "US $"
-OFFERS: str = "offers"
 PICKLE_EXTENSION: str = ".pickle"
 PDF_EXTENSION: str = ".pdf"
 

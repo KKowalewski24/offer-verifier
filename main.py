@@ -4,7 +4,9 @@ from argparse import ArgumentParser, Namespace
 
 from dotenv import load_dotenv
 
+from module.constants import RESULTS_DIRECTORY
 from module.interface.UserInterface import UserInterface
+from module.utils import create_directory
 
 """
 """
@@ -13,6 +15,8 @@ from module.interface.UserInterface import UserInterface
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
     load_dotenv()
+    create_directory(RESULTS_DIRECTORY)
+
     args = prepare_args()
     search_phrase: str = args.phrase
     save_offers: bool = args.offers

@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-from module.constants import OFFERS, PICKLE_EXTENSION, RESULTS_DIRECTORY
+from module.constants import OFFERS_PATH, PICKLE_EXTENSION
 from module.exception.ChoosingCredibleOfferNotPossibleException import \
     ChoosingCredibleOfferNotPossibleException
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
@@ -23,9 +23,8 @@ class OfferVerifier:
         print("Downloading offers, Please wait ...")
         offers: List[Offer] = self.request_provider.get_offers()
         if self.save_offers:
-            save_object_to_file(get_filename(
-                RESULTS_DIRECTORY + OFFERS + "-" + self.search_phrase, PICKLE_EXTENSION), offers
-            )
+            save_object_to_file(
+                get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
 
         print("Downloading offers done!")
         clusterizer: Clusterizer = Clusterizer(offers)

@@ -1,4 +1,5 @@
 import json
+import os
 import pickle
 from datetime import datetime
 from typing import Any, Dict, List
@@ -72,6 +73,11 @@ def to_string_class_formatter(variables: List, variables_names: List,
         result += variables_names[i] + ": " + str(variables[i]) + separator
 
     return result
+
+
+def create_directory(path: str) -> None:
+    if not os.path.exists(path):
+        os.makedirs(path)
 
 
 def get_filename(name: str, extension: str) -> str:
