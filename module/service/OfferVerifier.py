@@ -16,11 +16,15 @@ class OfferVerifier:
 
 
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+        print("Downloading offers, Please wait ...")
         offers: List[Offer] = self.request_provider.get_offers()
+        print("Downloading offers done!")
         clusterizer: Clusterizer = Clusterizer(offers)
         try:
+            print("Performing the analysis of the offers, Please wait ...")
             combined_offers, statistics = clusterizer.clusterize()
             verified_offers = self._choose_list_with_more_credible_offers(combined_offers)
+            print("Analysis of the offers done!")
         except ChoosingCredibleOfferNotPossibleException:
             raise VerificationImpossibleException
 

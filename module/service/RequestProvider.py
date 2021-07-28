@@ -17,10 +17,9 @@ class RequestProvider:
 
 
     def get_offers(self) -> List[Offer]:
-        return remove_none_items([
-            self._prepare_offer(offer_id)
-            for offer_id in self.offer_id_provider.get_offers_id()
-        ])
+        offers_id: List[str] = self.offer_id_provider.get_offers_id()
+        print("Offers to download:", len(offers_id))
+        return remove_none_items([self._prepare_offer(offer_id) for offer_id in offers_id])
 
 
     def _prepare_offer(self, offer_id: str) -> Optional[Offer]:
