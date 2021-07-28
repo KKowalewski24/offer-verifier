@@ -119,7 +119,8 @@ class SellerDetailsProvider(BaseProvider):
 
 
     def __get_detailed_content(self, ratings_section: Tag, attributes: Dict[str, str]) -> str:
-        return replace_many(
-            ratings_section.find(attrs=attributes).find("span").get("style"),
-            DETAILED_CONTENT_EXTRA_WORD
-        )
+        stars_span: Tag = ratings_section.find(attrs=attributes)
+        if stars_span is not None and len(stars_span) != 0:
+            return replace_many(stars_span.find("span").get("style"), DETAILED_CONTENT_EXTRA_WORD)
+
+        return str(3)
