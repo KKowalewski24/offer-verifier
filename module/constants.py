@@ -16,20 +16,23 @@ PDF_EXTENSION: str = ".pdf"
 
 # ----------------------------------------------------------------------- #
 SLASH: str = "/"
+PARAM_QUERY = "sch/i.html?_nkw="
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
 ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
 PARAM_PAGE_NUMBER: str = "&_pgn="
-PARAM_QUERY = "sch/i.html?_nkw="
 
 ITM: str = "itm/"
 SLASH_ITM: str = SLASH + ITM
 USR: str = "usr/"
 SLASH_USR: str = SLASH + USR
+FEEDBACK_PROFILE: str = "fdbk/feedback_profile/"
 
 EBAY_BASE_PATH: str = "https://www.ebay.com/"
 EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + PARAM_QUERY
 EBAY_ITEM_PATH: str = EBAY_BASE_PATH + ITM
+EBAY_USER_PATH: str = EBAY_BASE_PATH + USR
+EBAY_USER_DETAILS_PATH: str = EBAY_BASE_PATH + FEEDBACK_PROFILE
 
 # ----------------------------------------------------------------------- #
 REQUEST_HEADER: Dict[str, str] = {
@@ -90,6 +93,10 @@ SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"
 }
 
+SELLER_BASIC_INFO: Dict[str, str] = {
+    "id": "user_info"
+}
+
 # ----------------------------------------------------------------------- #
 ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
@@ -98,3 +105,4 @@ RETURNS_KEYWORD: str = "returns"
 PRODUCT_RATINGS_KEYWORDS: List[str] = [
     " product", " ratings", " rating"
 ]
+POSITIVE_FEEDBACK: str = "% positive feedback"
