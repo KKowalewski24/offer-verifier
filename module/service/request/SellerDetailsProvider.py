@@ -32,12 +32,12 @@ class SellerDetailsProvider(BaseProvider):
 
         return {
             "id": seller_id,
-            "feedback_score": feedback_score,
-            "feedback_percentage": feedback_percentage,
+            "seller_feedback_score": feedback_score,
+            "seller_feedback_percentage": feedback_percentage,
             "year_of_joining": self._get_year_of_joining(basic_soup),
-            "positive_ratings": positive_ratings,
-            "neutral_ratings": neutral_ratings,
-            "negative_ratings": negative_ratings
+            "seller_positive_ratings": positive_ratings,
+            "seller_neutral_ratings": neutral_ratings,
+            "seller_negative_ratings": negative_ratings
         }
 
 

@@ -51,9 +51,9 @@ class PdfGenerator:
         self._draw_cell("Offer price: " + CURRENCY_US_DOLLAR + " " + offer.price)
         self._draw_cell("Image URL - Click here", link=offer.image_url)
         self._draw_cell("Option to return item: " + offer.has_return_option)
-        self._draw_cell("Number of reviews: " + offer.reviews_number)
+        self._draw_cell("Number of reviews: " + offer.product_reviews_number)
         self._draw_cell("Ratings of product: " + offer.product_rating)
-        self._draw_cell("Number of ratings: " + offer.ratings_number)
+        self._draw_cell("Number of ratings: " + offer.product_ratings_number)
 
         # TODO
         # self._draw_cell("", "C")

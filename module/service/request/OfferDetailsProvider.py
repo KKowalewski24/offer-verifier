@@ -33,9 +33,9 @@ class OfferDetailsProvider(BaseProvider):
             "image_url": self._get_image_url(soup),
             "has_return_option": self._get_return_option(soup),
             "description_length": self._get_description_length(soup),
-            "reviews_number": reviews_number,
+            "product_reviews_number": reviews_number,
             "product_rating": product_rating,
-            "ratings_number": ratings_number,
+            "product_ratings_number": ratings_number,
             "seller": {
                 "id": self._get_seller_id(soup)
             }

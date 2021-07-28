@@ -49,9 +49,9 @@ class RequestProvider:
             offer_details["image_url"],
             bool(offer_details["has_return_option"]),
             int(offer_details["description_length"]),
-            int(offer_details["reviews_number"]),
+            int(offer_details["product_reviews_number"]),
             float(offer_details["product_rating"]),
-            int(offer_details["ratings_number"]),
+            int(offer_details["product_ratings_number"]),
             Seller(
                 seller_details["id"]
             )
