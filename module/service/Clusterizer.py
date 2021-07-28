@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.metrics import calinski_harabasz_score, davies_bouldin_score, silhouette_score
+from sklearn.preprocessing import LabelEncoder
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -16,6 +17,12 @@ class Clusterizer:
 
     def __init__(self, offers: List[Offer]) -> None:
         self.offers = offers
+        self.feature_names: List[str] = []
+        self.non_numeric_feature_names: List[str] = []
+
+        if self.offers is not None and len(self.offers) != 0:
+            self.feature_names = self.offers[0].get_feature_names()
+            self.non_numeric_feature_names = self.offers[0].get_non_numeric_feature_names()
 
 
     def clusterize(self) -> Tuple[Tuple[List[Offer], List[Offer]], Statistics]:
@@ -42,8 +49,16 @@ class Clusterizer:
 
 
     def _prepare_dataset(self) -> pd.DataFrame:
-        # TODO
-        pass
+        df: pd.DataFrame = pd.DataFrame(
+            [offer.get_feature_values() for offer in self.offers],
+            columns=self.feature_names
+        )
+
+        label_encoder = LabelEncoder()
+        for name in self.non_numeric_feature_names:
+            df[name] = label_encoder.fit_transform(df[name])
+
+        return df
 
 
     def _calculate_statistics(self, dataset: pd.DataFrame, cluster_labels: np.ndarray) -> Statistics:
