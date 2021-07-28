@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from fpdf import FPDF
 
-from module.constants import CURRENCY_US_DOLLAR
+from module.constants import CURRENCY_US_DOLLAR, PDF_EXTENSION
 from module.model.Offer import Offer
 from module.utils import get_filename
 
@@ -36,8 +36,8 @@ class PdfGenerator:
             self._draw_single_offer(offer, is_verified)
 
         self.pdf.output(get_filename(
-            "credible_offer_report" if is_verified else "not_credible_offer_report", ".pdf"), "F"
-        )
+            "credible_offer_report" if is_verified else "not_credible_offer_report", PDF_EXTENSION
+        ), "F")
 
 
     def _draw_single_offer(self, offer: Offer, is_verified: bool) -> None:

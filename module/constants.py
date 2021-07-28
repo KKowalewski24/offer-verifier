@@ -9,6 +9,9 @@ UTF_8: str = "UTF-8"
 RESULTS_DIRECTORY: str = "results/"
 STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 CURRENCY_US_DOLLAR: str = "US $"
+OFFERS: str = "offers"
+PICKLE_EXTENSION: str = ".pickle"
+PDF_EXTENSION: str = ".pdf"
 
 # ----------------------------------------------------------------------- #
 SLASH: str = "/"
@@ -75,9 +78,12 @@ OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
     "id": "desc_ifr"
 }
 
-OFFER_RATINGS_ATTRIBUTES: Dict[str, str] = {
+OFFER_RATINGS_REVIEWS_ATTRIBUTES: Dict[str, str] = {
     "id": "rwid"
 }
+
+REVIEWS_CLASS_ATTRIBUTE: str = ".reviews > div"
+RATINGS_CLASS_ATTRIBUTE: str = ".ebay-content-wrapper > span"
 
 SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"

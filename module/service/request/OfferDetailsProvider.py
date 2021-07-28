@@ -3,12 +3,12 @@ from typing import Any, Dict, Tuple
 from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
-    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_ATTRIBUTES, \
-    PRODUCT_RATINGS_KEYWORDS, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, \
-    RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, SELLER_PANEL_ATTRIBUTES, \
-    SLASH_USR, TITLE_PANEL_ATTRIBUTES
+    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, \
+    PRODUCT_RATINGS_KEYWORDS, RATINGS_CLASS_ATTRIBUTE, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
+    RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, \
+    REVIEWS_CLASS_ATTRIBUTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import convert_bool_to_json, normalize_text, remove_new_line_items, replace_many
+from module.utils import normalize_text, remove_new_line_items, replace_many
 
 
 class OfferDetailsProvider(BaseProvider):
@@ -74,15 +74,15 @@ class OfferDetailsProvider(BaseProvider):
 
 
     def _get_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str]:
-        ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_ATTRIBUTES)
+        ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_REVIEWS_ATTRIBUTES)
         reviews_number: str = str(0)
         # If offer has no ratings, neutral value is returned - 3 is neutral
         product_rating: str = str(3)
         ratings_number: str = str(0)
 
         if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
-            reviews_number = str(len(ratings_reviews_div.select(".reviews > div")))
-            ratings_spans = ratings_reviews_div.select(".ebay-content-wrapper > span")
+            reviews_number = str(len(ratings_reviews_div.select(REVIEWS_CLASS_ATTRIBUTE)))
+            ratings_spans = ratings_reviews_div.select(RATINGS_CLASS_ATTRIBUTE)
 
             if ratings_spans is not None and len(ratings_spans) != 0:
                 product_rating = normalize_text(ratings_spans[0].get_text()).replace(",", ".")
