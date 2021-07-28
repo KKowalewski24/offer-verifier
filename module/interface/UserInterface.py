@@ -13,7 +13,8 @@ from module.utils import has_access_to_internet, save_to_file
 
 class UserInterface:
 
-    def __init__(self, search_phrase: str, generate_pdf: bool, generate_statistics: bool) -> None:
+    def __init__(self, search_phrase: str, save_offers: bool,
+                 generate_pdf: bool, generate_statistics: bool) -> None:
         if not has_access_to_internet():
             print("No access to the Internet, program cannot be run")
             sys.exit()
@@ -22,7 +23,7 @@ class UserInterface:
         self.search_phrase: str = search_phrase
         self.generate_pdf: bool = generate_pdf
         self.generate_statistics = generate_statistics
-        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase)
+        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
         self.pdf_generator: PdfGenerator = PdfGenerator()
         self.latex_generator: LatexGenerator = LatexGenerator(RESULTS_DIRECTORY)
 

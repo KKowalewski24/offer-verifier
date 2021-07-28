@@ -15,10 +15,13 @@ def main() -> None:
     load_dotenv()
     args = prepare_args()
     search_phrase: str = args.phrase
+    save_offers: bool = args.offers
     generate_pdf: bool = args.pdf
     generate_statistics: bool = args.statistics
 
-    user_interface: UserInterface = UserInterface(search_phrase, generate_pdf, generate_statistics)
+    user_interface: UserInterface = UserInterface(
+        search_phrase, save_offers, generate_pdf, generate_statistics
+    )
     user_interface.display_result()
 
 
@@ -28,6 +31,9 @@ def prepare_args() -> Namespace:
 
     arg_parser.add_argument(
         "-p", "--phrase", required=True, type=str, help="Search phrase"
+    )
+    arg_parser.add_argument(
+        "-so", "--offers", default=False, action="store_true", help="Save downloaded offers to file"
     )
     arg_parser.add_argument(
         "--pdf", default=False, action="store_true", help="Generate PDF report"

@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+from module.constants import OFFERS, PICKLE_EXTENSION, RESULTS_DIRECTORY
 from module.exception.ChoosingCredibleOfferNotPossibleException import \
     ChoosingCredibleOfferNotPossibleException
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
@@ -7,17 +8,22 @@ from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.Clusterizer import Clusterizer
 from module.service.RequestProvider import RequestProvider
+from module.utils import get_filename, save_object_to_file
 
 
 class OfferVerifier:
 
-    def __init__(self, search_phrase: str) -> None:
+    def __init__(self, search_phrase: str, save_offers: bool) -> None:
         self.request_provider: RequestProvider = RequestProvider(search_phrase)
+        self.save_offers = save_offers
 
 
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         print("Downloading offers, Please wait ...")
         offers: List[Offer] = self.request_provider.get_offers()
+        if self.save_offers:
+            save_object_to_file(get_filename(RESULTS_DIRECTORY + OFFERS, PICKLE_EXTENSION), offers)
+
         print("Downloading offers done!")
         clusterizer: Clusterizer = Clusterizer(offers)
         try:
