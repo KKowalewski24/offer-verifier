@@ -41,7 +41,6 @@ class RequestProvider:
 
     def _map_json_to_offer(self, offer_details: Dict[str, Any],
                            seller_details: Dict[str, Any]) -> Offer:
-        # TODO
         return Offer(
             offer_details["id"],
             offer_details["title"],
@@ -53,6 +52,16 @@ class RequestProvider:
             float(offer_details["product_rating"]),
             int(offer_details["product_ratings_number"]),
             Seller(
-                seller_details["id"]
+                seller_details["id"],
+                float(seller_details["feedback_score"]),
+                int(seller_details["seller_feedback_percentage"]),
+                int(seller_details["year_of_joining"]),
+                int(seller_details["seller_positive_ratings_number"]),
+                int(seller_details["seller_neutral_ratings_number"]),
+                int(seller_details["seller_negative_ratings_number"]),
+                float(seller_details["accurate_description"]),
+                float(seller_details["reasonable_shipping_cost"]),
+                float(seller_details["shipping_speed"]),
+                float(seller_details["communication"]),
             )
         )

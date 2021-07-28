@@ -24,16 +24,16 @@ class Offer(AnalyzableItem):
         self.seller = seller
 
 
-    def get_feature_names(self) -> List[str]:
-        return [nameof(self.price), nameof(self.has_return_option), nameof(self.description_length),
-                nameof(self.product_reviews_number), nameof(self.product_rating),
-                nameof(self.product_ratings_number)] + self.seller.get_feature_names()
-
-
     def get_feature_values(self) -> List:
         return [self.price, self.has_return_option, self.description_length,
                 self.product_reviews_number, self.product_rating,
                 self.product_ratings_number] + self.seller.get_feature_values()
+
+
+    def get_feature_names(self) -> List[str]:
+        return [nameof(self.price), nameof(self.has_return_option), nameof(self.description_length),
+                nameof(self.product_reviews_number), nameof(self.product_rating),
+                nameof(self.product_ratings_number)] + self.seller.get_feature_names()
 
 
     def get_non_numeric_feature_names(self) -> List[str]:

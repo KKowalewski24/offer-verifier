@@ -11,12 +11,12 @@ class AnalyzableItem(BaseItem):
 
 
     @abstractmethod
-    def get_feature_names(self) -> List[str]:
+    def get_feature_values(self) -> List:
         pass
 
 
     @abstractmethod
-    def get_feature_values(self) -> List:
+    def get_feature_names(self) -> List[str]:
         pass
 
 
