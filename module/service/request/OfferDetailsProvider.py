@@ -9,7 +9,7 @@ from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTR
     REVIEWS_CLASS_ATTRIBUTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import normalize_text, remove_new_line_items, replace_many
+from module.utils import is_valid_item, normalize_text, remove_new_line_items, replace_many
 
 
 class OfferDetailsProvider(BaseProvider):
@@ -70,7 +70,7 @@ class OfferDetailsProvider(BaseProvider):
         description_url: str = soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES).get("src")
         description_soap, is_error_page = self.get_beautiful_soup_instance(description_url)
 
-        if not is_error_page and description_soap is not None and len(description_soap) != 0:
+        if not is_error_page and is_valid_item(description_soap):
             return str(len(normalize_text(description_soap.get_text())))
 
         return str(0)
@@ -83,12 +83,12 @@ class OfferDetailsProvider(BaseProvider):
         product_rating: str = str(3)
         ratings_number: str = str(0)
 
-        if ratings_reviews_div is not None and len(ratings_reviews_div) != 0:
+        if is_valid_item(ratings_reviews_div):
             self.logger.info("ratings_reviews_div exists")
             reviews_number = str(len(ratings_reviews_div.select(REVIEWS_CLASS_ATTRIBUTE)))
             ratings_spans = ratings_reviews_div.select(RATINGS_CLASS_ATTRIBUTE)
 
-            if ratings_spans is not None and len(ratings_spans) != 0:
+            if is_valid_item(ratings_spans):
                 self.logger.info("ratings_spans exists")
                 product_rating = normalize_text(ratings_spans[0].get_text()).replace(",", ".")
                 ratings_number_text: str = normalize_text(ratings_spans[1].get_text())

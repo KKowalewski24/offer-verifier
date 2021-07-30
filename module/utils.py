@@ -39,6 +39,10 @@ def remove_new_line_items(items: List[str]) -> List[str]:
     return [item for item in items if item != "\n"]
 
 
+def is_valid_item(item: Any) -> bool:
+    return item is not None and len(item) != 0
+
+
 def normalize_text(text: str) -> str:
     return " ".join(text.split())
 

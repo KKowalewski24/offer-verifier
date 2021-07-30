@@ -9,7 +9,7 @@ from module.constants import DETAILED_CONTENT_EXTRA_WORD, DETAILED_SELLER_RATING
     SELLER_BASIC_INFO_ATTRIBUTES, SELLER_MEMBER_INFO_ATTRIBUTES
 from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import normalize_text, replace_many
+from module.utils import is_valid_item, normalize_text, replace_many
 
 
 class SellerDetailsProvider(BaseProvider):
@@ -54,7 +54,7 @@ class SellerDetailsProvider(BaseProvider):
         feedback_score: str = str(0)
         feedback_percentage: str = str(0)
 
-        if stats_div is not None and len(stats_div) != 0:
+        if is_valid_item(stats_div):
             self.logger.info("stats_div exists")
             a_href = stats_div.select("div")[0].select("span")[0].select("a")
             if a_href is not None and len(a_href) > 1:
@@ -85,7 +85,7 @@ class SellerDetailsProvider(BaseProvider):
         neutral_ratings: str = str(0)
         negative_ratings: str = str(0)
 
-        if ratings_section is not None and len(ratings_section) != 0:
+        if is_valid_item(ratings_section):
             self.logger.info("ratings_section exists")
             table_rows = ratings_section.find("table").find("tbody").select("tr")
             positive_ratings = self.__get_feedback_td_content(table_rows[0])
@@ -107,7 +107,7 @@ class SellerDetailsProvider(BaseProvider):
         shipping_speed: str = str(3)
         communication: str = str(3)
 
-        if ratings_section is not None and len(ratings_section) != 0:
+        if is_valid_item(ratings_section):
             self.logger.info("ratings_section exists")
             accurate_description = self.__get_detailed_content(
                 ratings_section, DETAILED_SELLER_STARS_ONE_ATTRIBUTES
@@ -127,7 +127,7 @@ class SellerDetailsProvider(BaseProvider):
 
     def __get_detailed_content(self, ratings_section: Tag, attributes: Dict[str, str]) -> str:
         stars_span: Tag = ratings_section.find(attrs=attributes)
-        if stars_span is not None and len(stars_span) != 0:
+        if is_valid_item(stars_span):
             self.logger.info("stars_span exists")
             return replace_many(stars_span.find("span").get("style"), DETAILED_CONTENT_EXTRA_WORD)
 
