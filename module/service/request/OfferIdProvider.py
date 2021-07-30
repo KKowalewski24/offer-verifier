@@ -1,6 +1,6 @@
 from typing import List
 
-from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, \
+from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, LIST_VIEW, \
     OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
 from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
@@ -29,9 +29,14 @@ class OfferIdProvider(BaseProvider):
             self.logger.error("Error Page")
             return []
 
+        a_hrefs = [
+            list_item.find("a")
+            for list_item in soup.find(attrs=OFFERS_ID_A_HREF_ATTRIBUTES).find("ul").select("li")
+        ]
+
         return [
             self.urlparse_path_replace(a_href.get("href"), SLASH_ITM)
-            for a_href in soup.find_all("a", attrs=OFFERS_ID_A_HREF_ATTRIBUTES)
+            for a_href in a_hrefs
         ]
 
 
@@ -59,5 +64,5 @@ class OfferIdProvider(BaseProvider):
 
 
     def _create_url(self, page_number: int) -> str:
-        return (EBAY_SEARCH_PATH + self.search_phrase + PARAM_BRAND_NEW +
-                PARAM_BUY_NOW + ITEMS_PER_PAGE[0] + PARAM_PAGE_NUMBER + str(page_number))
+        return (EBAY_SEARCH_PATH + self.search_phrase + PARAM_BRAND_NEW + PARAM_BUY_NOW
+                + LIST_VIEW + ITEMS_PER_PAGE[0] + PARAM_PAGE_NUMBER + str(page_number))

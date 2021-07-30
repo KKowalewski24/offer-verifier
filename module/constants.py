@@ -19,6 +19,7 @@ SLASH: str = "/"
 PARAM_QUERY = "sch/i.html?_nkw="
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
+LIST_VIEW: str = "&_dmd=2"
 ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
 PARAM_PAGE_NUMBER: str = "&_pgn="
 
@@ -50,7 +51,7 @@ REQUEST_HEADER: Dict[str, str] = {
 }
 
 OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
-    "tabindex": "-1"
+    "id": "srp-river-results"
 }
 
 TITLE_PANEL_ATTRIBUTES: Dict[str, str] = {
