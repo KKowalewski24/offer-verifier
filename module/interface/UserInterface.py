@@ -103,4 +103,4 @@ class UserInterface:
             [[self.search_phrase] + statistics.to_list()]
         )
         print(latex_table_row)
-        save_to_file(STATISTICS_PATH, latex_table_row, "a")
+        save_to_file(STATISTICS_PATH, latex_table_row + "\n", "a")
