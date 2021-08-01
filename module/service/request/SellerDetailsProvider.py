@@ -7,17 +7,11 @@ from module.constants import DETAILED_CONTENT_EXTRA_WORD, DETAILED_SELLER_RATING
     DETAILED_SELLER_STARS_THREE_ATTRIBUTES, DETAILED_SELLER_STARS_TWO_ATTRIBUTES, \
     EBAY_USER_DETAILS_PATH, EBAY_USER_PATH, FEEDBACK_OVERALL_RATINGS_ATTRIBUTES, POSITIVE_FEEDBACK, \
     SELLER_BASIC_INFO_ATTRIBUTES, SELLER_MEMBER_INFO_ATTRIBUTES
-from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import is_valid_item, normalize_text, replace_many
 
 
 class SellerDetailsProvider(BaseProvider):
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.logger: Logger = Logger()
-
 
     def get_seller_details(self, seller_id: str) -> Dict[str, Any]:
         basic_soup, is_error_page = self.get_beautiful_soup_instance(EBAY_USER_PATH + seller_id)
@@ -55,7 +49,6 @@ class SellerDetailsProvider(BaseProvider):
         feedback_percentage: str = str(0)
 
         if is_valid_item(stats_div):
-            self.logger.info("stats_div exists")
             a_href = stats_div.select("div")[0].select("span")[0].select("a")
             if a_href is not None and len(a_href) > 1:
                 feedback_score_span: Tag = a_href[1]
@@ -65,6 +58,8 @@ class SellerDetailsProvider(BaseProvider):
             if feedback_percent_text != "":
                 feedback_percentage = (normalize_text(feedback_percent_text)
                                        .replace(POSITIVE_FEEDBACK, ""))
+        else:
+            self.logger.info("stats_div does not exist")
 
         return feedback_score, feedback_percentage
 
@@ -86,11 +81,12 @@ class SellerDetailsProvider(BaseProvider):
         negative_ratings: str = str(0)
 
         if is_valid_item(ratings_section):
-            self.logger.info("ratings_section exists")
             table_rows = ratings_section.find("table").find("tbody").select("tr")
             positive_ratings = self.__get_feedback_td_content(table_rows[0])
             neutral_ratings = self.__get_feedback_td_content(table_rows[1])
             negative_ratings = self.__get_feedback_td_content(table_rows[2])
+        else:
+            self.logger.info("ratings_section does not exist")
 
         return positive_ratings, neutral_ratings, negative_ratings
 
@@ -108,7 +104,6 @@ class SellerDetailsProvider(BaseProvider):
         communication: str = str(3)
 
         if is_valid_item(ratings_section):
-            self.logger.info("ratings_section exists")
             accurate_description = self.__get_detailed_content(
                 ratings_section, DETAILED_SELLER_STARS_ONE_ATTRIBUTES
             )
@@ -121,6 +116,8 @@ class SellerDetailsProvider(BaseProvider):
             communication = self.__get_detailed_content(
                 ratings_section, DETAILED_SELLER_STARS_FOUR_ATTRIBUTES
             )
+        else:
+            self.logger.info("ratings_section does not exist")
 
         return accurate_description, reasonable_shipping_cost, shipping_speed, communication
 
@@ -128,7 +125,8 @@ class SellerDetailsProvider(BaseProvider):
     def __get_detailed_content(self, ratings_section: Tag, attributes: Dict[str, str]) -> str:
         stars_span: Tag = ratings_section.find(attrs=attributes)
         if is_valid_item(stars_span):
-            self.logger.info("stars_span exists")
             return replace_many(stars_span.find("span").get("style"), DETAILED_CONTENT_EXTRA_WORD)
+        else:
+            self.logger.info("stars_span does not exist")
 
         return str(3)

@@ -2,7 +2,6 @@ from typing import List
 
 from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, LIST_VIEW, \
     OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
-from module.service.Logger import Logger
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import remove_duplicates
 
@@ -11,7 +10,6 @@ class OfferIdProvider(BaseProvider):
 
     def __init__(self, search_phrase: str) -> None:
         super().__init__()
-        self.logger: Logger = Logger()
         self.search_phrase = search_phrase
 
 

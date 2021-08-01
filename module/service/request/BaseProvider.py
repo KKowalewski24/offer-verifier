@@ -6,12 +6,14 @@ import requests
 from bs4 import BeautifulSoup
 
 from module.constants import ERROR_PAGE_PHRASE, HTML_PARSER, REQUEST_HEADER
+from module.service.Logger import Logger
 
 
 class BaseProvider(ABC):
 
     def __init__(self) -> None:
         self.requests_session = self._create_session()
+        self.logger: Logger = Logger()
 
 
     def _create_session(self) -> requests.Session:

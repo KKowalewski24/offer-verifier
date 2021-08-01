@@ -34,8 +34,8 @@ class RequestProvider:
             )
             return self._map_json_to_offer(offer_details, seller_details)
 
-        except KeyError:
-            self.logger.error("KeyError")
+        except KeyError as e:
+            self.logger.error("KeyError " + str(e))
             return None
 
 
