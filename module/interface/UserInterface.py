@@ -22,7 +22,7 @@ class UserInterface:
         self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
         self.pdf_generator: PdfGenerator = PdfGenerator()
         self.latex_generator: LatexGenerator = LatexGenerator(RESULTS_DIRECTORY)
-        self.logger: Logger = Logger()
+        self.logger = Logger().get_logging_instance()
 
         if not has_access_to_internet():
             print("No access to the Internet, program cannot be run")

@@ -13,7 +13,7 @@ class BaseProvider(ABC):
 
     def __init__(self) -> None:
         self.requests_session = self._create_session()
-        self.logger = Logger().get_logging()
+        self.logger = Logger().get_logging_instance()
 
 
     def _create_session(self) -> requests.Session:

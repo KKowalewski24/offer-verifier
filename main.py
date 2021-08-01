@@ -15,7 +15,7 @@ from module.utils import create_directory
 
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
-    logger: Logger = Logger()
+    logger = Logger().get_logging_instance()
     logger.info("Start program")
     load_dotenv()
     create_directory(RESULTS_DIRECTORY)

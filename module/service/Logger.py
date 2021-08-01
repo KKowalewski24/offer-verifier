@@ -14,5 +14,5 @@ class Logger:
         )
 
 
-    def get_logging(self) -> Any:
+    def get_logging_instance(self) -> Any:
         return logging

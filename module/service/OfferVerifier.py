@@ -17,7 +17,7 @@ class OfferVerifier:
     def __init__(self, search_phrase: str, save_offers: bool) -> None:
         self.search_phrase = search_phrase
         self.save_offers = save_offers
-        self.logger: Logger = Logger()
+        self.logger = Logger().get_logging_instance()
         self.request_provider: RequestProvider = RequestProvider(self.search_phrase)
 
 

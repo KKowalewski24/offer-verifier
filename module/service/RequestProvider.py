@@ -15,7 +15,7 @@ class RequestProvider:
         self.offer_id_provider: OfferIdProvider = OfferIdProvider(search_phrase)
         self.offer_details_provider: OfferDetailsProvider = OfferDetailsProvider()
         self.seller_details_provider: SellerDetailsProvider = SellerDetailsProvider()
-        self.logger: Logger = Logger()
+        self.logger = Logger().get_logging_instance()
 
 
     def get_offers(self) -> List[Offer]:
