@@ -25,6 +25,7 @@ class OfferVerifier:
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         print("Downloading offers, Please wait ...")
         self.logger.info("Downloading offers, Please wait ...")
+        # TODO Add True as param for using local file
         offers: List[Offer] = self.download_offers()
 
         print("Downloading offers done!")
@@ -48,12 +49,12 @@ class OfferVerifier:
         offers: List[Offer] = []
         if read_from_file:
             offers = list(
-                read_object_from_file(glob.glob(RESULTS_DIRECTORY + "*" + PICKLE_EXTENSION))
+                read_object_from_file(glob.glob(RESULTS_DIRECTORY + "*" + PICKLE_EXTENSION)[0])
             )
         else:
             offers = self.request_provider.get_offers()
 
-        if self.save_offers:
+        if self.save_offers and not read_from_file:
             save_object_to_file(
                 get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
 

@@ -14,14 +14,17 @@ from module.service.Logger import Logger
 class BaseProvider(ABC):
 
     def __init__(self) -> None:
-        self.requests_session = self._create_session()
         self.logger = Logger().get_logging_instance()
 
 
-    def _create_session(self) -> requests.Session:
+    def create_session(self) -> requests.Session:
         session: requests.Session = requests.Session()
         session.headers = REQUEST_HEADER
         return session
+
+
+    def urlparse_path_replace(self, url: str, replaced_text: str, replacing_text: str = "") -> str:
+        return urlparse(url).path.replace(replaced_text, replacing_text)
 
 
     def get_beautiful_soup_instance(self, url: str) -> Tuple[BeautifulSoup, bool]:
@@ -38,13 +41,9 @@ class BaseProvider(ABC):
 
         while is_request_exception:
             try:
-                response = self._create_session().get(url)
+                response = self.create_session().get(url)
                 is_request_exception = False
             except ChunkedEncodingError as e:
                 self.logger.error("ChunkedEncodingError " + str(e))
 
         return response
-
-
-    def urlparse_path_replace(self, url: str, replaced_text: str, replacing_text: str = "") -> str:
-        return urlparse(url).path.replace(replaced_text, replacing_text)
