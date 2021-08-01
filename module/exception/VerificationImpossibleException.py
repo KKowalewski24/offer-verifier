@@ -1,0 +1,2 @@
+class VerificationImpossibleException(Exception):
+    pass
