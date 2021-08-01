@@ -1,6 +1,7 @@
+import glob
 from typing import List, Tuple
 
-from module.constants import OFFERS_PATH, PICKLE_EXTENSION
+from module.constants import OFFERS_PATH, PICKLE_EXTENSION, RESULTS_DIRECTORY
 from module.exception.ChoosingCredibleOfferNotPossibleException import \
     ChoosingCredibleOfferNotPossibleException
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
@@ -9,7 +10,7 @@ from module.model.Statistics import Statistics
 from module.service.Clusterizer import Clusterizer
 from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
-from module.utils import get_filename, save_object_to_file
+from module.utils import get_filename, read_object_from_file, save_object_to_file
 
 
 class OfferVerifier:
@@ -24,16 +25,7 @@ class OfferVerifier:
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         print("Downloading offers, Please wait ...")
         self.logger.info("Downloading offers, Please wait ...")
-        offers: List[Offer] = self.request_provider.get_offers()
-
-        # TODO Uncomment for reading from local files with offers
-        # offers: List[Offer] = list(
-        #     read_object_from_file(glob.glob(RESULTS_DIRECTORY + "*" + PICKLE_EXTENSION))
-        # )
-
-        if self.save_offers:
-            save_object_to_file(
-                get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
+        offers: List[Offer] = self.download_offers()
 
         print("Downloading offers done!")
         self.logger.info("Downloading offers done!")
@@ -50,6 +42,22 @@ class OfferVerifier:
             raise VerificationImpossibleException
 
         return verified_offers, statistics
+
+
+    def download_offers(self, read_from_file: bool = False) -> List[Offer]:
+        offers: List[Offer] = []
+        if read_from_file:
+            offers = list(
+                read_object_from_file(glob.glob(RESULTS_DIRECTORY + "*" + PICKLE_EXTENSION))
+            )
+        else:
+            offers = self.request_provider.get_offers()
+
+        if self.save_offers:
+            save_object_to_file(
+                get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
+
+        return offers
 
 
     def _choose_list_with_more_credible_offers(
