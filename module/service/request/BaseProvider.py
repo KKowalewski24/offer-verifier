@@ -13,7 +13,7 @@ class BaseProvider(ABC):
 
     def __init__(self) -> None:
         self.requests_session = self._create_session()
-        self.logger: Logger = Logger()
+        self.logger = Logger().get_logging()
 
 
     def _create_session(self) -> requests.Session:
@@ -23,7 +23,9 @@ class BaseProvider(ABC):
 
 
     def get_beautiful_soup_instance(self, url: str) -> Tuple[BeautifulSoup, bool]:
-        soup: BeautifulSoup = BeautifulSoup(self.requests_session.get(url).content, HTML_PARSER)
+        response = self.requests_session.get(url)
+        self.logger.info("url: " + url + " ||| Status Code: " + str(response.status_code))
+        soup: BeautifulSoup = BeautifulSoup(response.content, HTML_PARSER)
         is_error_page: bool = ERROR_PAGE_PHRASE in soup.title.string
         return soup, is_error_page
 

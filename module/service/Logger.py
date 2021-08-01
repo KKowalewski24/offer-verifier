@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from module.constants import LOGS_FILENAME
 
@@ -13,21 +14,5 @@ class Logger:
         )
 
 
-    def debug(self, text: str) -> None:
-        logging.debug(text)
-
-
-    def info(self, text: str) -> None:
-        logging.info(text)
-
-
-    def warning(self, text: str) -> None:
-        logging.warning(text)
-
-
-    def error(self, text: str) -> None:
-        logging.error(text)
-
-
-    def critical(self, text: str) -> None:
-        logging.critical(text)
+    def get_logging(self) -> Any:
+        return logging
