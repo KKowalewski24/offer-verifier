@@ -131,4 +131,5 @@ def _calculate_lines_number(text: str, max_line_length: int) -> int:
 
 
 def _set_text_result(text: str, begin_index: int, end_index: int) -> str:
-    return text[begin_index:end_index] + "\n"
+    end_line: str = ("\n" if text[end_index - 1] == " " else "-\n")
+    return text[begin_index:end_index] + (end_line if len(text) > end_index else "")
