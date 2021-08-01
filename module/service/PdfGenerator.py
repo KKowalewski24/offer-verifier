@@ -3,9 +3,9 @@ from typing import List, Tuple
 from fpdf import FPDF
 
 from module.constants import CURRENCY_US_DOLLAR, OFFER_REPORT_FILENAME, PDF_EXTENSION, \
-    RESULTS_DIRECTORY
+    PDF_MAX_LINE_LENGTH, RESULTS_DIRECTORY
 from module.model.Offer import Offer
-from module.utils import convert_bool_to_string, get_filename
+from module.utils import break_string, convert_bool_to_string, get_filename
 
 
 class PDF(FPDF):
@@ -84,4 +84,7 @@ class PdfGenerator:
 
 
     def _draw_cell(self, text: str, align: str = "", link: str = "") -> None:
-        self.pdf.cell(w=0, h=10, txt=text, align=align, border=0, ln=1, link=link)
+        self.pdf.cell(
+            w=0, h=10, txt=break_string(text, PDF_MAX_LINE_LENGTH),
+            align=align, border=0, ln=1, link=link
+        )

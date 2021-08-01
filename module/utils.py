@@ -106,3 +106,29 @@ def save_object_to_file(path: str, data: object) -> None:
 def read_object_from_file(path: str) -> Any:
     with open(path, "rb") as file:
         return pickle.load(file)
+
+
+def break_string(text: str, max_line_length: int) -> str:
+    result: str = ""
+    for line_number in range(1, _calculate_lines_number(text, max_line_length) + 1):
+        predicted_last_index = max_line_length * line_number
+        last_index: int = predicted_last_index if predicted_last_index <= len(text) else len(text)
+
+        if line_number == 1:
+            result += _set_text_result(text, 0, last_index)
+        else:
+            result += _set_text_result(text, (max_line_length * (line_number - 1)), last_index)
+
+    return result
+
+
+def _calculate_lines_number(text: str, max_line_length: int) -> int:
+    new_lines_number = int(len(text) / max_line_length)
+    if len(text) % max_line_length != 0:
+        new_lines_number = new_lines_number + 1
+
+    return new_lines_number
+
+
+def _set_text_result(text: str, begin_index: int, end_index: int) -> str:
+    return text[begin_index:end_index] + "\n"
