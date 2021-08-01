@@ -41,7 +41,6 @@ class BaseProvider(ABC):
                 response = self._create_session().get(url)
                 is_request_exception = False
             except ChunkedEncodingError as e:
-                print(is_request_exception)
                 self.logger.error("ChunkedEncodingError " + str(e))
 
         return response

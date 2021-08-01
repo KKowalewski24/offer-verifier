@@ -53,8 +53,8 @@ class RequestProvider:
             int(offer_details["product_ratings_number"]),
             Seller(
                 seller_details["id"],
-                float(seller_details["feedback_score"]),
-                int(seller_details["seller_feedback_percentage"]),
+                float(seller_details["seller_feedback_score"]),
+                float(seller_details["seller_feedback_percentage"]),
                 int(seller_details["year_of_joining"]),
                 int(seller_details["seller_positive_ratings_number"]),
                 int(seller_details["seller_neutral_ratings_number"]),
