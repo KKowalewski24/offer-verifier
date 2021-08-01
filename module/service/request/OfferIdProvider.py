@@ -15,7 +15,7 @@ class OfferIdProvider(BaseProvider):
 
     def get_offers_id(self) -> List[str]:
         offers_id: List[str] = []
-        for page_number in range(self._get_pages_number()):
+        for page_number in self._get_pages_range():
             offers_id.extend(self._get_offers_id_for_single_page(page_number))
 
         return remove_duplicates(offers_id)
@@ -38,11 +38,11 @@ class OfferIdProvider(BaseProvider):
         ]
 
 
-    def _get_pages_number(self) -> int:
+    def _get_pages_range(self) -> range:
         soup, is_error_page = self.get_beautiful_soup_instance(self._create_url(1))
         if is_error_page:
             self.logger.error("Error Page")
-            return 0
+            return range(0)
 
         items_number: int = int(
             soup.find(text=ITEMS_NUMBER_PHRASE)
@@ -54,11 +54,12 @@ class OfferIdProvider(BaseProvider):
 
         pages_number: int = int(items_number / ITEMS_PER_PAGE[1])
         if pages_number < 0:
-            return 0
+            return range(0)
         if items_number % ITEMS_PER_PAGE[1] != 0:
-            return pages_number + 1
+            pages_number = pages_number + 1
 
-        return pages_number
+        # Start from 1 and increment pages_number because range stop is < not <= - like in loops
+        return range(1, pages_number + 1)
 
 
     def _create_url(self, page_number: int) -> str:
