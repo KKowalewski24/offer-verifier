@@ -27,6 +27,11 @@ def check_http_code_get_json(response: requests.models.Response) -> Dict:
     return response.json()
 
 
+def print_and_log(logger_instance: Any, text: str) -> None:
+    print(text)
+    logger_instance.info(text)
+
+
 def remove_duplicates(items: List[Any]) -> List[Any]:
     return list(set(items))
 

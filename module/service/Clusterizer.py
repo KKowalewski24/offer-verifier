@@ -8,6 +8,8 @@ from sklearn.preprocessing import LabelEncoder
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
+from module.service.Logger import Logger
+from module.utils import print_and_log
 
 RANDOM_STATE: int = 21
 K_RANGE: range = range(2, 20)
@@ -16,6 +18,7 @@ K_RANGE: range = range(2, 20)
 class Clusterizer:
 
     def __init__(self, offers: List[Offer]) -> None:
+        self.logger = Logger().get_logging_instance()
         self.offers = offers
         self.feature_names: List[str] = []
         self.non_numeric_feature_names: List[str] = []
@@ -26,14 +29,18 @@ class Clusterizer:
 
 
     def clusterize(self) -> Tuple[Tuple[List[Offer], List[Offer]], Statistics]:
+        print_and_log(self.logger, "Preparing dataset")
         dataset: pd.DataFrame = self._prepare_dataset()
+        print_and_log(self.logger, "Dataset prepared")
 
         # K is set to 2 in order to always get 2 clusters whether it is optimal or not
         k_param: int = 2
+        print_and_log(self.logger, "Clustering started")
         k_means: KMeans = KMeans(
             n_clusters=k_param, random_state=RANDOM_STATE
         )
         cluster_labels: np.ndarray = k_means.fit_predict(dataset)
+        print_and_log(self.logger, "Clustering finished")
 
         # Combine offers and assigned cluster numbers - in theory number of
         # offers and array with cluster numbers should have equal length and it should be

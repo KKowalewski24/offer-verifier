@@ -10,7 +10,7 @@ from module.model.Statistics import Statistics
 from module.service.Clusterizer import Clusterizer
 from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
-from module.utils import get_filename, read_object_from_file, save_object_to_file
+from module.utils import get_filename, print_and_log, read_object_from_file, save_object_to_file
 
 
 class OfferVerifier:
@@ -23,22 +23,18 @@ class OfferVerifier:
 
 
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
-        print("Downloading offers, Please wait ...")
-        self.logger.info("Downloading offers, Please wait ...")
+        print_and_log(self.logger, "Downloading offers, Please wait ...")
         # TODO Add True as param for using local file
         offers: List[Offer] = self.download_offers()
 
-        print("Downloading offers done!")
-        self.logger.info("Downloading offers done!")
+        print_and_log(self.logger, "Downloading offers done!")
         clusterizer: Clusterizer = Clusterizer(offers)
 
         try:
-            print("Performing the analysis of the offers, Please wait ...")
-            self.logger.info("Performing the analysis of the offers, Please wait ...")
+            print_and_log(self.logger, "Performing the analysis of the offers, Please wait ...")
             combined_offers, statistics = clusterizer.clusterize()
             verified_offers = self._choose_list_with_more_credible_offers(combined_offers)
-            print("Analysis of the offers done!")
-            self.logger.info("Analysis of the offers done!")
+            print_and_log(self.logger, "Analysis of the offers done!")
         except ChoosingCredibleOfferNotPossibleException:
             raise VerificationImpossibleException
 
