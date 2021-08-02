@@ -22,7 +22,7 @@ class UserInterface:
         self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
         self.pdf_generator: PdfGenerator = PdfGenerator()
         self.latex_generator: LatexGenerator = LatexGenerator(RESULTS_DIRECTORY)
-        self.logger: Logger = Logger()
+        self.logger = Logger().get_logging_instance()
 
         if not has_access_to_internet():
             print("No access to the Internet, program cannot be run")
@@ -92,15 +92,13 @@ class UserInterface:
             convert_bool_to_string(is_verified)
         )
 
-        pass
-
 
     def _display_statistics(self, statistics: Statistics) -> None:
-        print("Silhouette score:", statistics.silhouette_score)
+        print("\n\nSilhouette score:", statistics.silhouette_score)
         print("Calinski Harabasz score:", statistics.calinski_harabasz_score)
         print("Davies Bouldin score:", statistics.davies_bouldin_score)
         latex_table_row: str = self.latex_generator.get_table_body(
             [[self.search_phrase] + statistics.to_list()]
         )
         print(latex_table_row)
-        save_to_file(STATISTICS_PATH, latex_table_row, "a")
+        save_to_file(STATISTICS_PATH, latex_table_row + "\n", "a")

@@ -7,6 +7,10 @@ LOGS_FILENAME: str = "app.log"
 HTTP_OK: int = 200
 UTF_8: str = "UTF-8"
 
+OFFER_REPORT_FILENAME: Tuple[str, str] = (
+    "credible_offer_report", "not_credible_offer_report"
+)
+PDF_MAX_LINE_LENGTH: int = 85
 RESULTS_DIRECTORY: str = "results/"
 STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 OFFERS_PATH: str = RESULTS_DIRECTORY + "offers-"

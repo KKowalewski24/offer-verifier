@@ -15,7 +15,7 @@ from module.utils import create_directory
 
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
-    logger: Logger = Logger()
+    logger = Logger().get_logging_instance()
     logger.info("Start program")
     load_dotenv()
     create_directory(RESULTS_DIRECTORY)
@@ -31,6 +31,10 @@ def main() -> None:
         search_phrase, save_offers, generate_pdf, generate_statistics
     )
     user_interface.display_result()
+
+    # TODO Uncomment for creating data sets
+    # offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
+    # print(len(offer_verifier.download_offers(True)))
 
 
 # DEF ------------------------------------------------------------------------ #

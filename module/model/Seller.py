@@ -8,7 +8,7 @@ from module.utils import to_string_class_formatter
 
 class Seller(AnalyzableItem):
 
-    def __init__(self, id: str, feedback_score: float, seller_feedback_percentage: int,
+    def __init__(self, id: str, feedback_score: float, seller_feedback_percentage: float,
                  year_of_joining: int, seller_positive_ratings_number: int,
                  seller_neutral_ratings_number: int, seller_negative_ratings_number: int,
                  accurate_description: float, reasonable_shipping_cost: float,

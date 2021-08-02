@@ -6,7 +6,7 @@ from module.service.Logger import Logger
 from module.service.request.OfferDetailsProvider import OfferDetailsProvider
 from module.service.request.OfferIdProvider import OfferIdProvider
 from module.service.request.SellerDetailsProvider import SellerDetailsProvider
-from module.utils import remove_none_items
+from module.utils import remove_none_items, print_and_log
 
 
 class RequestProvider:
@@ -15,13 +15,12 @@ class RequestProvider:
         self.offer_id_provider: OfferIdProvider = OfferIdProvider(search_phrase)
         self.offer_details_provider: OfferDetailsProvider = OfferDetailsProvider()
         self.seller_details_provider: SellerDetailsProvider = SellerDetailsProvider()
-        self.logger: Logger = Logger()
+        self.logger = Logger().get_logging_instance()
 
 
     def get_offers(self) -> List[Offer]:
         offers_id: List[str] = self.offer_id_provider.get_offers_id()
-        print("Offers to download:", len(offers_id))
-        self.logger.info("Offers to download: " + str(len(offers_id)))
+        print_and_log(self.logger, "Offers to download: " + str(len(offers_id)))
         return remove_none_items([self._prepare_offer(offer_id) for offer_id in offers_id])
 
 
@@ -34,8 +33,8 @@ class RequestProvider:
             )
             return self._map_json_to_offer(offer_details, seller_details)
 
-        except KeyError:
-            self.logger.error("KeyError")
+        except KeyError as e:
+            self.logger.error("KeyError " + str(e) + " offer_id: " + offer_id)
             return None
 
 
@@ -53,8 +52,8 @@ class RequestProvider:
             int(offer_details["product_ratings_number"]),
             Seller(
                 seller_details["id"],
-                float(seller_details["feedback_score"]),
-                int(seller_details["seller_feedback_percentage"]),
+                float(seller_details["seller_feedback_score"]),
+                float(seller_details["seller_feedback_percentage"]),
                 int(seller_details["year_of_joining"]),
                 int(seller_details["seller_positive_ratings_number"]),
                 int(seller_details["seller_neutral_ratings_number"]),
