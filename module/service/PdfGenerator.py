@@ -8,6 +8,15 @@ from module.model.Offer import Offer
 from module.utils import break_string, convert_bool_to_string, get_filename
 
 
+class PdfGenerator:
+
+    def generate(
+            self, combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
+    ) -> None:
+        PdfDocument().generate_single_report(combined_offers[0])
+        PdfDocument().generate_single_report(combined_offers[1])
+
+
 class PDF(FPDF):
 
     def lines(self):
@@ -18,20 +27,13 @@ class PDF(FPDF):
         self.line(205.0, 5.0, 205.0, 292.0)
 
 
-class PdfGenerator:
+class PdfDocument:
 
     def __init__(self) -> None:
         self.pdf = PDF()
 
 
-    def generate(
-            self, combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
-    ) -> None:
-        self._generate_single_report(combined_offers[0])
-        self._generate_single_report(combined_offers[1])
-
-
-    def _generate_single_report(self, combined_offers: Tuple[List[Offer], bool]) -> None:
+    def generate_single_report(self, combined_offers: Tuple[List[Offer], bool]) -> None:
         offers, is_verified = combined_offers
         for offer in offers:
             self._draw_single_offer(offer, is_verified)
