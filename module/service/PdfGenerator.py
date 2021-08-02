@@ -84,7 +84,5 @@ class PdfGenerator:
 
 
     def _draw_cell(self, text: str, align: str = "", link: str = "") -> None:
-        self.pdf.cell(
-            w=0, h=10, txt=break_string(text, PDF_MAX_LINE_LENGTH),
-            align=align, border=0, ln=1, link=link
-        )
+        for string in break_string(text, PDF_MAX_LINE_LENGTH):
+            self.pdf.cell(w=0, h=10, txt=string, align=align, border=0, ln=1, link=link)

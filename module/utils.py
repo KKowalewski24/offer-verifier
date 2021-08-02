@@ -108,16 +108,16 @@ def read_object_from_file(path: str) -> Any:
         return pickle.load(file)
 
 
-def break_string(text: str, max_line_length: int) -> str:
-    result: str = ""
+def break_string(text: str, max_line_length: int) -> List[str]:
+    result: List[str] = []
     for line_number in range(1, _calculate_lines_number(text, max_line_length) + 1):
         predicted_last_index = max_line_length * line_number
         last_index: int = predicted_last_index if predicted_last_index <= len(text) else len(text)
 
         if line_number == 1:
-            result += _set_text_result(text, 0, last_index)
+            result.append(_set_text_result(text, 0, last_index))
         else:
-            result += _set_text_result(text, (max_line_length * (line_number - 1)), last_index)
+            result.append(_set_text_result(text, (max_line_length * (line_number - 1)), last_index))
 
     return result
 
