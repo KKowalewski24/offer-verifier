@@ -1,6 +1,8 @@
 import glob
 from typing import List, Tuple
 
+import numpy as np
+
 from module.constants import OFFERS_PATH, PICKLE_EXTENSION, RESULTS_DIRECTORY
 from module.exception.ChoosingCredibleOfferNotPossibleException import \
     ChoosingCredibleOfferNotPossibleException
@@ -60,6 +62,19 @@ class OfferVerifier:
     def _choose_list_with_more_credible_offers(
             self, combined_offers: Tuple[List[Offer], List[Offer]]
     ) -> Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]:
-        # TODO
-        # first_list_offers, second_list_offers = combined_offers
-        pass
+        first_list_offers, second_list_offers = combined_offers
+        first_list_sum: int = self._sum_positive_feedback_number(first_list_offers)
+        second_list_sum: int = self._sum_positive_feedback_number(second_list_offers)
+
+        if first_list_sum > second_list_sum:
+            result = (first_list_offers, True), (second_list_offers, False)
+        elif first_list_sum < second_list_sum:
+            result = (second_list_offers, True), (first_list_offers, False)
+        else:
+            raise ChoosingCredibleOfferNotPossibleException
+
+        return result
+
+
+    def _sum_positive_feedback_number(self, offers: List[Offer]) -> int:
+        return np.sum([offer.seller.seller_positive_ratings_number for offer in offers])
