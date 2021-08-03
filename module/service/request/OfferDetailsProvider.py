@@ -41,7 +41,7 @@ class OfferDetailsProvider(BaseProvider):
 
 
     def _get_price(self, soup: BeautifulSoup) -> str:
-        return str(soup.find(attrs=OFFER_PRICE_ATTRIBUTES).get("content"))
+        return str(soup.find(attrs=OFFER_PRICE_ATTRIBUTES).get("content").replace(",", ""))
 
 
     def _get_image_url(self, soup: BeautifulSoup) -> str:
