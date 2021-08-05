@@ -27,7 +27,7 @@ def check_http_code_get_json(response: requests.models.Response) -> Dict:
     return response.json()
 
 
-def print_and_log(logger_instance: Any, text: str) -> None:
+def display_and_log(logger_instance: Any, text: str) -> None:
     print(text)
     logger_instance.info(text)
 
@@ -111,6 +111,15 @@ def save_object_to_file(path: str, data: object) -> None:
 def read_object_from_file(path: str) -> Any:
     with open(path, "rb") as file:
         return pickle.load(file)
+
+
+def replace_unsupported_characters(text: str, begin: int = 0, end: int = 256) -> str:
+    text_as_list = list(text)
+    for index, char in enumerate(text_as_list):
+        if not begin <= ord(char) < end:
+            text_as_list[index] = " "
+
+    return "".join(text_as_list)
 
 
 def break_string(text: str, max_line_length: int) -> List[str]:
