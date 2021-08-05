@@ -12,7 +12,7 @@ from module.model.Statistics import Statistics
 from module.service.Clusterizer import Clusterizer
 from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
-from module.utils import get_filename, print_and_log, read_object_from_file, save_object_to_file
+from module.utils import get_filename, display_and_log, read_object_from_file, save_object_to_file
 
 
 class OfferVerifier:
@@ -25,18 +25,18 @@ class OfferVerifier:
 
 
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
-        print_and_log(self.logger, "Downloading offers, Please wait ...")
+        display_and_log(self.logger, "Downloading offers, Please wait ...")
         # TODO Add True as param for using local file
         offers: List[Offer] = self.download_offers()
 
-        print_and_log(self.logger, "Downloading offers done!")
+        display_and_log(self.logger, "Downloading offers done!")
         clusterizer: Clusterizer = Clusterizer(offers)
 
         try:
-            print_and_log(self.logger, "Performing the analysis of the offers, Please wait ...")
+            display_and_log(self.logger, "Performing the analysis of the offers, Please wait ...")
             combined_offers, statistics = clusterizer.clusterize()
             verified_offers = self._choose_list_with_more_credible_offers(combined_offers)
-            print_and_log(self.logger, "Analysis of the offers done!")
+            display_and_log(self.logger, "Analysis of the offers done!")
         except ChoosingCredibleOfferNotPossibleException:
             raise VerificationImpossibleException
 
@@ -63,12 +63,12 @@ class OfferVerifier:
             self, combined_offers: Tuple[List[Offer], List[Offer]]
     ) -> Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]:
         first_list_offers, second_list_offers = combined_offers
-        first_list_sum: int = self._sum_positive_feedback_number(first_list_offers)
-        second_list_sum: int = self._sum_positive_feedback_number(second_list_offers)
+        first_list_average_feedback_score: int = self._average_feedback_score(first_list_offers)
+        second_list_average_feedback_score: int = self._average_feedback_score(second_list_offers)
 
-        if first_list_sum > second_list_sum:
+        if first_list_average_feedback_score > second_list_average_feedback_score:
             result = (first_list_offers, True), (second_list_offers, False)
-        elif first_list_sum < second_list_sum:
+        elif first_list_average_feedback_score < second_list_average_feedback_score:
             result = (second_list_offers, True), (first_list_offers, False)
         else:
             raise ChoosingCredibleOfferNotPossibleException
@@ -76,5 +76,5 @@ class OfferVerifier:
         return result
 
 
-    def _sum_positive_feedback_number(self, offers: List[Offer]) -> int:
-        return np.sum([offer.seller.seller_positive_ratings_number for offer in offers])
+    def _average_feedback_score(self, offers: List[Offer]) -> int:
+        return np.sum([offer.seller.feedback_score for offer in offers]) / len(offers)

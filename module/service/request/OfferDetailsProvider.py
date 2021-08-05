@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from bs4 import BeautifulSoup, Tag
 
@@ -20,7 +20,7 @@ class OfferDetailsProvider(BaseProvider):
             return {}
 
         reviews_number, product_rating, ratings_number = self._get_ratings(soup)
-        return {
+        offer_json: Dict[str, Any] = {
             "id": offer_id,
             "title": self._get_title(soup),
             "price": self._get_price(soup),
@@ -35,27 +35,47 @@ class OfferDetailsProvider(BaseProvider):
             }
         }
 
+        if None in list(offer_json.values()):
+            self.logger.error("Wrong offer structure")
+            return {}
 
-    def _get_title(self, soup: BeautifulSoup) -> str:
-        return str(list(soup.find(attrs=TITLE_PANEL_ATTRIBUTES).find("h1").children)[1])
-
-
-    def _get_price(self, soup: BeautifulSoup) -> str:
-        return str(soup.find(attrs=OFFER_PRICE_ATTRIBUTES).get("content"))
+        return offer_json
 
 
-    def _get_image_url(self, soup: BeautifulSoup) -> str:
-        return str(soup.find(attrs=OFFER_IMAGE_ATTRIBUTES).get("src"))
+    def _get_title(self, soup: BeautifulSoup) -> Optional[str]:
+        title_div = soup.find(attrs=TITLE_PANEL_ATTRIBUTES)
+        if is_valid_item(title_div):
+            return str(list(title_div.find("h1").children)[1])
+
+        return None
 
 
-    def _get_return_option(self, soup: BeautifulSoup) -> bool:
+    def _get_price(self, soup: BeautifulSoup) -> Optional[str]:
+        price_div = soup.find(attrs=OFFER_PRICE_ATTRIBUTES)
+        if is_valid_item(price_div):
+            return str(price_div.get("content").replace(",", ""))
+
+        return None
+
+
+    def _get_image_url(self, soup: BeautifulSoup) -> Optional[str]:
+        image_div = soup.find(attrs=OFFER_IMAGE_ATTRIBUTES)
+        if is_valid_item(image_div):
+            return str(image_div.get("src"))
+
+        return None
+
+
+    def _get_return_option(self, soup: BeautifulSoup) -> Optional[bool]:
+        returns_div = soup.find(attrs=RETURNS_OPTION_ATTRIBUTES)
+        other_returns_div = soup.find(attrs=RETURNS_OPTION_WHY_BUY_ATTRIBUTES)
+        if not is_valid_item(returns_div) or not is_valid_item(other_returns_div):
+            return None
+
         returns_phrase: str = (
-            soup.find(attrs=RETURNS_OPTION_ATTRIBUTES)
-                .find_parent()
-                .find(attrs=RETURNS_OPTION_SPAN_ATTRIBUTES)
-                .get_text(strip=True)
+            returns_div.find_parent().find(attrs=RETURNS_OPTION_SPAN_ATTRIBUTES).get_text(strip=True)
         )
-        other_returns_phrase: str = str(soup.find(attrs=RETURNS_OPTION_WHY_BUY_ATTRIBUTES).get_text())
+        other_returns_phrase: str = str(other_returns_div.get_text())
 
         return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
 
@@ -93,9 +113,11 @@ class OfferDetailsProvider(BaseProvider):
         return reviews_number, product_rating, ratings_number
 
 
-    def _get_seller_id(self, soup: BeautifulSoup) -> str:
-        markup: str = str(
-            remove_new_line_items(list(soup.find(attrs=SELLER_PANEL_ATTRIBUTES).children))[2]
-        )
-        url: str = BeautifulSoup(markup, HTML_PARSER).find("a").get("href")
-        return self.urlparse_path_replace(url, SLASH_USR)
+    def _get_seller_id(self, soup: BeautifulSoup) -> Optional[str]:
+        seller_div = soup.find(attrs=SELLER_PANEL_ATTRIBUTES)
+        if is_valid_item(seller_div):
+            markup: str = str(remove_new_line_items(list(seller_div.children))[2])
+            url: str = BeautifulSoup(markup, HTML_PARSER).find("a").get("href")
+            return self.urlparse_path_replace(url, SLASH_USR)
+
+        return None

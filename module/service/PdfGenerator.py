@@ -5,7 +5,8 @@ from fpdf import FPDF
 from module.constants import CURRENCY_US_DOLLAR, OFFER_REPORT_FILENAME, PDF_EXTENSION, \
     PDF_MAX_LINE_LENGTH, RESULTS_DIRECTORY
 from module.model.Offer import Offer
-from module.utils import break_string, convert_bool_to_string, get_filename
+from module.utils import break_string, convert_bool_to_string, get_filename, \
+    replace_unsupported_characters
 
 
 class PdfGenerator:
@@ -86,5 +87,5 @@ class PdfDocument:
 
 
     def _draw_cell(self, text: str, align: str = "", link: str = "") -> None:
-        for string in break_string(text, PDF_MAX_LINE_LENGTH):
+        for string in break_string(replace_unsupported_characters(text), PDF_MAX_LINE_LENGTH):
             self.pdf.cell(w=0, h=10, txt=string, align=align, border=0, ln=1, link=link)
