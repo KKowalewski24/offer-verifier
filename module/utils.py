@@ -113,6 +113,15 @@ def read_object_from_file(path: str) -> Any:
         return pickle.load(file)
 
 
+def replace_unsupported_characters(text: str, begin: int = 0, end: int = 256) -> str:
+    text_as_list = list(text)
+    for index, char in enumerate(text_as_list):
+        if not begin <= ord(char) < end:
+            text_as_list[index] = " "
+
+    return "".join(text_as_list)
+
+
 def break_string(text: str, max_line_length: int) -> List[str]:
     result: List[str] = []
     for line_number in range(1, _calculate_lines_number(text, max_line_length) + 1):
