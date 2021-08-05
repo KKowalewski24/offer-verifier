@@ -12,7 +12,6 @@ from module.service.Logger import Logger
 from module.utils import display_and_log
 
 RANDOM_STATE: int = 21
-K_RANGE: range = range(2, 20)
 
 
 class Clusterizer:
