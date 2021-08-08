@@ -28,7 +28,7 @@ class Seller(AnalyzableItem):
 
     def get_feature_values(self) -> List:
         return [
-            self.feedback_score, self.seller_feedback_percentage, self.year_of_joining,
+            self.seller_feedback_percentage, self.year_of_joining,
             self.seller_positive_ratings_number, self.seller_neutral_ratings_number,
             self.seller_negative_ratings_number, self.accurate_description,
             self.reasonable_shipping_cost, self.shipping_speed, self.communication
@@ -37,11 +37,11 @@ class Seller(AnalyzableItem):
 
     def get_feature_names(self) -> List[str]:
         return [
-            nameof(self.feedback_score), nameof(self.seller_feedback_percentage),
-            nameof(self.year_of_joining), nameof(self.seller_positive_ratings_number),
-            nameof(self.seller_neutral_ratings_number), nameof(self.seller_negative_ratings_number),
-            nameof(self.accurate_description), nameof(self.reasonable_shipping_cost),
-            nameof(self.shipping_speed), nameof(self.communication)
+            nameof(self.seller_feedback_percentage), nameof(self.year_of_joining),
+            nameof(self.seller_positive_ratings_number), nameof(self.seller_neutral_ratings_number),
+            nameof(self.seller_negative_ratings_number), nameof(self.accurate_description),
+            nameof(self.reasonable_shipping_cost), nameof(self.shipping_speed),
+            nameof(self.communication)
         ]
 
 

@@ -12,7 +12,7 @@ from module.model.Statistics import Statistics
 from module.service.Clusterizer import Clusterizer
 from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
-from module.utils import get_filename, display_and_log, read_object_from_file, save_object_to_file
+from module.utils import display_and_log, get_filename, read_object_from_file, save_object_to_file
 
 
 class OfferVerifier:
@@ -63,8 +63,8 @@ class OfferVerifier:
             self, combined_offers: Tuple[List[Offer], List[Offer]]
     ) -> Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]:
         first_list_offers, second_list_offers = combined_offers
-        first_list_average_feedback_score: int = self._average_feedback_score(first_list_offers)
-        second_list_average_feedback_score: int = self._average_feedback_score(second_list_offers)
+        first_list_average_feedback_score: float = self._average_feedback_score(first_list_offers)
+        second_list_average_feedback_score: float = self._average_feedback_score(second_list_offers)
 
         if first_list_average_feedback_score > second_list_average_feedback_score:
             result = (first_list_offers, True), (second_list_offers, False)
@@ -76,5 +76,5 @@ class OfferVerifier:
         return result
 
 
-    def _average_feedback_score(self, offers: List[Offer]) -> int:
-        return np.sum([offer.seller.feedback_score for offer in offers]) / len(offers)
+    def _average_feedback_score(self, offers: List[Offer]) -> float:
+        return round(np.sum([offer.seller.feedback_score for offer in offers]) / len(offers), 2)

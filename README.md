@@ -22,3 +22,5 @@ pip install -r requirements.txt
 #### Data Analysis
 * For KMeans K is always set to 2 because only 2 clusters are needed
 * For testing of algorithm downloaded offers can be used in order to save time for downloading
+* Field `feedback_score` from Seller is not added to feature vector but it is 
+used to for choosing cluster with more credible offers 
