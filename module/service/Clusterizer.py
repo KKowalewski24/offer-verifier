@@ -69,8 +69,8 @@ class Clusterizer:
 
     def _calculate_statistics(self, dataset: pd.DataFrame, cluster_labels: np.ndarray) -> Statistics:
         return Statistics(
+            dataset.shape[0],
             round(silhouette_score(dataset, cluster_labels), 3),
             round(calinski_harabasz_score(dataset, cluster_labels), 3),
-            round(davies_bouldin_score(dataset, cluster_labels), 3),
-            dataset.shape[0]
+            round(davies_bouldin_score(dataset, cluster_labels), 3)
         )
