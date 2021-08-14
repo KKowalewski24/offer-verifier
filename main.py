@@ -33,8 +33,9 @@ def main() -> None:
     user_interface.display_result()
 
     # TODO Uncomment for creating data sets
+    # from module.service.OfferVerifier import OfferVerifier
     # offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
-    # print(len(offer_verifier.download_offers(True)))
+    # print(len(offer_verifier.download_offers()))
 
 
 # DEF ------------------------------------------------------------------------ #

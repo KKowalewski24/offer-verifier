@@ -3,7 +3,7 @@ from typing import List
 from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, LIST_VIEW, \
     OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import remove_duplicates
+from module.utils import remove_duplicates, remove_none_items
 
 
 class OfferIdProvider(BaseProvider):
@@ -27,10 +27,10 @@ class OfferIdProvider(BaseProvider):
             self.logger.error("Error Page")
             return []
 
-        a_hrefs = [
+        a_hrefs = remove_none_items([
             list_item.find("a")
             for list_item in soup.find(attrs=OFFERS_ID_A_HREF_ATTRIBUTES).find("ul").select("li")
-        ]
+        ])
 
         return [
             self.urlparse_path_replace(a_href.get("href"), SLASH_ITM)
