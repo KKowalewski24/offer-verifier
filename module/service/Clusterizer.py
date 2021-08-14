@@ -71,5 +71,6 @@ class Clusterizer:
         return Statistics(
             round(silhouette_score(dataset, cluster_labels), 3),
             round(calinski_harabasz_score(dataset, cluster_labels), 3),
-            round(davies_bouldin_score(dataset, cluster_labels), 3)
+            round(davies_bouldin_score(dataset, cluster_labels), 3),
+            dataset.shape[0]
         )
