@@ -119,7 +119,8 @@ class OfferDetailsProvider(BaseProvider):
         seller_div = soup.find(attrs=SELLER_PANEL_ATTRIBUTES)
         if is_valid_item(seller_div):
             markup: str = str(remove_new_line_items(list(seller_div.children))[2])
-            url: str = BeautifulSoup(markup, HTML_PARSER).find("a").get("href")
-            return self.urlparse_path_replace(url, SLASH_USR)
+            a_element = BeautifulSoup(markup, HTML_PARSER).find("a")
+            if is_valid_item(a_element):
+                return self.urlparse_path_replace(a_element.get("href"), SLASH_USR)
 
         return None
