@@ -94,7 +94,8 @@ class UserInterface:
 
 
     def _display_statistics(self, statistics: Statistics) -> None:
-        print("\n\nSilhouette score:", statistics.silhouette_score)
+        print("\n\nNumber of offers :", statistics.offers_number)
+        print("Silhouette score:", statistics.silhouette_score)
         print("Calinski Harabasz score:", statistics.calinski_harabasz_score)
         print("Davies Bouldin score:", statistics.davies_bouldin_score)
         latex_table_row: str = self.latex_generator.get_table_body(

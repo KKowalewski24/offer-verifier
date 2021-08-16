@@ -31,7 +31,13 @@ class BaseProvider(ABC):
         response = self._make_request(url)
         self.logger.info("url: " + url + " ||| Status Code: " + str(response.status_code))
         soup: BeautifulSoup = BeautifulSoup(response.content, HTML_PARSER)
-        is_error_page: bool = ERROR_PAGE_PHRASE in soup.title.string
+
+        is_error_page: bool = False
+        if soup.title.string is not None:
+            is_error_page = ERROR_PAGE_PHRASE in soup.title.string
+        if soup.title.string is None:
+            is_error_page = True
+
         return soup, is_error_page
 
 
