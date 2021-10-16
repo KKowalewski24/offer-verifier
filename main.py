@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from module.constants import RESULTS_DIRECTORY
 from module.interface.UserInterface import UserInterface
 from module.service.Logger import Logger
+from module.service.OfferVerifier import OfferVerifier
 from module.utils import create_directory
 
 """
@@ -25,17 +26,17 @@ def main() -> None:
     save_offers: bool = args.offers
     generate_pdf: bool = args.pdf
     generate_statistics: bool = args.statistics
+    only_dataset: bool = args.dataset
     logger.info("Search phrase: " + search_phrase)
 
-    user_interface: UserInterface = UserInterface(
-        search_phrase, save_offers, generate_pdf, generate_statistics
-    )
-    user_interface.display_result()
-
-    # TODO Uncomment for creating data sets
-    # from module.service.OfferVerifier import OfferVerifier
-    # offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
-    # print(len(offer_verifier.download_offers()))
+    if not only_dataset:
+        user_interface: UserInterface = UserInterface(
+            search_phrase, save_offers, generate_pdf, generate_statistics
+        )
+        user_interface.display_result()
+    else:
+        offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
+        print(len(offer_verifier.download_offers()))
 
 
 # DEF ------------------------------------------------------------------------ #
@@ -54,6 +55,10 @@ def prepare_args() -> Namespace:
     arg_parser.add_argument(
         "-s", "--statistics", default=False, action="store_true",
         help="Generate clustering statistics"
+    )
+    arg_parser.add_argument(
+        "-ds", "--dataset", default=False, action="store_true",
+        help="Only create and save dataset - for development and research!!!"
     )
 
     return arg_parser.parse_args()
