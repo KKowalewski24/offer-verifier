@@ -1,5 +1,3 @@
-import subprocess
-import sys
 from argparse import ArgumentParser, Namespace
 
 from dotenv import load_dotenv
@@ -8,13 +6,12 @@ from module.constants import RESULTS_DIRECTORY
 from module.interface.UserInterface import UserInterface
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
-from module.utils import create_directory
+from module.utils import create_directory, run_main
 
 """
 """
 
 
-# MAIN ----------------------------------------------------------------------- #
 def main() -> None:
     logger = Logger().get_logging_instance()
     logger.info("Start program")
@@ -39,7 +36,6 @@ def main() -> None:
         print(len(offer_verifier.download_offers()))
 
 
-# DEF ------------------------------------------------------------------------ #
 def prepare_args() -> Namespace:
     arg_parser = ArgumentParser()
 
@@ -64,25 +60,5 @@ def prepare_args() -> Namespace:
     return arg_parser.parse_args()
 
 
-# UTIL ----------------------------------------------------------------------- #
-def check_types_check_style() -> None:
-    subprocess.call(["mypy", "."])
-    subprocess.call(["flake8", "."])
-
-
-def compile_to_pyc() -> None:
-    subprocess.call(["python", "-m", "compileall", "."])
-
-
-def check_if_exists_in_args(arg: str) -> bool:
-    return arg in sys.argv
-
-
-# __MAIN__ ------------------------------------------------------------------- #
 if __name__ == "__main__":
-    if check_if_exists_in_args("--type"):
-        check_types_check_style()
-    elif check_if_exists_in_args("--build"):
-        compile_to_pyc()
-    else:
-        main()
+    run_main(main)

@@ -1,13 +1,37 @@
 import json
 import os
 import pickle
+import subprocess
+import sys
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 
 import requests
 
 from module.constants import HTTP_OK, UTF_8
 from module.exception.RequestException import RequestException
+
+
+def run_main(main: Callable[[], None]) -> None:
+    if check_if_exists_in_args("--type"):
+        check_types_check_style()
+    elif check_if_exists_in_args("--build"):
+        compile_to_pyc()
+    else:
+        main()
+
+
+def check_types_check_style() -> None:
+    subprocess.call(["mypy", "."])
+    subprocess.call(["flake8", "."])
+
+
+def compile_to_pyc() -> None:
+    subprocess.call(["python", "-m", "compileall", "."])
+
+
+def check_if_exists_in_args(arg: str) -> bool:
+    return arg in sys.argv
 
 
 def has_access_to_internet() -> bool:
