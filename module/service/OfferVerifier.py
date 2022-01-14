@@ -9,9 +9,10 @@ from module.exception.ChoosingCredibleOfferNotPossibleException import \
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
-from module.service.Clusterizer import Clusterizer
 from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
+from module.service.clustering.Clusterizer import Clusterizer
+from module.service.clustering.KMeansClusterizer import KMeansClusterizer
 from module.utils import display_and_log, get_filename, read_object_from_file, save_object_to_file
 
 
@@ -30,7 +31,7 @@ class OfferVerifier:
         offers: List[Offer] = self.download_offers()
 
         display_and_log(self.logger, "Downloading offers done!")
-        clusterizer: Clusterizer = Clusterizer(offers)
+        clusterizer: Clusterizer = KMeansClusterizer(offers)
 
         try:
             display_and_log(self.logger, "Performing the analysis of the offers, Please wait ...")
