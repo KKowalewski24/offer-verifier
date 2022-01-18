@@ -1,26 +1,22 @@
 import sys
 from typing import List, Tuple
 
-from module.constants import CURRENCY_US_DOLLAR, RESULTS_DIRECTORY, STATISTICS_PATH
+from module.constants import CURRENCY_US_DOLLAR, RESULTS_DIRECTORY
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
 from module.model.Offer import Offer
-from module.model.Statistics import Statistics
 from module.service.LatexGenerator import LatexGenerator
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
 from module.service.PdfGenerator import PdfGenerator
-from module.utils import convert_bool_to_string, display_and_log_error, has_access_to_internet, \
-    save_to_file
+from module.utils import convert_bool_to_string, display_and_log_error, has_access_to_internet
 
 
 class UserInterface:
 
-    def __init__(self, search_phrase: str, save_offers: bool,
-                 generate_pdf: bool, generate_statistics: bool) -> None:
+    def __init__(self, search_phrase: str, generate_pdf: bool) -> None:
         self.search_phrase: str = search_phrase
         self.generate_pdf: bool = generate_pdf
-        self.generate_statistics = generate_statistics
-        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
+        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase)
         self.pdf_generator: PdfGenerator = PdfGenerator()
         self.latex_generator: LatexGenerator = LatexGenerator(RESULTS_DIRECTORY)
         self.logger = Logger().get_logging_instance()
@@ -41,9 +37,6 @@ class UserInterface:
 
             if self.generate_pdf:
                 self.pdf_generator.generate(combined_offers)
-
-            if self.generate_statistics:
-                self._display_statistics(statistics)
 
         except VerificationImpossibleException:
             display_and_log_error(
@@ -88,15 +81,3 @@ class UserInterface:
             "\n\tIs the offer verified as credible:",
             convert_bool_to_string(is_verified)
         )
-
-
-    def _display_statistics(self, statistics: Statistics) -> None:
-        print("\n\nNumber of offers :", statistics.offers_number)
-        print("Silhouette score:", statistics.silhouette_score)
-        print("Calinski Harabasz score:", statistics.calinski_harabasz_score)
-        print("Davies Bouldin score:", statistics.davies_bouldin_score)
-        latex_table_row: str = self.latex_generator.get_table_body(
-            [[self.search_phrase] + statistics.to_list()]
-        )
-        print(latex_table_row)
-        save_to_file(STATISTICS_PATH, latex_table_row + "\n", "a")
