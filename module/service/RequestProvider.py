@@ -8,7 +8,7 @@ from module.service.Logger import Logger
 from module.service.request.OfferDetailsProvider import OfferDetailsProvider
 from module.service.request.OfferIdProvider import OfferIdProvider
 from module.service.request.SellerDetailsProvider import SellerDetailsProvider
-from module.utils import display_and_log, remove_none_items
+from module.utils import display_and_log_info, remove_none_items
 
 
 class RequestProvider:
@@ -22,7 +22,7 @@ class RequestProvider:
 
     def get_offers(self) -> List[Offer]:
         offers_id: List[str] = self.offer_id_provider.get_offers_id()
-        display_and_log(self.logger, "Offers to download: " + str(len(offers_id)))
+        display_and_log_info(self.logger, "Offers to download: " + str(len(offers_id)))
         return remove_none_items([self._prepare_offer(offer_id) for offer_id in tqdm(offers_id)])
 
 

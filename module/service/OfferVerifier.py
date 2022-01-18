@@ -13,7 +13,8 @@ from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
 from module.service.clustering.Clusterizer import Clusterizer
 from module.service.clustering.KMeansClusterizer import KMeansClusterizer
-from module.utils import display_and_log, get_filename, read_object_from_file, save_object_to_file
+from module.utils import display_and_log_info, get_filename, read_object_from_file, \
+    save_object_to_file
 
 
 class OfferVerifier:
@@ -26,18 +27,19 @@ class OfferVerifier:
 
 
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
-        display_and_log(self.logger, "Downloading offers, Please wait ...")
+        display_and_log_info(self.logger, "Downloading offers, Please wait ...")
         # TODO Add True as param for using local file
         offers: List[Offer] = self.download_offers()
 
-        display_and_log(self.logger, "Downloading offers done!")
+        display_and_log_info(self.logger, "Downloading offers done!")
         clusterizer: Clusterizer = KMeansClusterizer(offers)
 
         try:
-            display_and_log(self.logger, "Performing the analysis of the offers, Please wait ...")
+            display_and_log_info(self.logger,
+                                 "Performing the analysis of the offers, Please wait ...")
             combined_offers, statistics = clusterizer.clusterize()
             verified_offers = self._choose_list_with_more_credible_offers(combined_offers)
-            display_and_log(self.logger, "Analysis of the offers done!")
+            display_and_log_info(self.logger, "Analysis of the offers done!")
         except ChoosingCredibleOfferNotPossibleException:
             raise VerificationImpossibleException
 

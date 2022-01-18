@@ -6,7 +6,7 @@ from module.constants import RESULTS_DIRECTORY
 from module.interface.UserInterface import UserInterface
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
-from module.utils import create_directory, run_main
+from module.utils import create_directory, display_and_log_info, run_main
 
 """
 """
@@ -33,7 +33,7 @@ def main() -> None:
         user_interface.display_result()
     else:
         offer_verifier: OfferVerifier = OfferVerifier(search_phrase, save_offers)
-        print(len(offer_verifier.download_offers()))
+        display_and_log_info(logger, str(len(offer_verifier.download_offers())))
 
 
 def prepare_args() -> Namespace:

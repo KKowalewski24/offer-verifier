@@ -9,7 +9,8 @@ from module.service.LatexGenerator import LatexGenerator
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
 from module.service.PdfGenerator import PdfGenerator
-from module.utils import convert_bool_to_string, has_access_to_internet, save_to_file
+from module.utils import convert_bool_to_string, display_and_log_error, has_access_to_internet, \
+    save_to_file
 
 
 class UserInterface:
@@ -25,8 +26,7 @@ class UserInterface:
         self.logger = Logger().get_logging_instance()
 
         if not has_access_to_internet():
-            print("No access to the Internet, program cannot be run")
-            self.logger.error("No access to the Internet, program cannot be run")
+            display_and_log_error(self.logger, "No access to the Internet, program cannot be run")
             sys.exit()
         print()
 
@@ -46,11 +46,8 @@ class UserInterface:
                 self._display_statistics(statistics)
 
         except VerificationImpossibleException:
-            print(
-                "Program cannot decide whether offers are credible or not - both clusters "
-                "have the same number of super sellers"
-            )
-            self.logger.error(
+            display_and_log_error(
+                self.logger,
                 "Program cannot decide whether offers are credible or not - both clusters "
                 "have the same number of super sellers"
             )
