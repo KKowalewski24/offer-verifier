@@ -1,10 +1,9 @@
 import sys
 from typing import List, Tuple
 
-from module.constants import CURRENCY_US_DOLLAR, RESULTS_DIRECTORY
+from module.constants import CURRENCY_US_DOLLAR
 from module.exception.VerificationImpossibleException import VerificationImpossibleException
 from module.model.Offer import Offer
-from module.service.LatexGenerator import LatexGenerator
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
 from module.service.PdfGenerator import PdfGenerator
@@ -14,11 +13,9 @@ from module.utils import convert_bool_to_string, display_and_log_error, has_acce
 class UserInterface:
 
     def __init__(self, search_phrase: str, generate_pdf: bool) -> None:
-        self.search_phrase: str = search_phrase
         self.generate_pdf: bool = generate_pdf
         self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase)
         self.pdf_generator: PdfGenerator = PdfGenerator()
-        self.latex_generator: LatexGenerator = LatexGenerator(RESULTS_DIRECTORY)
         self.logger = Logger().get_logging_instance()
 
         if not has_access_to_internet():

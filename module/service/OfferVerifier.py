@@ -1,6 +1,6 @@
 from typing import Any, Callable, List, Tuple
+
 from nameof import nameof
-import numpy as np
 
 from module.constants import OFFERS_PATH, PICKLE_EXTENSION
 from module.exception.ChoosingCredibleOfferNotPossibleException import \
@@ -40,8 +40,7 @@ class OfferVerifier:
             display_and_log_info(
                 self.logger, "Performing the analysis of the offers, Please wait ..."
             )
-            combined_offers, statistics = self.clusterizer(offers).clusterize()
-            verified_offers = self._choose_list_with_more_credible_offers(combined_offers)
+            verified_offers, statistics = self.clusterizer(offers).clusterize()
             display_and_log_info(self.logger, "Analysis of the offers done!")
         except ChoosingCredibleOfferNotPossibleException:
             raise VerificationImpossibleException()
@@ -62,27 +61,6 @@ class OfferVerifier:
             )
 
         return offers
-
-
-    def _choose_list_with_more_credible_offers(
-            self, combined_offers: Tuple[List[Offer], List[Offer]]
-    ) -> Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]:
-        first_list_offers, second_list_offers = combined_offers
-        first_list_average_feedback_score: float = self._average_feedback_score(first_list_offers)
-        second_list_average_feedback_score: float = self._average_feedback_score(second_list_offers)
-
-        if first_list_average_feedback_score > second_list_average_feedback_score:
-            result = (first_list_offers, True), (second_list_offers, False)
-        elif first_list_average_feedback_score < second_list_average_feedback_score:
-            result = (second_list_offers, True), (first_list_offers, False)
-        else:
-            raise ChoosingCredibleOfferNotPossibleException()
-
-        return result
-
-
-    def _average_feedback_score(self, offers: List[Offer]) -> float:
-        return round(np.sum([offer.seller.feedback_score for offer in offers]) / len(offers), 2)
 
 
     def _validate_init_params(self) -> None:
