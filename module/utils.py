@@ -56,6 +56,11 @@ def display_and_log_info(logger_instance: Any, text: str) -> None:
     logger_instance.info(text)
 
 
+def display_and_log_warning(logger_instance: Any, text: str) -> None:
+    print(text)
+    logger_instance.warning(text)
+
+
 def display_and_log_error(logger_instance: Any, text: str) -> None:
     print(text)
     logger_instance.error(text)

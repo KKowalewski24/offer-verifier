@@ -28,24 +28,10 @@ class Clusterizer:
 
 
     @abstractmethod
-    def clusterize(self) -> Tuple[Tuple[List[Offer], List[Offer]], Statistics]:
+    def clusterize(
+            self
+    ) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         pass
-
-
-    def _combine_offers(
-            self, dataset: pd.DataFrame
-    ) -> Tuple[Tuple[List[Offer], List[Offer]], Statistics]:
-        # Combine offers and assigned cluster numbers - in theory number of
-        # offers and array with cluster numbers should have equal length and it should be
-        # in same order that is why it is merged
-        combined_offers: List[Tuple[Offer, int]] = list(zip(self.offers, self.cluster_labels))
-        return (
-            (
-                [combined_offer[0] for combined_offer in combined_offers if combined_offer[1] == 0],
-                [combined_offer[0] for combined_offer in combined_offers if combined_offer[1] == 1]
-            ),
-            self._calculate_statistics(dataset)
-        )
 
 
     def _prepare_dataset(self) -> pd.DataFrame:
@@ -62,6 +48,7 @@ class Clusterizer:
 
 
     def _calculate_statistics(self, dataset: pd.DataFrame) -> Statistics:
+        # TODO ADD MORE STATISTICS
         return Statistics(
             dataset.shape[0],
             round(silhouette_score(dataset, self.cluster_labels), 3),
