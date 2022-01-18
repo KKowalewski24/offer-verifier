@@ -26,14 +26,4 @@ class KMeansClusterizer(Clusterizer):
         self.cluster_labels: np.ndarray = k_means.fit_predict(dataset)
         display_and_log(self.logger, "Clustering finished")
 
-        # Combine offers and assigned cluster numbers - in theory number of
-        # offers and array with cluster numbers should have equal length and it should be
-        # in same order that is why it is merged
-        combined_offers: List[Tuple[Offer, int]] = list(zip(self.offers, self.cluster_labels))
-        return (
-            (
-                [combined_offer[0] for combined_offer in combined_offers if combined_offer[1] == 0],
-                [combined_offer[0] for combined_offer in combined_offers if combined_offer[1] == 1]
-            ),
-            self._calculate_statistics(dataset)
-        )
+        return self._combine_offers(dataset)
