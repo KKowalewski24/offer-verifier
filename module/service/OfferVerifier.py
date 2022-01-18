@@ -24,10 +24,10 @@ class OfferVerifier:
                  save_offers: bool = False,
                  clusterizer: Callable[[List[Offer]], Clusterizer] = KMeansClusterizer) -> None:
         self.logger = Logger().get_logging_instance()
-        self.clusterizer: Callable[[Any], Clusterizer] = clusterizer
         self.search_phrase = search_phrase
-        self.save_offers = save_offers
         self.path_to_local_file = path_to_local_file
+        self.save_offers = save_offers
+        self.clusterizer: Callable[[Any], Clusterizer] = clusterizer
         self._validate_init_params()
 
 
