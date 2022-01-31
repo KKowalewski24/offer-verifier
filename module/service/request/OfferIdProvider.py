@@ -42,13 +42,15 @@ class OfferIdProvider(BaseProvider):
 
 
     def _remove_related_offers(self, tag: Tag) -> Tag:
-        hashed_spacer = hash(tag.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES))
-        hashed_children = [hash(child) for child in tag.children]
+        separator_div = tag.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES)
+        if separator_div is None:
+            return tag
 
+        hashed_children = [hash(child) for child in tag.children]
         if len(list(tag.children)) != len(hashed_children):
             raise ArraysLengthNotEqualException()
 
-        separator_index = hashed_children.index(hashed_spacer)
+        separator_index = hashed_children.index(hash(separator_div))
         content = str(list(tag.children)[:separator_index])
         return self.get_beautiful_soup_instance_by_content(content)
 

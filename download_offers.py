@@ -4,7 +4,7 @@ from module.service.OfferVerifier import OfferVerifier
 from module.utils import run_main
 
 SEARCH_PHRASES: List[str] = [
-    "amd razen 9"
+    "amd ryzen 9"
     "intel core i9"
     "kingston a400"
     "iphone 7 plus 128gb"
