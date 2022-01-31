@@ -16,7 +16,7 @@ class UserInterface:
 
     def __init__(self, search_phrase: str, generate_pdf: bool) -> None:
         self.generate_pdf: bool = generate_pdf
-        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase)
+        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase=search_phrase)
         self.pdf_generator: PdfGenerator = PdfGenerator()
         self.logger = Logger().get_logging_instance()
 
