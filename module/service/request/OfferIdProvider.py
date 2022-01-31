@@ -7,7 +7,7 @@ from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PA
     PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
 from module.exception.ArraysLengthNotEqualException import ArraysLengthNotEqualException
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import remove_duplicates, remove_none_items, save_to_file
+from module.utils import remove_duplicates, remove_none_items
 
 
 class OfferIdProvider(BaseProvider):
@@ -32,20 +32,8 @@ class OfferIdProvider(BaseProvider):
             return []
 
         ul = soup.find(attrs=OFFERS_ID_A_HREF_ATTRIBUTES).find("ul")
-        self.remove_html_comments(ul)
-        self.remove_html_comments(ul)
         list_items = self._remove_related_offers(ul).select("li")
         a_hrefs = remove_none_items([list_item.find("a") for list_item in list_items])
-
-        # save_to_file("separator.html",
-        #              str(tag.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES)))
-        for x in ul.children:
-            save_to_file("children.html", f"{x}\n", mode="a")
-        # hashed_spacer = hash(ul.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES))
-        # hashed_childrens = [hash(str(x)) for x in ul.children]
-        # separator_index = (hashed_childrens.index(hashed_spacer))
-        # filtered_children = str(list(ul.children)[:separator_index])
-        # BeautifulSoup(filtered_children, HTML_PARSER).select("li")
 
         return [
             self.urlparse_path_replace(a_href.get("href"), SLASH_ITM)
