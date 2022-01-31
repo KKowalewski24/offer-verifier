@@ -12,7 +12,7 @@ class LatexItem:
 
 
 class Table(LatexItem):
-    begin: str = "\\begin{table}[!htbp]\n"
+    begin: str = "\\begin{table}[H]\n"
     back_slashes: str = "\\\\"
     hline: str = "\hline\n"
     end_tabular: str = "\end{tabular}\n"
@@ -37,7 +37,7 @@ class Table(LatexItem):
 
 
 class Image(LatexItem):
-    begin: str = "\\begin{figure}[!htbp]\n"
+    begin: str = "\\begin{figure}[H]\n"
     include: str = "\includegraphics\n"
     width: str = "[width=\\textwidth,keepaspectratio]\n"
     end: str = "\end{figure}"
@@ -73,8 +73,8 @@ class LatexGenerator:
 
 
     def generate_vertical_table_df(self, df: pd.DataFrame, filename: str) -> None:
-        result: str = self.table.begin + self.table.centering \
-                      + self.table.get_begin_tabular(len(df.columns)) + self.table.hline
+        result: str = (self.table.begin + self.table.centering
+                       + self.table.get_begin_tabular(len(df.columns)) + self.table.hline)
 
         header: str = ""
         for i in range(len(df.columns)):
@@ -92,14 +92,14 @@ class LatexGenerator:
                     body += self.table.ampersand
             body += " " + self.table.back_slashes + " " + self.table.hline
 
-        result += header + body + self.table.end_tabular + self.table.get_caption(filename) \
-                  + self.table.get_label(filename) + self.table.end + self.table.float_barrier
+        result += (header + body + self.table.end_tabular + self.table.get_caption(filename)
+                   + self.table.get_label(filename) + self.table.end)
         self._save_to_file(result, filename)
 
 
     def generate_horizontal_table_df(self, df: pd.DataFrame, filename: str) -> None:
-        result: str = self.table.begin + self.table.centering \
-                      + self.table.get_begin_tabular(len(df.columns) + 1) + self.table.hline
+        result: str = (self.table.begin + self.table.centering
+                       + self.table.get_begin_tabular(len(df.columns) + 1) + self.table.hline)
 
         header: str = ""
         for i in range(len(df.columns)):
@@ -107,8 +107,7 @@ class LatexGenerator:
             if i <= len(df.columns) - 2:
                 header += self.table.ampersand
 
-        result += self.table.ampersand + header + " " \
-                  + self.table.back_slashes + " " + self.table.hline
+        result += self.table.ampersand + header + " " + self.table.back_slashes + " " + self.table.hline
 
         body: str = ""
         for i in range(len(df.values)):
@@ -120,27 +119,18 @@ class LatexGenerator:
 
             body += " " + self.table.back_slashes + " " + self.table.hline
 
-        result += body + self.table.end_tabular + self.table.get_caption(filename) \
-                  + self.table.get_label(filename) + self.table.end + self.table.float_barrier
+        result += (body + self.table.end_tabular + self.table.get_caption(filename)
+                   + self.table.get_label(filename) + self.table.end)
         self._save_to_file(result, filename)
 
 
     def generate_chart_image(self, filename: str) -> None:
-        result: str = self.image.begin + self.image.centering \
-                      + self.image.include + self.image.width
+        result: str = self.image.begin + self.image.centering + self.image.include + self.image.width
         result += self.image.get_latex_path(filename)
         result += self.image.get_caption(self._remove_png_extension(filename))
         result += self.image.get_label(self._remove_png_extension(filename))
         result += self.image.end
         self._save_to_file(result, filename)
-
-
-    def _compare_array_with_matrix_rows(self, array: List[Any], matrix: List[List[Any]]) -> bool:
-        for item in matrix:
-            if len(array) != len(item):
-                return False
-
-        return True
 
 
     def _save_to_file(self, data: str, filename: str) -> None:
