@@ -14,9 +14,7 @@ from module.utils import display_and_log_info
 
 class KMeansClusterizer(Clusterizer):
 
-    def clusterize(
-            self
-    ) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         display_and_log_info(self.logger, "Preparing dataset")
         dataset: pd.DataFrame = self._prepare_dataset()
         display_and_log_info(self.logger, "Dataset prepared")

@@ -59,7 +59,7 @@ OFFERS_ID_A_HREF_ATTRIBUTES: Dict[str, str] = {
 }
 
 OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES: Dict[str, str] = {
-    "id": "srp-river-results"
+    "class": "srp-river-answer srp-river-answer--REWRITE_START"
 }
 
 TITLE_PANEL_ATTRIBUTES: Dict[str, str] = {

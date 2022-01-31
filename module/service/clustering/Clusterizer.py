@@ -28,9 +28,7 @@ class Clusterizer:
 
 
     @abstractmethod
-    def clusterize(
-            self
-    ) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         pass
 
 
