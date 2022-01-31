@@ -2,9 +2,9 @@ from typing import List
 
 from bs4 import Tag
 
-from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, \
-    LIST_VIEW, OFFERS_ID_A_HREF_ATTRIBUTES, OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES, \
-    PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
+from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, LIST_VIEW, \
+    OFFERS_ID_A_HREF_ATTRIBUTES, OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES, PARAM_BRAND_NEW, \
+    PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SCH_PAGE, SLASH_ITM
 from module.exception.ArraysLengthNotEqualException import ArraysLengthNotEqualException
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import remove_duplicates, remove_none_items
@@ -35,10 +35,13 @@ class OfferIdProvider(BaseProvider):
         list_items = self._remove_related_offers(ul).select("li")
         a_hrefs = remove_none_items([list_item.find("a") for list_item in list_items])
 
-        return [
+        offers_id = [
             self.urlparse_path_replace(a_href.get("href"), SLASH_ITM)
             for a_href in a_hrefs
         ]
+
+        # Removing redundant SCH_PAGE - somehow select("li") returns also div with this URL
+        return [offer_id for offer_id in offers_id if offer_id != SCH_PAGE]
 
 
     def _remove_related_offers(self, tag: Tag) -> Tag:

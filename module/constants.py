@@ -32,6 +32,7 @@ SLASH_ITM: str = SLASH + ITM
 USR: str = "usr/"
 SLASH_USR: str = SLASH + USR
 FEEDBACK_PROFILE: str = "fdbk/feedback_profile/"
+SCH_PAGE: str = "/sch/i.html"
 
 EBAY_BASE_PATH: str = "https://www.ebay.com/"
 EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + PARAM_QUERY
