@@ -14,7 +14,7 @@ from module.utils import is_valid_item, normalize_text, remove_new_line_items, r
 class OfferDetailsProvider(BaseProvider):
 
     def get_offer_details(self, offer_id: str) -> Dict[str, Any]:
-        soup, is_error_page = self.get_beautiful_soup_instance(EBAY_ITEM_PATH + offer_id)
+        soup, is_error_page = self.get_beautiful_soup_instance_by_url(EBAY_ITEM_PATH + offer_id)
         if is_error_page:
             self.logger.error("Error Page")
             return {}
@@ -84,7 +84,7 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_description_length(self, soup: BeautifulSoup) -> str:
         description_url: str = soup.find(attrs=OFFER_DESCRIPTION_ATTRIBUTES).get("src")
-        description_soap, is_error_page = self.get_beautiful_soup_instance(description_url)
+        description_soap, is_error_page = self.get_beautiful_soup_instance_by_url(description_url)
 
         if not is_error_page and is_valid_item(description_soap):
             return str(len(normalize_text(description_soap.get_text())))

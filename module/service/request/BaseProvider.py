@@ -3,18 +3,37 @@ from typing import Tuple
 from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment, Tag
 from requests import Response
 from requests.exceptions import ChunkedEncodingError
 
 from module.constants import ERROR_PAGE_PHRASE, HTML_PARSER, REQUEST_HEADER
 from module.service.Logger import Logger
+from module.utils import display_and_log_info
 
 
 class BaseProvider(ABC):
 
     def __init__(self) -> None:
         self.logger = Logger().get_logging_instance()
+
+
+    def get_beautiful_soup_instance_by_url(self, url: str) -> Tuple[BeautifulSoup, bool]:
+        response = self._make_request(url)
+        self.logger.info("url: " + url + " ||| Status Code: " + str(response.status_code))
+        soup: BeautifulSoup = self.get_beautiful_soup_instance_by_content(response.content)
+
+        is_error_page: bool = False
+        if soup.title.string is not None:
+            is_error_page = ERROR_PAGE_PHRASE in soup.title.string
+        if soup.title.string is None:
+            is_error_page = True
+
+        return soup, is_error_page
+
+
+    def get_beautiful_soup_instance_by_content(self, content: str) -> BeautifulSoup:
+        return BeautifulSoup(content, HTML_PARSER)
 
 
     def create_session(self) -> requests.Session:
@@ -27,18 +46,14 @@ class BaseProvider(ABC):
         return urlparse(url).path.replace(replaced_text, replacing_text)
 
 
-    def get_beautiful_soup_instance(self, url: str) -> Tuple[BeautifulSoup, bool]:
-        response = self._make_request(url)
-        self.logger.info("url: " + url + " ||| Status Code: " + str(response.status_code))
-        soup: BeautifulSoup = BeautifulSoup(response.content, HTML_PARSER)
+    def remove_html_comments(self, tag: Tag) -> None:
+        if tag.children is None:
+            display_and_log_info(self.logger, "Tag has no children!")
+            return
 
-        is_error_page: bool = False
-        if soup.title.string is not None:
-            is_error_page = ERROR_PAGE_PHRASE in soup.title.string
-        if soup.title.string is None:
-            is_error_page = True
-
-        return soup, is_error_page
+        for child in tag.children:
+            if isinstance(child, Comment):
+                child.extract()
 
 
     def _make_request(self, url: str) -> Response:

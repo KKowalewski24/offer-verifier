@@ -1,9 +1,13 @@
 from typing import List
 
-from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, LIST_VIEW, \
-    OFFERS_ID_A_HREF_ATTRIBUTES, PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
+from bs4 import Tag
+
+from module.constants import EBAY_SEARCH_PATH, ITEMS_NUMBER_PHRASE, ITEMS_PER_PAGE, \
+    LIST_VIEW, OFFERS_ID_A_HREF_ATTRIBUTES, OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES, \
+    PARAM_BRAND_NEW, PARAM_BUY_NOW, PARAM_PAGE_NUMBER, SLASH_ITM
+from module.exception.ArraysLengthNotEqualException import ArraysLengthNotEqualException
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import remove_duplicates, remove_none_items
+from module.utils import remove_duplicates, remove_none_items, save_to_file
 
 
 class OfferIdProvider(BaseProvider):
@@ -22,15 +26,26 @@ class OfferIdProvider(BaseProvider):
 
 
     def _get_offers_id_for_single_page(self, page_number: int) -> List[str]:
-        soup, is_error_page = self.get_beautiful_soup_instance(self._create_url(page_number))
+        soup, is_error_page = self.get_beautiful_soup_instance_by_url(self._create_url(page_number))
         if is_error_page:
             self.logger.error("Error Page")
             return []
 
-        a_hrefs = remove_none_items([
-            list_item.find("a")
-            for list_item in soup.find(attrs=OFFERS_ID_A_HREF_ATTRIBUTES).find("ul").select("li")
-        ])
+        ul = soup.find(attrs=OFFERS_ID_A_HREF_ATTRIBUTES).find("ul")
+        self.remove_html_comments(ul)
+        self.remove_html_comments(ul)
+        list_items = self._remove_related_offers(ul).select("li")
+        a_hrefs = remove_none_items([list_item.find("a") for list_item in list_items])
+
+        # save_to_file("separator.html",
+        #              str(tag.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES)))
+        for x in ul.children:
+            save_to_file("children.html", f"{x}\n", mode="a")
+        # hashed_spacer = hash(ul.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES))
+        # hashed_childrens = [hash(str(x)) for x in ul.children]
+        # separator_index = (hashed_childrens.index(hashed_spacer))
+        # filtered_children = str(list(ul.children)[:separator_index])
+        # BeautifulSoup(filtered_children, HTML_PARSER).select("li")
 
         return [
             self.urlparse_path_replace(a_href.get("href"), SLASH_ITM)
@@ -38,8 +53,20 @@ class OfferIdProvider(BaseProvider):
         ]
 
 
+    def _remove_related_offers(self, tag: Tag) -> Tag:
+        hashed_spacer = hash(tag.find(attrs=OFFERS_ID_RELATED_OFFERS_SEPARATOR_ATTRIBUTES))
+        hashed_children = [hash(child) for child in tag.children]
+
+        if len(list(tag.children)) != len(hashed_children):
+            raise ArraysLengthNotEqualException()
+
+        separator_index = hashed_children.index(hashed_spacer)
+        content = str(list(tag.children)[:separator_index])
+        return self.get_beautiful_soup_instance_by_content(content)
+
+
     def _get_pages_range(self) -> range:
-        soup, is_error_page = self.get_beautiful_soup_instance(self._create_url(1))
+        soup, is_error_page = self.get_beautiful_soup_instance_by_url(self._create_url(1))
         if is_error_page:
             self.logger.error("Error Page")
             return range(0)
