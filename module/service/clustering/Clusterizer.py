@@ -3,6 +3,7 @@ from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
+from sklearn import preprocessing
 from sklearn.metrics import calinski_harabasz_score, davies_bouldin_score, silhouette_score
 from sklearn.preprocessing import LabelEncoder
 
@@ -42,7 +43,8 @@ class Clusterizer:
         for name in self.non_numeric_feature_names:
             df[name] = label_encoder.fit_transform(df[name])
 
-        return df
+        df = df.astype(float)
+        return pd.DataFrame(data=preprocessing.normalize(df), columns=df.columns)
 
 
     def _calculate_statistics(self, dataset: pd.DataFrame) -> Statistics:
