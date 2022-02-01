@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
     OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, \
-    PRODUCT_RATINGS_KEYWORDS, RATINGS_CLASS_ATTRIBUTE, RETURNS_KEYWORD, RETURNS_NOT_ACCEPTED, \
-    RETURNS_OPTION_ATTRIBUTES, RETURNS_OPTION_SPAN_ATTRIBUTES, RETURNS_OPTION_WHY_BUY_ATTRIBUTES, \
-    REVIEWS_CLASS_ATTRIBUTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
+    PRODUCT_RATINGS_KEYWORDS, RATINGS_CLASS_ATTRIBUTE, RETURNS_NEGATION, RETURNS_NOT_ACCEPTED, \
+    RETURNS_OPTION_ATTRIBUTES, REVIEWS_CLASS_ATTRIBUTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, \
+    TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import is_valid_item, normalize_text, remove_new_line_items, replace_many
 
@@ -70,16 +70,14 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_return_option(self, soup: BeautifulSoup) -> Optional[bool]:
         returns_div = soup.find(attrs=RETURNS_OPTION_ATTRIBUTES)
-        other_returns_div = soup.find(attrs=RETURNS_OPTION_WHY_BUY_ATTRIBUTES)
-        if not is_valid_item(returns_div) or not is_valid_item(other_returns_div):
+        if not is_valid_item(returns_div):
             return None
 
         returns_phrase: str = (
-            returns_div.find_parent().find(attrs=RETURNS_OPTION_SPAN_ATTRIBUTES).get_text(strip=True)
+            returns_div.find("a").find_parent().find_all("span")[0].get_text(strip=True)
         )
-        other_returns_phrase: str = str(other_returns_div.get_text())
 
-        return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_KEYWORD in other_returns_phrase
+        return returns_phrase != RETURNS_NOT_ACCEPTED or RETURNS_NEGATION not in returns_phrase
 
 
     def _get_description_length(self, soup: BeautifulSoup) -> str:
