@@ -5,14 +5,15 @@ from module.constants import PICKLE_EXTENSION
 from module.service.LatexGenerator import LatexGenerator
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
+from module.service.PdfGenerator import PdfGenerator
 from module.service.clustering.KMeansClusterizer import KMeansClusterizer
 from module.utils import run_main
 
 EXPERIMENTS_RESULTS_DIR: str = "experiment_results"
-# TODO
-DATASET_DIR: str = ""
+DATASET_DIR: str = "dataset_snapshot/"
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
+pdf_generator: PdfGenerator = PdfGenerator()
 logger = Logger().get_logging_instance()
 
 
