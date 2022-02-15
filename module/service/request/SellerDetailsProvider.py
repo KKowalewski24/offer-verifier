@@ -14,8 +14,8 @@ from module.utils import is_valid_item, normalize_text, replace_many
 class SellerDetailsProvider(BaseProvider):
 
     def get_seller_details(self, seller_id: str) -> Dict[str, Any]:
-        basic_soup, is_error_page = self.get_beautiful_soup_instance(EBAY_USER_PATH + seller_id)
-        details_soup, is_error_details_page = self.get_beautiful_soup_instance(
+        basic_soup, is_error_page = self.get_beautiful_soup_instance_by_url(EBAY_USER_PATH + seller_id)
+        details_soup, is_error_details_page = self.get_beautiful_soup_instance_by_url(
             EBAY_USER_DETAILS_PATH + seller_id
         )
 

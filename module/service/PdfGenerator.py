@@ -11,9 +11,7 @@ from module.utils import break_string, convert_bool_to_string, get_filename, \
 
 class PdfGenerator:
 
-    def generate(
-            self, combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
-    ) -> None:
+    def generate(self, combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]) -> None:
         PdfDocument().generate_single_report(combined_offers[0])
         PdfDocument().generate_single_report(combined_offers[1])
 

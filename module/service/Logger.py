@@ -6,9 +6,9 @@ from module.constants import LOGS_FILENAME
 
 class Logger:
 
-    def __init__(self) -> None:
+    def __init__(self, logs_filename: str = LOGS_FILENAME) -> None:
         logging.basicConfig(
-            filename=LOGS_FILENAME,
+            filename=logs_filename,
             level=logging.INFO,
             format="[%(asctime)s] {%(pathname)s:%(lineno)d} - %(message)s"
         )

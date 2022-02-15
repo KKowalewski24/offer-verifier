@@ -3,7 +3,7 @@ from typing import Tuple
 from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from requests import Response
 from requests.exceptions import ChunkedEncodingError
 
@@ -17,20 +17,11 @@ class BaseProvider(ABC):
         self.logger = Logger().get_logging_instance()
 
 
-    def create_session(self) -> requests.Session:
-        session: requests.Session = requests.Session()
-        session.headers = REQUEST_HEADER
-        return session
-
-
-    def urlparse_path_replace(self, url: str, replaced_text: str, replacing_text: str = "") -> str:
-        return urlparse(url).path.replace(replaced_text, replacing_text)
-
-
-    def get_beautiful_soup_instance(self, url: str) -> Tuple[BeautifulSoup, bool]:
-        response = self._make_request(url)
+    def get_beautiful_soup_instance_by_url(self, url: str) -> Tuple[BeautifulSoup, bool]:
+        response = self.make_request(url)
         self.logger.info("url: " + url + " ||| Status Code: " + str(response.status_code))
-        soup: BeautifulSoup = BeautifulSoup(response.content, HTML_PARSER)
+        soup: BeautifulSoup = self.get_beautiful_soup_instance_by_content(response.content)
+        self.remove_html_comments(soup)
 
         is_error_page: bool = False
         if soup.title.string is not None:
@@ -41,7 +32,7 @@ class BaseProvider(ABC):
         return soup, is_error_page
 
 
-    def _make_request(self, url: str) -> Response:
+    def make_request(self, url: str) -> Response:
         is_request_exception = True
         response = None
 
@@ -53,3 +44,22 @@ class BaseProvider(ABC):
                 self.logger.error("ChunkedEncodingError " + str(e))
 
         return response
+
+
+    def create_session(self) -> requests.Session:
+        session: requests.Session = requests.Session()
+        session.headers = REQUEST_HEADER
+        return session
+
+
+    def get_beautiful_soup_instance_by_content(self, content: str) -> BeautifulSoup:
+        return BeautifulSoup(content, HTML_PARSER)
+
+
+    def remove_html_comments(self, soup: BeautifulSoup) -> None:
+        for comment in soup.find_all(text=lambda text: isinstance(text, Comment)):
+            comment.extract()
+
+
+    def urlparse_path_replace(self, url: str, replaced_text: str, replacing_text: str = "") -> str:
+        return urlparse(url).path.replace(replaced_text, replacing_text)
