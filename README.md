@@ -14,10 +14,8 @@ pip install -r requirements.txt
 
 #### How to use
 * Run `python main.py -h` in order to get information about parameters
-* Run `python main.py -p "OFFER_TITLE" --pdf -s`
-* Additional parameter `-so` saves downloaded offers to file in binary format
+* Run `python main.py -p "OFFER_TITLE" --pdf`
 * Additional parameter `--pdf` generates pdf report
-* Additional parameter `-s` generates clustering statistics 
 
 #### Data Analysis
 * For KMeans K is always set to 2 because only 2 clusters are needed

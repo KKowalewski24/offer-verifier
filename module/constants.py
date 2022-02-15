@@ -32,6 +32,7 @@ SLASH_ITM: str = SLASH + ITM
 USR: str = "usr/"
 SLASH_USR: str = SLASH + USR
 FEEDBACK_PROFILE: str = "fdbk/feedback_profile/"
+SCH_PAGE: str = "/sch/i.html"
 
 EBAY_BASE_PATH: str = "https://www.ebay.com/"
 EBAY_SEARCH_PATH: str = EBAY_BASE_PATH + PARAM_QUERY
@@ -76,15 +77,11 @@ OFFER_IMAGE_ATTRIBUTES: Dict[str, str] = {
 }
 
 RETURNS_OPTION_ATTRIBUTES: Dict[str, str] = {
-    "id": "returnsPlacementHolderId"
+    "data-testid": "x-returns-minview"
 }
 
 RETURNS_OPTION_SPAN_ATTRIBUTES: Dict[str, str] = {
     "id": "vi-ret-accrd-txt"
-}
-
-RETURNS_OPTION_WHY_BUY_ATTRIBUTES: Dict[str, str] = {
-    "id": "why2buy"
 }
 
 OFFER_DESCRIPTION_ATTRIBUTES: Dict[str, str] = {
@@ -138,7 +135,7 @@ DETAILED_SELLER_STARS_FOUR_ATTRIBUTES: Dict[str, str] = {
 ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
-RETURNS_KEYWORD: str = "returns"
+RETURNS_NEGATION: str = "does not"
 PRODUCT_RATINGS_KEYWORDS: List[str] = [
     " product", " ratings", " rating"
 ]

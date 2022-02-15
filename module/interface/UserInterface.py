@@ -2,7 +2,9 @@ import sys
 from typing import List, Tuple
 
 from module.constants import CURRENCY_US_DOLLAR
-from module.exception.VerificationImpossibleException import VerificationImpossibleException
+from module.exception.ChoosingCredibleOfferNotPossibleException import \
+    ChoosingCredibleOfferNotPossibleException
+from module.exception.EmptyDatasetException import EmptyDatasetException
 from module.model.Offer import Offer
 from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
@@ -14,7 +16,7 @@ class UserInterface:
 
     def __init__(self, search_phrase: str, generate_pdf: bool) -> None:
         self.generate_pdf: bool = generate_pdf
-        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase)
+        self.offer_verifier: OfferVerifier = OfferVerifier(search_phrase=search_phrase)
         self.pdf_generator: PdfGenerator = PdfGenerator()
         self.logger = Logger().get_logging_instance()
 
@@ -35,12 +37,16 @@ class UserInterface:
             if self.generate_pdf:
                 self.pdf_generator.generate(combined_offers)
 
-        except VerificationImpossibleException:
+        except ChoosingCredibleOfferNotPossibleException:
             display_and_log_error(
                 self.logger,
                 "Program cannot decide whether offers are credible or not - both clusters "
                 "have the same number of super sellers"
             )
+            sys.exit()
+
+        except EmptyDatasetException:
+            display_and_log_error(self.logger, "Dataset cannot be empty!")
             sys.exit()
 
 

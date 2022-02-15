@@ -3,9 +3,7 @@ from typing import Any, Callable, List, Tuple
 from nameof import nameof
 
 from module.constants import OFFERS_PATH, PICKLE_EXTENSION
-from module.exception.ChoosingCredibleOfferNotPossibleException import \
-    ChoosingCredibleOfferNotPossibleException
-from module.exception.VerificationImpossibleException import VerificationImpossibleException
+from module.exception.EmptyDatasetException import EmptyDatasetException
 from module.exception.WrongConstructorParams import WrongConstructorParams
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -34,16 +32,14 @@ class OfferVerifier:
     def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         display_and_log_info(self.logger, "Downloading offers, Please wait ...")
         offers: List[Offer] = self.download_offers()
-        display_and_log_info(self.logger, "Downloading offers done!")
+        display_and_log_info(self.logger, f"Downloading offers done! Offers count: {len(offers)}")
 
-        try:
-            display_and_log_info(
-                self.logger, "Performing the analysis of the offers, Please wait ..."
-            )
-            verified_offers, statistics = self.clusterizer(offers).clusterize()
-            display_and_log_info(self.logger, "Analysis of the offers done!")
-        except ChoosingCredibleOfferNotPossibleException:
-            raise VerificationImpossibleException()
+        if len(offers) == 0:
+            raise EmptyDatasetException()
+
+        display_and_log_info(self.logger, "Performing the analysis of the offers, Please wait ...")
+        verified_offers, statistics = self.clusterizer(offers).clusterize()
+        display_and_log_info(self.logger, "Analysis of the offers done!")
 
         return verified_offers, statistics
 
