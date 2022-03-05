@@ -48,7 +48,7 @@ class OfferVerifier:
         offers: List[Offer] = (
             list(read_object_from_file(self.path_to_local_file))
             if self.path_to_local_file is not None
-            else RequestProvider(self.search_phrase).get_offers()
+            else RequestProvider().get_offers(self.search_phrase)
         )
 
         if self.save_offers and self.path_to_local_file is None:

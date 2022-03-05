@@ -1,5 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
+from module.model.Offer import Offer
+from module.service.RequestProvider import RequestProvider
 from module.utils import run_main
 
 """
@@ -11,6 +13,8 @@ from module.utils import run_main
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
     args = prepare_args()
+    offer_id: str = ""
+    offer: Offer = RequestProvider().get_offer(offer_id)
 
 
 # DEF ------------------------------------------------------------------------ #

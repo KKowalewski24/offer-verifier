@@ -13,17 +13,21 @@ from module.utils import display_and_log_info, remove_none_items
 
 class RequestProvider:
 
-    def __init__(self, search_phrase: str) -> None:
-        self.offer_id_provider: OfferIdProvider = OfferIdProvider(search_phrase)
+    def __init__(self) -> None:
         self.offer_details_provider: OfferDetailsProvider = OfferDetailsProvider()
         self.seller_details_provider: SellerDetailsProvider = SellerDetailsProvider()
         self.logger = Logger().get_logging_instance()
 
 
-    def get_offers(self) -> List[Offer]:
-        offers_id: List[str] = self.offer_id_provider.get_offers_id()
-        display_and_log_info(self.logger, "Offers to download: " + str(len(offers_id)))
+    def get_offers(self, search_phrase: str) -> List[Offer]:
+        offers_id: List[str] = OfferIdProvider(search_phrase).get_offers_id()
+        display_and_log_info(self.logger, f"Offers to download: {len(offers_id)}")
         return remove_none_items([self._prepare_offer(offer_id) for offer_id in tqdm(offers_id)])
+
+
+    def get_offer(self, offer_id: str) -> Offer:
+        display_and_log_info(self.logger, f"Downloading offer for offer_id: {offer_id}")
+        return self._prepare_offer(offer_id)
 
 
     def _prepare_offer(self, offer_id: str) -> Optional[Offer]:
