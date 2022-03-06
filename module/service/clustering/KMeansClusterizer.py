@@ -1,3 +1,4 @@
+import time
 from typing import List, Tuple
 
 import numpy as np
@@ -15,6 +16,8 @@ from module.utils import display_and_log_info
 class KMeansClusterizer(Clusterizer):
 
     def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+        start_time = time.time()
+
         display_and_log_info(self.logger, "Preparing dataset")
         dataset: pd.DataFrame = self._prepare_dataset()
         display_and_log_info(self.logger, "Dataset prepared")
@@ -28,10 +31,12 @@ class KMeansClusterizer(Clusterizer):
         self.cluster_labels: np.ndarray = k_means.fit_predict(dataset)
         display_and_log_info(self.logger, "Clustering finished")
 
-        return (
-            self._choose_list_with_more_credible_offers(self._combine_offers()),
-            self._calculate_statistics(dataset)
-        )
+        result = self._choose_list_with_more_credible_offers(self._combine_offers())
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        return result, self._calculate_statistics(dataset, execution_time)
 
 
     def _combine_offers(self) -> Tuple[List[Offer], List[Offer]]:

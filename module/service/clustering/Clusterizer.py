@@ -47,11 +47,12 @@ class Clusterizer:
         return pd.DataFrame(data=preprocessing.normalize(df), columns=df.columns)
 
 
-    def _calculate_statistics(self, dataset: pd.DataFrame) -> Statistics:
+    def _calculate_statistics(self, dataset: pd.DataFrame, execution_time: float) -> Statistics:
         # TODO ADD MORE STATISTICS
         return Statistics(
             dataset.shape[0],
             round(silhouette_score(dataset, self.cluster_labels), 3),
             round(calinski_harabasz_score(dataset, self.cluster_labels), 3),
-            round(davies_bouldin_score(dataset, self.cluster_labels), 3)
+            round(davies_bouldin_score(dataset, self.cluster_labels), 3),
+            execution_time
         )
