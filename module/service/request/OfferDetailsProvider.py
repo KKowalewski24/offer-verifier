@@ -47,7 +47,7 @@ class OfferDetailsProvider(BaseProvider):
         if is_valid_item(title_div):
             h1_element = title_div.find("h1")
             if is_valid_item(h1_element):
-                return str(list(h1_element.children)[1])
+                return h1_element.get_text(strip=True)
 
         return None
 

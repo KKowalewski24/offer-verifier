@@ -10,3 +10,4 @@ requests
 scikit-learn
 numpy
 pandas
+fuzzy-c-means
