@@ -52,9 +52,7 @@ class OfferVerifier:
         )
 
         if self.save_offers and self.path_to_local_file is None:
-            save_object_to_file(
-                get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers
-            )
+            save_object_to_file(get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
 
         return offers
 

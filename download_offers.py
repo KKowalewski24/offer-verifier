@@ -1,7 +1,8 @@
 from typing import List
 
+from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
-from module.utils import run_main
+from module.utils import display_and_log_info, run_main
 
 SEARCH_PHRASES: List[str] = [
     "amd ryzen 9"
@@ -26,12 +27,14 @@ SEARCH_PHRASES: List[str] = [
     "porsche 911 rug"
 ]
 
+logger = Logger().get_logging_instance()
+
 
 def main() -> None:
     for search_phrase in SEARCH_PHRASES:
-        print(f"Search phrase: {search_phrase}")
+        display_and_log_info(logger, f"Search phrase: {search_phrase}")
         offers = OfferVerifier(search_phrase=search_phrase, save_offers=True).download_offers()
-        print(f"Downloaded offers: {len(offers)}")
+        display_and_log_info(logger, f"Downloaded offers: {len(offers)}")
 
 
 if __name__ == "__main__":
