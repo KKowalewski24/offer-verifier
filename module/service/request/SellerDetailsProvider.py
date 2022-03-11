@@ -8,7 +8,7 @@ from module.constants import DETAILED_CONTENT_EXTRA_WORD, DETAILED_SELLER_RATING
     EBAY_USER_DETAILS_PATH, EBAY_USER_PATH, FEEDBACK_OVERALL_RATINGS_ATTRIBUTES, POSITIVE_FEEDBACK, \
     SELLER_BASIC_INFO_ATTRIBUTES, SELLER_MEMBER_INFO_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import is_valid_item, normalize_text, replace_many
+from module.utils import display_and_log_info, is_valid_item, normalize_text, replace_many
 
 
 class SellerDetailsProvider(BaseProvider):
@@ -90,7 +90,9 @@ class SellerDetailsProvider(BaseProvider):
             negative_ratings = self.__get_feedback_td_content(table_rows[2])
         else:
             self.logger.info("ratings_section does not exist")
-            self.logger.info(f"Go to {url} and check if captcha verification is not required")
+            display_and_log_info(
+                self.logger, f"Go to {url} and check if captcha verification is not required"
+            )
 
         return positive_ratings, neutral_ratings, negative_ratings
 
@@ -122,7 +124,9 @@ class SellerDetailsProvider(BaseProvider):
             )
         else:
             self.logger.info("ratings_section does not exist")
-            self.logger.info(f"Go to {url} and check if captcha verification is not required")
+            display_and_log_info(
+                self.logger, f"Go to {url} and check if captcha verification is not required"
+            )
 
         return accurate_description, reasonable_shipping_cost, shipping_speed, communication
 
