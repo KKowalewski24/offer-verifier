@@ -37,10 +37,7 @@ def check_if_exists_in_args(arg: str) -> bool:
 def has_access_to_internet() -> bool:
     url: str = "https://www.google.com/"
     response = requests.get(url)
-
-    if response.status_code == HTTP_OK:
-        return True
-    return False
+    return True if response.status_code == HTTP_OK else False
 
 
 def check_http_code_get_json(response: requests.models.Response) -> Dict:
@@ -97,9 +94,7 @@ def convert_bool_to_json(value: bool) -> str:
 
 
 def convert_bool_to_string(value: bool) -> str:
-    if value:
-        return "Yes"
-    return "No"
+    return "Yes" if value else "No"
 
 
 def format_json(data: Dict) -> str:
