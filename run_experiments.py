@@ -2,10 +2,11 @@ import glob
 from argparse import ArgumentParser, Namespace
 
 from module.constants import PICKLE_EXTENSION
-from module.service.LatexGenerator import LatexGenerator
-from module.service.Logger import Logger
+from module.model.Statistics import Statistics
+from module.service.common.LatexGenerator import LatexGenerator
+from module.service.common.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
-from module.service.PdfGenerator import PdfGenerator
+from module.interface.PdfGenerator import PdfGenerator
 from module.service.clustering.KMeansClusterizer import KMeansClusterizer
 from module.utils import run_main
 
@@ -14,7 +15,7 @@ from module.utils import run_main
 
 # VAR ------------------------------------------------------------------------ #
 EXPERIMENTS_RESULTS_DIR: str = "experiment_results"
-DATASET_DIR: str = "results/"
+DATASET_DIR: str = "dataset_snapshot/"
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
 pdf_generator: PdfGenerator = PdfGenerator()
@@ -41,16 +42,8 @@ def main() -> None:
 
 
 # DEF ------------------------------------------------------------------------ #
-# def _display_statistics(statistics: Statistics) -> None:
-#     print("\n\nNumber of offers :", statistics.offers_number)
-#     print("Silhouette score:", statistics.silhouette_score)
-#     print("Calinski Harabasz score:", statistics.calinski_harabasz_score)
-#     print("Davies Bouldin score:", statistics.davies_bouldin_score)
-#     latex_table_row: str = latex_generator.get_table_body(
-#         [[search_phrase] + statistics.to_list()]
-#     )
-#     print(latex_table_row)
-#     save_to_file(STATISTICS_PATH, latex_table_row + "\n", "a")
+def _display_statistics(statistics: Statistics) -> None:
+    pass
 
 
 def prepare_args() -> Namespace:

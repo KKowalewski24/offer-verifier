@@ -19,7 +19,25 @@ class OfferDetailsProvider(BaseProvider):
             self.logger.error("Error Page")
             return {}
 
-        reviews_number, product_rating, ratings_number = self._get_ratings(soup)
+        # self._get_ratings(soup)
+        # TODO
+        ratings = [
+            {
+                "stars_number": -15
+            },
+            {
+                "stars_number": -15
+            },
+        ]
+        reviews = [
+            {
+                "stars_number": -15,
+                "positive_votes_number": -30,
+                "negative_votes_number": -30,
+                "contains_images": True
+            },
+        ]
+
         offer_json: Dict[str, Any] = {
             "id": offer_id,
             "title": self._get_title(soup),
@@ -27,9 +45,8 @@ class OfferDetailsProvider(BaseProvider):
             "image_url": self._get_image_url(soup),
             "has_return_option": self._get_return_option(soup),
             "description_length": self._get_description_length(soup),
-            "product_reviews_number": reviews_number,
-            "product_rating": product_rating,
-            "product_ratings_number": ratings_number,
+            "ratings": ratings,
+            "reviews": reviews,
             "seller": {
                 "id": self._get_seller_id(soup)
             }

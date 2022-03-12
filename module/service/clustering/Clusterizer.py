@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
-from module.service.Logger import Logger
+from module.service.common.Logger import Logger
 
 
 class Clusterizer:
@@ -20,12 +20,6 @@ class Clusterizer:
         self.logger = Logger().get_logging_instance()
         self.offers = offers
         self.cluster_labels: np.ndarray = np.ndarray([])
-        self.feature_names: List[str] = []
-        self.non_numeric_feature_names: List[str] = []
-
-        if self.offers is not None and len(self.offers) != 0:
-            self.feature_names = self.offers[0].get_feature_names()
-            self.non_numeric_feature_names = self.offers[0].get_non_numeric_feature_names()
 
 
     @abstractmethod
@@ -34,17 +28,18 @@ class Clusterizer:
 
 
     def _prepare_dataset(self) -> pd.DataFrame:
-        df: pd.DataFrame = pd.DataFrame(
-            [offer.get_feature_values() for offer in self.offers],
-            columns=self.feature_names
-        )
-
-        label_encoder = LabelEncoder()
-        for name in self.non_numeric_feature_names:
-            df[name] = label_encoder.fit_transform(df[name])
-
-        df = df.astype(float)
-        return pd.DataFrame(data=preprocessing.normalize(df), columns=df.columns)
+        # df: pd.DataFrame = pd.DataFrame(
+        #     [offer.get_feature_values() for offer in self.offers],
+        #     columns=self.feature_names
+        # )
+        #
+        # label_encoder = LabelEncoder()
+        # for name in self.non_numeric_feature_names:
+        #     df[name] = label_encoder.fit_transform(df[name])
+        #
+        # df = df.astype(float)
+        # return pd.DataFrame(data=preprocessing.normalize(df), columns=df.columns)
+        return pd.DataFrame()
 
 
     def _calculate_statistics(self, dataset: pd.DataFrame, execution_time: float) -> Statistics:

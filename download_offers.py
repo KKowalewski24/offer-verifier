@@ -1,6 +1,6 @@
 from typing import List
 
-from module.service.Logger import Logger
+from module.service.common.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
 from module.utils import display_and_log_info, run_main
 

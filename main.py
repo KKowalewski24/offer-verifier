@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from module.constants import RESULTS_DIRECTORY
 from module.interface.UserInterface import UserInterface
-from module.service.Logger import Logger
+from module.service.common.Logger import Logger
 from module.utils import create_directory, run_main
 
 """

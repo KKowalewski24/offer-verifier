@@ -8,7 +8,7 @@ from requests import Response
 from requests.exceptions import ChunkedEncodingError
 
 from module.constants import ERROR_PAGE_PHRASE, HTML_PARSER, REQUEST_HEADER
-from module.service.Logger import Logger
+from module.service.common.Logger import Logger
 
 
 class BaseProvider(ABC):

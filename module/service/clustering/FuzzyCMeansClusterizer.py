@@ -1,7 +1,7 @@
-from module.service.clustering.MeansClusterizer import MeansClusterizer
-
 from fcmeans import FCM
 import pandas as pd
+
+from module.service.clustering.MeansClusterizer import MeansClusterizer
 
 
 class FuzzyCMeansClusterizer(MeansClusterizer):

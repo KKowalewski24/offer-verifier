@@ -5,10 +5,10 @@ from module.constants import CURRENCY_US_DOLLAR
 from module.exception.ChoosingCredibleOfferNotPossibleException import \
     ChoosingCredibleOfferNotPossibleException
 from module.exception.EmptyDatasetException import EmptyDatasetException
+from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
-from module.service.Logger import Logger
 from module.service.OfferVerifier import OfferVerifier
-from module.service.PdfGenerator import PdfGenerator
+from module.service.common.Logger import Logger
 from module.utils import convert_bool_to_string, display_and_log_error, has_access_to_internet
 
 
@@ -63,9 +63,18 @@ class UserInterface:
         print("\tOffer price:", CURRENCY_US_DOLLAR, offer.price)
         print("\tImage URL:", offer.image_url)
         print("\tOption to return item:", offer.has_return_option)
-        print("\tNumber of reviews:", offer.product_reviews_number)
-        print("\tRatings of product:", offer.product_rating)
-        print("\tNumber of ratings:", offer.product_ratings_number)
+
+        print("\tInformation about ratings")
+        for index, rating in enumerate(offer.ratings):
+            print(f"\tRating no.{index}, number of stars:", rating.stars_number)
+
+        print("\tInformation about reviews")
+        for index, review in enumerate(offer.reviews):
+            print(f"\tReview no.{index}")
+            print(f"\tNumber of stars:", review.stars_number)
+            print(f"\tNumber of positive votes:", review.positive_votes_number)
+            print(f"\tNumber of negative votes:", review.negative_votes_number)
+            print(f"\tContains image:", review.contains_images)
 
         print("\tInformation about seller")
         print("\t\tSeller ID:", offer.seller.id)
