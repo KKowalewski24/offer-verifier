@@ -63,6 +63,14 @@ def display_and_log_error(logger_instance: Any, text: str) -> None:
     logger_instance.error(text)
 
 
+def flap_map_list(items: List, callback: Callable[[int, List], List]) -> List:
+    return [sub_item for index, sub_items in enumerate(items) for sub_item in callback(index, sub_items)]
+
+
+def add_value_to_all_items(items: List[str], value: str) -> List[str]:
+    return [item + value for item in items]
+
+
 def remove_duplicates(items: List[Any]) -> List[Any]:
     return list(set(items))
 
