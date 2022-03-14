@@ -93,6 +93,7 @@ class RequestProvider:
             ProductReview(
                 str(offer_details["id"]),
                 int(review["stars_number"]),
+                str(review["text_content"]),
                 int(review["positive_votes_number"]),
                 int(review["negative_votes_number"]),
                 bool(review["contains_images"]),

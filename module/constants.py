@@ -95,6 +95,22 @@ OFFER_RATINGS_REVIEWS_ATTRIBUTES: Dict[str, str] = {
 REVIEWS_CLASS_ATTRIBUTE: str = ".reviews > div"
 RATINGS_CLASS_ATTRIBUTE: str = ".ebay-content-wrapper > span"
 
+REVIEWS_IMAGES: Dict[str, str] = {
+    "class": "reviews-images"
+}
+
+REVIEW_VOTE: Dict[str, str] = {
+    "name": "vote"
+}
+
+REVIEW_POSITIVE_VOTE: Dict[str, str] = {
+    "class": "positive-h-c"
+}
+
+REVIEW_NEGATIVE_VOTE: Dict[str, str] = {
+    "class": "negative-h-c"
+}
+
 SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"
 }

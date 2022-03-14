@@ -1,14 +1,13 @@
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
-    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, \
-    PRODUCT_RATINGS_KEYWORDS, RATINGS_CLASS_ATTRIBUTE, RETURNS_NEGATION, RETURNS_NOT_ACCEPTED, \
-    RETURNS_OPTION_ATTRIBUTES, REVIEWS_CLASS_ATTRIBUTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, \
-    TITLE_PANEL_ATTRIBUTES
+    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, RETURNS_NEGATION, \
+    RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, REVIEWS_CLASS_ATTRIBUTE, REVIEW_NEGATIVE_VOTE, \
+    REVIEW_POSITIVE_VOTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import is_valid_item, normalize_text, remove_new_line_items, replace_many
+from module.utils import is_valid_item, normalize_text, remove_new_line_items
 
 
 class OfferDetailsProvider(BaseProvider):
@@ -19,25 +18,7 @@ class OfferDetailsProvider(BaseProvider):
             self.logger.error("Error Page")
             return {}
 
-        # self._get_ratings(soup)
-        # TODO
-        ratings = [
-            {
-                "stars_number": -15
-            },
-            {
-                "stars_number": -15
-            },
-        ]
-        reviews = [
-            {
-                "stars_number": -15,
-                "positive_votes_number": -30,
-                "negative_votes_number": -30,
-                "contains_images": True
-            },
-        ]
-
+        ratings, reviews = self._get_ratings_reviews(soup)
         offer_json: Dict[str, Any] = {
             "id": offer_id,
             "title": self._get_title(soup),
@@ -107,27 +88,40 @@ class OfferDetailsProvider(BaseProvider):
         return str(0)
 
 
-    def _get_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str]:
+    def _get_ratings_reviews(self, soup: BeautifulSoup) -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_REVIEWS_ATTRIBUTES)
-        reviews_number: str = str(0)
-        # If offer has no ratings, neutral value is returned - 3 is neutral
-        product_rating: str = str(3)
-        ratings_number: str = str(0)
+        ratings: List[Dict[str, str]] = []
+        reviews: List[Dict[str, str]] = []
 
         if is_valid_item(ratings_reviews_div):
-            reviews_number = str(len(ratings_reviews_div.select(REVIEWS_CLASS_ATTRIBUTE)))
-            ratings_spans = ratings_reviews_div.select(RATINGS_CLASS_ATTRIBUTE)
 
-            if is_valid_item(ratings_spans):
-                product_rating = normalize_text(ratings_spans[0].get_text()).replace(",", ".")
-                ratings_number_text: str = normalize_text(ratings_spans[1].get_text())
-                ratings_number = replace_many(ratings_number_text, PRODUCT_RATINGS_KEYWORDS)
-            else:
-                self.logger.info("ratings_spans does not exist")
+            # ratings.append({"stars_number": stars})
+
+            for review_div in ratings_reviews_div.select(REVIEWS_CLASS_ATTRIBUTE):
+                stars: int = int(float(review_div.div.div.get("aria-label").split()[0]))
+
+                p_elements: str = review_div.find_all("div")[2].find_all("p")
+                text_content: str = (f"{normalize_text(p_elements[0].get_text(strip=True))}."
+                                     f" {normalize_text(p_elements[1].get_text(strip=True))}")
+                positive_votes = review_div.find(attrs=REVIEW_POSITIVE_VOTE).get_text(strip=True)
+                negative_votes = review_div.find(attrs=REVIEW_NEGATIVE_VOTE).get_text(strip=True)
+
+                contains_images: bool = len(review_div.find_all("img")) > 0
+
+                reviews.append(
+                    {
+                        "stars_number": stars,
+                        "text_content": text_content,
+                        "positive_votes_number": positive_votes,
+                        "negative_votes_number": negative_votes,
+                        "contains_images": contains_images
+                    }
+                )
+
         else:
             self.logger.info("ratings_reviews_div does not exist")
 
-        return reviews_number, product_rating, ratings_number
+        return ratings, reviews
 
 
     def _get_seller_id(self, soup: BeautifulSoup) -> Optional[str]:
