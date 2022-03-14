@@ -3,9 +3,9 @@ from typing import Any, Dict, List, Optional, Tuple
 from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
-    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, RETURNS_NEGATION, \
-    RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, REVIEWS_CLASS_ATTRIBUTE, REVIEW_NEGATIVE_VOTE, \
-    REVIEW_POSITIVE_VOTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
+    OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, RATINGS_HISTOGRAM, \
+    RETURNS_NEGATION, RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, REVIEWS_CLASS_ATTRIBUTE, \
+    REVIEW_NEGATIVE_VOTE, REVIEW_POSITIVE_VOTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import is_valid_item, normalize_text, remove_new_line_items
 
@@ -94,8 +94,12 @@ class OfferDetailsProvider(BaseProvider):
         reviews: List[Dict[str, str]] = []
 
         if is_valid_item(ratings_reviews_div):
-
-            # ratings.append({"stars_number": stars})
+            for rating_div in ratings_reviews_div.find(attrs=RATINGS_HISTOGRAM).find_all("li"):
+                div_elements = rating_div.div.find_all("div")
+                star_value = div_elements[0].find("p").get_text(strip=True)
+                star_count = int(div_elements[1].find("span").get_text(strip=True))
+                for _ in range(star_count):
+                    ratings.append({"stars_number": str(star_value)})
 
             for review_div in ratings_reviews_div.select(REVIEWS_CLASS_ATTRIBUTE):
                 stars: int = int(float(review_div.div.div.get("aria-label").split()[0]))

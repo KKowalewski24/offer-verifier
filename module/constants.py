@@ -92,8 +92,11 @@ OFFER_RATINGS_REVIEWS_ATTRIBUTES: Dict[str, str] = {
     "id": "rwid"
 }
 
+RATINGS_HISTOGRAM: Dict[str, str] = {
+    "class": "reviews-histogram"
+}
+
 REVIEWS_CLASS_ATTRIBUTE: str = ".reviews > div"
-RATINGS_CLASS_ATTRIBUTE: str = ".ebay-content-wrapper > span"
 
 REVIEWS_IMAGES: Dict[str, str] = {
     "class": "reviews-images"
