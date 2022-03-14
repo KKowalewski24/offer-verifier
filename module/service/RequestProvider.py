@@ -41,11 +41,11 @@ class RequestProvider:
 
         modified_ratings = [
             self._set_rating_properties(offer, index)
-            for index in range(len(offer.ratings))
+            for index in range(1, len(offer.ratings) + 1)
         ]
         modified_reviews = [
             self._set_review_properties(offer, index)
-            for index in range(len(offer.reviews))
+            for index in range(1, len(offer.reviews) + 1)
         ]
 
         return modified_ratings + modified_reviews
@@ -55,6 +55,7 @@ class RequestProvider:
         offer_copy = copy.deepcopy(offer)
         offer_copy.id = f"{offer.id}__rating__{index}"
         offer_copy.ratings = offer.ratings[:index]
+        offer_copy.reviews = []
         return offer_copy
 
 
