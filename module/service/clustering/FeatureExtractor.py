@@ -26,7 +26,18 @@ class FeatureExtractor:
         return self
 
 
-    def extract(self) -> FeatureExtractor:
+    def insert_extracted_features(self) -> FeatureExtractor:
+        column_names: List[str] = [
+            # "", "", "", "", ""
+        ]
+
+        columns: List = [
+
+        ]
+
+        for column_name, column in zip(column_names, columns):
+            self.dataset[column_name] = column
+
         return self
 
 
@@ -41,7 +52,9 @@ class FeatureExtractor:
             self.dataset[name] = label_encoder.fit_transform(self.dataset[name])
 
         self.dataset = self.dataset.astype(float)
-        return pd.DataFrame(data=preprocessing.normalize(self.dataset), columns=self.dataset.columns)
+        return pd.DataFrame(
+            data=preprocessing.normalize(self.dataset), columns=self.dataset.columns
+        )
 
 
     def _get_feature_values(self, offer: Offer) -> List:
