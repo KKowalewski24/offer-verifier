@@ -33,9 +33,9 @@ def main() -> None:
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
     clusterizers: List = [KMeansClusterizer, FuzzyCMeansClusterizer, BenchmarkClusterizer]
 
-    for clusterizer in clusterizers:
+    for dataset_path in dataset_paths:
         result = []
-        for dataset_path in dataset_paths:
+        for clusterizer in clusterizers:
             offer_verifier: OfferVerifier = OfferVerifier(
                 path_to_local_file=dataset_path, clusterizer=clusterizer
             )

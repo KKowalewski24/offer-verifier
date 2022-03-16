@@ -63,3 +63,14 @@ class BaseProvider(ABC):
 
     def urlparse_path_replace(self, url: str, replaced_text: str, replacing_text: str = "") -> str:
         return urlparse(url).path.replace(replaced_text, replacing_text)
+
+
+    def calculate_page_ranges(self, items_number: int, items_per_page: int) -> range:
+        pages_number: int = int(items_number / items_per_page)
+        if pages_number < 0:
+            return range(0)
+        if items_number % items_per_page != 0:
+            pages_number = pages_number + 1
+
+        # Start from 1 and increment pages_number because range stop is < not <= - like in loops
+        return range(1, pages_number + 1)

@@ -24,8 +24,10 @@ PARAM_QUERY = "sch/i.html?_nkw="
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
 LIST_VIEW: str = "&_dmd=2"
-ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
+ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=240", 240)
 PARAM_PAGE_NUMBER: str = "&_pgn="
+REVIEW_ITEMS_PER_PAGE: int = 10
+REVIEW_PARAM_PAGE_NUMBER: str = "&pgn="
 
 ITM: str = "itm/"
 SLASH_ITM: str = SLASH + ITM
@@ -97,6 +99,10 @@ RATINGS_HISTOGRAM: Dict[str, str] = {
 }
 
 REVIEWS_CLASS_ATTRIBUTE: str = ".reviews > div"
+
+REVIEWS_HEADER: Dict[str, str] = {
+    "class": "reviews-header"
+}
 
 REVIEWS_IMAGES: Dict[str, str] = {
     "class": "reviews-images"
