@@ -106,20 +106,22 @@ class OfferDetailsProvider(BaseProvider):
         reviews: List[Dict[str, str]] = []
 
         if is_valid_item(ratings_reviews_div):
-            reviews_header_a_element = ratings_reviews_div.find(attrs=REVIEWS_HEADER).find("div").find("a")
+            reviews_header = ratings_reviews_div.find(attrs=REVIEWS_HEADER).find("div")
+            if is_valid_item(reviews_header):
+                a_element = reviews_header.find("a")
+                ratings = self.__get_ratings(ratings_reviews_div)
+                reviews = (
+                    self.__get_reviews_when_many(str(a_element.get("href")))
+                    if a_element is not None
+                    else self.__get_reviews_when_few(ratings_reviews_div)
+                )
 
-            ratings = self.__get_ratings(ratings_reviews_div)
-            reviews = (
-                self.__get_reviews_when_many(str(reviews_header_a_element.get("href")))
-                if reviews_header_a_element is not None
-                else self.__get_reviews_when_few(ratings_reviews_div)
-            )
-
-            # Removing stars_number from ratings in order to disjoint this two sets - originally
-            # website aggregate stars_number from ratings and reviews that is why it needs to be removed
-            for stars_number in [review["stars_number"] for review in reviews]:
-                ratings.remove({"stars_number": str(stars_number)})
-
+                # Removing stars_number from ratings in order to disjoint this two sets - originally
+                # website aggregate stars_number from ratings and reviews that is why it needs to be removed
+                for stars_number in [review["stars_number"] for review in reviews]:
+                    ratings.remove({"stars_number": str(stars_number)})
+            else:
+                self.logger.info("reviews_header does not exist")
         else:
             self.logger.info("ratings_reviews_div does not exist")
 
