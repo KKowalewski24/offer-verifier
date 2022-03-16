@@ -1,15 +1,15 @@
-from fcmeans import FCM
+import numpy as np
 import pandas as pd
+from fcmeans import FCM
 
+from module.service.clustering.Clusterizer import Clusterizer
 from module.service.clustering.MeansClusterizer import MeansClusterizer
 
 
 class FuzzyCMeansClusterizer(MeansClusterizer):
 
     def perform_means_clusterization(self, dataset: pd.DataFrame) -> None:
-        # TODO
-        # fcm = FCM(**params)
-        # fcm.random_state = Clusterizer.RANDOM_STATE
-        # fcm.fit(self.X)
-        # self.y_pred = fcm.predict(self.X)
-        pass
+        fcm = FCM(n_clusters=MeansClusterizer.K_PARAM)
+        fcm.random_state = Clusterizer.RANDOM_STATE
+        # fcm.fit(dataset.to_numpy())
+        # self.cluster_labels: np.ndarray = fcm.predict(dataset.to_numpy())

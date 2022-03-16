@@ -14,6 +14,9 @@ from module.utils import display_and_log_info
 
 
 class MeansClusterizer(Clusterizer):
+    # K is set to 2 in order to always get 2 clusters whether it is optimal or not
+    K_PARAM: int = 2
+
 
     def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         start_time = time.time()
