@@ -101,7 +101,11 @@ RATINGS_HISTOGRAM: Dict[str, str] = {
 REVIEWS_CLASS_ATTRIBUTE: str = ".reviews > div"
 
 REVIEWS_HEADER: Dict[str, str] = {
-    "class": "reviews-header"
+    "class": "reviews-right"
+}
+
+REVIEWS_COUNT: Dict[str, str] = {
+    "class": "p-rvw-count"
 }
 
 REVIEWS_IMAGES: Dict[str, str] = {

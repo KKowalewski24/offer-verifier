@@ -63,7 +63,7 @@ def display_and_log_error(logger_instance: Any, text: str) -> None:
     logger_instance.error(text)
 
 
-def flap_map_list(items: List, callback: Callable[[int, List], List]) -> List:
+def flat_map_list(items: List, callback: Callable[[int, List], List] = lambda x, y: y) -> List:
     return [sub_item for index, sub_items in enumerate(items) for sub_item in callback(index, sub_items)]
 
 
