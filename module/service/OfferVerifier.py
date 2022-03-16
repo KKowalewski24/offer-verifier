@@ -7,10 +7,10 @@ from module.exception.EmptyDatasetException import EmptyDatasetException
 from module.exception.WrongConstructorParams import WrongConstructorParams
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
-from module.service.Logger import Logger
 from module.service.RequestProvider import RequestProvider
 from module.service.clustering.Clusterizer import Clusterizer
 from module.service.clustering.KMeansClusterizer import KMeansClusterizer
+from module.service.common.Logger import Logger
 from module.utils import display_and_log_error, display_and_log_info, display_and_log_warning, \
     get_filename, read_object_from_file, save_object_to_file
 

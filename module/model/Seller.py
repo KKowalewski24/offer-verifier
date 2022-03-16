@@ -1,12 +1,10 @@
-from typing import List
-
 from nameof import nameof
 
-from module.model.AnalyzableItem import AnalyzableItem
+from module.model.BaseItem import BaseItem
 from module.utils import to_string_class_formatter
 
 
-class Seller(AnalyzableItem):
+class Seller(BaseItem):
 
     def __init__(self, id: str, feedback_score: float, seller_feedback_percentage: float,
                  year_of_joining: int, seller_positive_ratings_number: int,
@@ -24,29 +22,6 @@ class Seller(AnalyzableItem):
         self.reasonable_shipping_cost = reasonable_shipping_cost
         self.shipping_speed = shipping_speed
         self.communication = communication
-
-
-    def get_feature_values(self) -> List:
-        return [
-            self.seller_feedback_percentage, self.year_of_joining,
-            self.seller_positive_ratings_number, self.seller_neutral_ratings_number,
-            self.seller_negative_ratings_number, self.accurate_description,
-            self.reasonable_shipping_cost, self.shipping_speed, self.communication
-        ]
-
-
-    def get_feature_names(self) -> List[str]:
-        return [
-            nameof(self.seller_feedback_percentage), nameof(self.year_of_joining),
-            nameof(self.seller_positive_ratings_number), nameof(self.seller_neutral_ratings_number),
-            nameof(self.seller_negative_ratings_number), nameof(self.accurate_description),
-            nameof(self.reasonable_shipping_cost), nameof(self.shipping_speed),
-            nameof(self.communication)
-        ]
-
-
-    def get_non_numeric_feature_names(self) -> List[str]:
-        return []
 
 
     def __str__(self) -> str:

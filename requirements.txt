@@ -1,3 +1,4 @@
+matplotlib
 tqdm
 beautifulsoup4
 fpdf

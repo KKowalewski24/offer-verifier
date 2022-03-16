@@ -72,14 +72,7 @@ class OfferIdProvider(BaseProvider):
                 .replace(",", "")
         )
 
-        pages_number: int = int(items_number / ITEMS_PER_PAGE[1])
-        if pages_number < 0:
-            return range(0)
-        if items_number % ITEMS_PER_PAGE[1] != 0:
-            pages_number = pages_number + 1
-
-        # Start from 1 and increment pages_number because range stop is < not <= - like in loops
-        return range(1, pages_number + 1)
+        return self.calculate_page_ranges(items_number, ITEMS_PER_PAGE[1])
 
 
     def _create_url(self, page_number: int) -> str:

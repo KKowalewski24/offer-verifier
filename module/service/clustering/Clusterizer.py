@@ -3,13 +3,13 @@ from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
 from sklearn.metrics import calinski_harabasz_score, davies_bouldin_score, silhouette_score
-from sklearn.preprocessing import LabelEncoder
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
-from module.service.Logger import Logger
+from module.service.clustering.FeatureExtractor import FeatureExtractor
+from module.service.common.Logger import Logger
+from module.utils import display_and_log_info
 
 
 class Clusterizer:
@@ -20,31 +20,21 @@ class Clusterizer:
         self.logger = Logger().get_logging_instance()
         self.offers = offers
         self.cluster_labels: np.ndarray = np.ndarray([])
-        self.feature_names: List[str] = []
-        self.non_numeric_feature_names: List[str] = []
 
-        if self.offers is not None and len(self.offers) != 0:
-            self.feature_names = self.offers[0].get_feature_names()
-            self.non_numeric_feature_names = self.offers[0].get_non_numeric_feature_names()
+        display_and_log_info(self.logger, "Extracting features and preparing dataset")
+        self.dataset: pd.DataFrame = (
+            FeatureExtractor(self.offers)
+                .insert_elementary_columns()
+                .insert_extracted_features()
+                .normalize_dataset()
+                .get_dataset()
+        )
+        display_and_log_info(self.logger, "Features extracted and dataset prepared")
 
 
     @abstractmethod
     def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         pass
-
-
-    def _prepare_dataset(self) -> pd.DataFrame:
-        df: pd.DataFrame = pd.DataFrame(
-            [offer.get_feature_values() for offer in self.offers],
-            columns=self.feature_names
-        )
-
-        label_encoder = LabelEncoder()
-        for name in self.non_numeric_feature_names:
-            df[name] = label_encoder.fit_transform(df[name])
-
-        df = df.astype(float)
-        return pd.DataFrame(data=preprocessing.normalize(df), columns=df.columns)
 
 
     def _calculate_statistics(self, dataset: pd.DataFrame, execution_time: float) -> Statistics:

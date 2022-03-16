@@ -14,16 +14,15 @@ from module.utils import display_and_log_info
 
 
 class MeansClusterizer(Clusterizer):
+    # K is set to 2 in order to always get 2 clusters whether it is optimal or not
+    K_PARAM: int = 2
+
 
     def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         start_time = time.time()
 
-        display_and_log_info(self.logger, "Preparing dataset")
-        dataset: pd.DataFrame = self._prepare_dataset()
-        display_and_log_info(self.logger, "Dataset prepared")
-
         display_and_log_info(self.logger, "Clustering started")
-        self.perform_means_clusterization(dataset)
+        self.perform_means_clusterization(self.dataset)
         display_and_log_info(self.logger, "Clustering finished")
 
         result = self._choose_list_with_more_credible_offers(self._combine_offers())
@@ -31,7 +30,7 @@ class MeansClusterizer(Clusterizer):
         end_time = time.time()
         execution_time = end_time - start_time
 
-        return result, self._calculate_statistics(dataset, execution_time)
+        return result, self._calculate_statistics(self.dataset, execution_time)
 
 
     @abstractmethod
