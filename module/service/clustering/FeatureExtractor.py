@@ -41,7 +41,7 @@ class FeatureExtractor:
         return self
 
 
-    def prepare_dataset(self) -> pd.DataFrame:
+    def normalize_dataset(self) -> FeatureExtractor:
         non_numeric_feature_names: List[str] = [
             nameof(self.offers[0].has_return_option),
             # nameof(self.offers[0].reviews[0].contains_images),
@@ -52,9 +52,13 @@ class FeatureExtractor:
             self.dataset[name] = label_encoder.fit_transform(self.dataset[name])
 
         self.dataset = self.dataset.astype(float)
-        return pd.DataFrame(
-            data=preprocessing.normalize(self.dataset), columns=self.dataset.columns
-        )
+        self.dataset = pd.DataFrame(data=preprocessing.normalize(self.dataset), columns=self.dataset.columns)
+
+        return self
+
+
+    def get_dataset(self) -> pd.DataFrame:
+        return self.dataset
 
 
     def _get_feature_values(self, offer: Offer) -> List:

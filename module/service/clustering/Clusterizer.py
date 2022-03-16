@@ -26,7 +26,8 @@ class Clusterizer:
             FeatureExtractor(self.offers)
                 .insert_elementary_columns()
                 .insert_extracted_features()
-                .prepare_dataset()
+                .normalize_dataset()
+                .get_dataset()
         )
         display_and_log_info(self.logger, "Features extracted and dataset prepared")
 
