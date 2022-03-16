@@ -7,7 +7,9 @@ from nameof import nameof
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 
+from module.exception.MoreThanOneModeException import MoreThanOneModeException
 from module.model.Offer import Offer
+from module.model.ProductRating import ProductRating
 
 
 class FeatureExtractor:
@@ -27,13 +29,14 @@ class FeatureExtractor:
 
 
     def insert_extracted_features(self) -> FeatureExtractor:
-        # TODO
         column_names: List[str] = [
-            # "", "", "", "", ""
+            "rating_stars_dominant", "review_stars_dominant",
+            # "", "", ""
         ]
 
         columns: List = [
-
+            [self._calculate_mode(offer.ratings) for offer in self.offers],
+            [self._calculate_mode(offer.reviews) for offer in self.offers],
         ]
 
         for column_name, column in zip(column_names, columns):
@@ -94,3 +97,10 @@ class FeatureExtractor:
             nameof(offer.seller.shipping_speed),
             nameof(offer.seller.communication),
         ]
+
+
+    def _calculate_mode(self, ratings: List[ProductRating]) -> int:
+        mode = pd.Series([rating.stars_number for rating in ratings]).mode()
+        if len(mode) != 1:
+            raise MoreThanOneModeException()
+        return mode[0]

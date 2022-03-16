@@ -1,0 +1,2 @@
+class MoreThanOneModeException(Exception):
+    pass
