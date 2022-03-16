@@ -114,13 +114,18 @@ class OfferDetailsProvider(BaseProvider):
 
                 reviews.append(
                     {
-                        "stars_number": stars,
+                        "stars_number": str(stars),
                         "text_content": text_content,
                         "positive_votes_number": positive_votes,
                         "negative_votes_number": negative_votes,
                         "contains_images": contains_images
                     }
                 )
+
+            # Removing stars_number from ratings in order to disjoint this two sets - originally
+            # website aggregate stars_number from ratings and reviews that is why it needs to be removed
+            for stars_number in [review["stars_number"] for review in reviews]:
+                ratings.remove({"stars_number": str(stars_number)})
 
         else:
             self.logger.info("ratings_reviews_div does not exist")
