@@ -165,6 +165,7 @@ ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
 RETURNS_NEGATION: str = "does not"
+READ_FULL_REVIEW: str = "Read full review..."
 PRODUCT_RATINGS_KEYWORDS: List[str] = [
     " product", " ratings", " rating"
 ]

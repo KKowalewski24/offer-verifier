@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup, Tag
 
 from module.constants import EBAY_ITEM_PATH, HTML_PARSER, OFFER_DESCRIPTION_ATTRIBUTES, \
     OFFER_IMAGE_ATTRIBUTES, OFFER_PRICE_ATTRIBUTES, OFFER_RATINGS_REVIEWS_ATTRIBUTES, RATINGS_HISTOGRAM, \
-    RETURNS_NEGATION, RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, REVIEWS_CLASS_ATTRIBUTE, REVIEWS_COUNT, \
-    REVIEWS_HEADER, REVIEW_ITEMS_PER_PAGE, REVIEW_NEGATIVE_VOTE, REVIEW_PARAM_PAGE_NUMBER, \
-    REVIEW_POSITIVE_VOTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
+    READ_FULL_REVIEW, RETURNS_NEGATION, RETURNS_NOT_ACCEPTED, RETURNS_OPTION_ATTRIBUTES, \
+    REVIEWS_CLASS_ATTRIBUTE, REVIEWS_COUNT, REVIEWS_HEADER, REVIEW_ITEMS_PER_PAGE, REVIEW_NEGATIVE_VOTE, \
+    REVIEW_PARAM_PAGE_NUMBER, REVIEW_POSITIVE_VOTE, SELLER_PANEL_ATTRIBUTES, SLASH_USR, TITLE_PANEL_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
 from module.utils import flat_map_list, is_valid_item, normalize_text, remove_new_line_items
 
@@ -196,9 +196,11 @@ class OfferDetailsProvider(BaseProvider):
     def __extract_data_from_reviews_when_many(self, review_div: Tag) -> Dict[str, str]:
         stars: int = int(float(review_div.div.div.get("title").split()[0]))
 
-        review_section: str = review_div.find_all("div")[2]
+        review_section: Tag = review_div.find_all("div")[2]
         text_content: str = (f"{normalize_text(review_section.find('h3').get_text(strip=True))}."
                              f" {normalize_text(review_section.find('p').get_text(strip=True))}")
+        text_content = text_content.replace(READ_FULL_REVIEW, "")
+
         positive_votes = review_div.find(attrs=REVIEW_POSITIVE_VOTE).get_text(strip=True)
         negative_votes = review_div.find(attrs=REVIEW_NEGATIVE_VOTE).get_text(strip=True)
 
