@@ -4,6 +4,8 @@ from typing import List
 
 import pandas as pd
 from nameof import nameof
+from nltk import WordNetLemmatizer, word_tokenize
+from nltk.corpus import stopwords
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 
@@ -18,6 +20,7 @@ class FeatureExtractor:
         super().__init__()
         self.offers = offers
         self.dataset: pd.DataFrame = pd.DataFrame()
+        self.stopwords = stopwords.words("english")
 
 
     def insert_elementary_columns(self) -> FeatureExtractor:
@@ -31,13 +34,19 @@ class FeatureExtractor:
     def insert_extracted_features(self) -> FeatureExtractor:
         column_names: List[str] = [
             "rating_stars_dominant", "review_stars_dominant",
-            # "", "", ""
+            "", "", ""
         ]
 
         columns: List = [
             [self._calculate_mode(offer.ratings) for offer in self.offers],
             [self._calculate_mode(offer.reviews) for offer in self.offers],
+            [],
+            [],
+            [],
         ]
+
+        if len(columns) != len(column_names):
+            raise Exception(f"{nameof(columns)} and {nameof(column_names)} must have equal size!")
 
         for column_name, column in zip(column_names, columns):
             self.dataset[column_name] = column
@@ -104,3 +113,11 @@ class FeatureExtractor:
         if len(mode) != 1:
             raise MoreThanOneModeException()
         return mode[0]
+
+
+    def _prepare_text(self, text: str) -> List[str]:
+        return [
+            WordNetLemmatizer().lemmatize(x)
+            for x in word_tokenize(text.casefold())
+            if x.isalpha() and x not in self.stopwords
+        ]
