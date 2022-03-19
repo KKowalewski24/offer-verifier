@@ -63,6 +63,10 @@ def display_and_log_error(logger_instance: Any, text: str) -> None:
     logger_instance.error(text)
 
 
+def list_to_string(items: List) -> str:
+    return " ".join(items)
+
+
 def flat_map_list(items: List, callback: Callable[[int, List], List] = lambda x, y: y) -> List:
     return [sub_item for index, sub_items in enumerate(items) for sub_item in callback(index, sub_items)]
 
@@ -103,6 +107,14 @@ def convert_bool_to_json(value: bool) -> str:
 
 def convert_bool_to_string(value: bool) -> str:
     return "Yes" if value else "No"
+
+
+def remove_dict_entry_by_key(dictionary: Dict, key_to_delete: str) -> Dict:
+    return {
+        key: value
+        for key, value in dictionary.items()
+        if key != key_to_delete
+    }
 
 
 def format_json(data: Dict) -> str:
