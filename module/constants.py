@@ -17,6 +17,7 @@ OFFERS_PATH: str = RESULTS_DIRECTORY + "offers-"
 CURRENCY_US_DOLLAR: str = "US $"
 PICKLE_EXTENSION: str = ".pickle"
 PDF_EXTENSION: str = ".pdf"
+LANGDETECT_ENGLISH = "en"
 
 # ----------------------------------------------------------------------- #
 SLASH: str = "/"

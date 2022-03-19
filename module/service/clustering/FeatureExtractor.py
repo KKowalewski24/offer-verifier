@@ -3,12 +3,14 @@ from __future__ import annotations
 from typing import List
 
 import pandas as pd
+from langdetect import detect
 from nameof import nameof
 from nltk import WordNetLemmatizer, word_tokenize
 from nltk.corpus import stopwords
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 
+from module.constants import LANGDETECT_ENGLISH
 from module.exception.MoreThanOneModeException import MoreThanOneModeException
 from module.model.Offer import Offer
 from module.model.ProductRating import ProductRating
@@ -121,3 +123,7 @@ class FeatureExtractor:
             for x in word_tokenize(text.casefold())
             if x.isalpha() and x not in self.stopwords
         ]
+
+
+    def _is_english_language(self, text: str) -> bool:
+        return detect(text) == LANGDETECT_ENGLISH
