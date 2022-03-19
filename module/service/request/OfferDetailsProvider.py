@@ -100,7 +100,7 @@ class OfferDetailsProvider(BaseProvider):
         return None
 
 
-    def _get_ratings_reviews(self, soup: BeautifulSoup) -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
+    def _get_ratings_reviews(self, soup: BeautifulSoup) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_REVIEWS_ATTRIBUTES)
         ratings: List[Dict[str, str]] = []
         reviews: List[Dict[str, str]] = []
@@ -128,7 +128,7 @@ class OfferDetailsProvider(BaseProvider):
         return ratings, reviews
 
 
-    def __get_ratings(self, ratings_reviews_div: Tag) -> List[Dict[str, str]]:
+    def __get_ratings(self, ratings_reviews_div: Tag) -> List[Dict[str, Any]]:
         ratings: List[Dict[str, str]] = []
 
         for rating_div in ratings_reviews_div.find(attrs=RATINGS_HISTOGRAM).find_all("li"):
@@ -141,17 +141,17 @@ class OfferDetailsProvider(BaseProvider):
         return ratings
 
 
-    def __get_reviews_when_few(self, ratings_reviews_div: Tag) -> List[Dict[str, str]]:
+    def __get_reviews_when_few(self, ratings_reviews_div: Tag) -> List[Dict[str, Any]]:
         return [
             self.__extract_data_from_reviews_when_few(review_div)
             for review_div in ratings_reviews_div.select(REVIEWS_CLASS_ATTRIBUTE)
         ]
 
 
-    def __extract_data_from_reviews_when_few(self, review_div: Tag) -> Dict[str, str]:
+    def __extract_data_from_reviews_when_few(self, review_div: Tag) -> Dict[str, Any]:
         stars: int = int(float(review_div.div.div.get("aria-label").split()[0]))
 
-        p_elements: str = review_div.find_all("div")[2].find_all("p")
+        p_elements: Tag = review_div.find_all("div")[2].find_all("p")
         text_content: str = (f"{normalize_text(p_elements[0].get_text(strip=True))}."
                              f" {normalize_text(p_elements[1].get_text(strip=True))}")
         positive_votes = review_div.find(attrs=REVIEW_POSITIVE_VOTE).get_text(strip=True)
@@ -168,7 +168,7 @@ class OfferDetailsProvider(BaseProvider):
         }
 
 
-    def __get_reviews_when_many(self, all_reviews_url: str) -> List[Dict[str, str]]:
+    def __get_reviews_when_many(self, all_reviews_url: str) -> List[Dict[str, Any]]:
         soup, is_error_page = self.get_beautiful_soup_instance_by_url(all_reviews_url)
         if is_error_page:
             self.logger.error("Error Page")
@@ -193,7 +193,7 @@ class OfferDetailsProvider(BaseProvider):
         return flat_map_list(reviews)
 
 
-    def __extract_data_from_reviews_when_many(self, review_div: Tag) -> Dict[str, str]:
+    def __extract_data_from_reviews_when_many(self, review_div: Tag) -> Dict[str, Any]:
         stars: int = int(float(review_div.div.div.get("title").split()[0]))
 
         review_section: Tag = review_div.find_all("div")[2]
