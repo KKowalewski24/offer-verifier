@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import List
+from typing import Dict, List
 
 import pandas as pd
 from langdetect import detect
 from nameof import nameof
 from nltk import WordNetLemmatizer, word_tokenize
 from nltk.corpus import stopwords
+from nrclex import NRCLex
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 
@@ -14,6 +15,7 @@ from module.constants import LANGDETECT_ENGLISH
 from module.exception.MoreThanOneModeException import MoreThanOneModeException
 from module.model.Offer import Offer
 from module.model.ProductRating import ProductRating
+from module.utils import list_to_string, remove_dict_entry_by_key
 
 
 class FeatureExtractor:
@@ -34,17 +36,12 @@ class FeatureExtractor:
 
 
     def insert_extracted_features(self) -> FeatureExtractor:
-        column_names: List[str] = [
-            "rating_stars_dominant", "review_stars_dominant",
-            "", "", ""
-        ]
+        self._move_not_valid_reviews_to_ratings()
 
-        columns: List = [
+        column_names: List[str] = ["rating_stars_dominant", "review_stars_dominant"]
+        columns: List[List[float]] = [
             [self._calculate_mode(offer.ratings) for offer in self.offers],
             [self._calculate_mode(offer.reviews) for offer in self.offers],
-            [],
-            [],
-            [],
         ]
 
         if len(columns) != len(column_names):
@@ -117,12 +114,33 @@ class FeatureExtractor:
         return mode[0]
 
 
-    def _prepare_text(self, text: str) -> List[str]:
-        return [
+    def _get_emotions_from_text_content(self) -> None:
+        for offer in self.offers:
+            reviews_emotions: List[Dict] = [
+                remove_dict_entry_by_key(NRCLex(review.text_content).affect_frequencies, "anticip")
+                for review in offer.reviews
+            ]
+
+            mean: pd.Series = pd.DataFrame(
+                data=[emotions.values() for emotions in reviews_emotions],
+                columns=reviews_emotions[0].keys()
+            ).mean()
+
+
+    def _prepare_text(self, text: str) -> str:
+        return list_to_string([
             WordNetLemmatizer().lemmatize(x)
             for x in word_tokenize(text.casefold())
             if x.isalpha() and x not in self.stopwords
-        ]
+        ])
+
+
+    def _move_not_valid_reviews_to_ratings(self) -> None:
+        for offer in self.offers:
+            for review in offer.reviews:
+                if not self._is_english_language(review.text_content):
+                    offer.ratings.append(ProductRating(str(offer.id), review.stars_number))
+                    offer.reviews.remove(review)
 
 
     def _is_english_language(self, text: str) -> bool:
