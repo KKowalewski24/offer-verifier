@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
+import numpy as np
 import pandas as pd
 from langdetect import detect
 from nameof import nameof
@@ -44,6 +45,10 @@ class FeatureExtractor:
             [self._calculate_mode(offer.reviews) for offer in self.offers],
         ]
 
+        emotions_column_names, emotions_columns = self._get_emotions_from_text_content()
+        column_names = column_names + emotions_column_names
+        columns = columns + emotions_columns
+
         if len(columns) != len(column_names):
             raise Exception(f"{nameof(columns)} and {nameof(column_names)} must have equal size!")
 
@@ -80,7 +85,10 @@ class FeatureExtractor:
         return mode[0]
 
 
-    def _get_emotions_from_text_content(self) -> None:
+    def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
+        emotions_column_names: List[List[str]] = []
+        emotions_columns: List[List[float]] = []
+
         for offer in self.offers:
             reviews_emotions: List[Dict] = [
                 remove_dict_entry_by_key(NRCLex(review.text_content).affect_frequencies, "anticip")
@@ -91,6 +99,17 @@ class FeatureExtractor:
                 data=[emotions.values() for emotions in reviews_emotions],
                 columns=reviews_emotions[0].keys()
             ).mean()
+
+            emotions_column_names.append(mean.index.to_list())
+            emotions_columns.append(mean.to_list())
+
+        emotions_columns_ndarray = np.array(emotions_columns)
+        rotated_emotions_columns = [
+            list(emotions_columns_ndarray[:, index])
+            for index in range(emotions_columns_ndarray.shape[1])
+        ]
+
+        return list(np.unique(emotions_column_names)), rotated_emotions_columns
 
 
     def _prepare_text(self, text: str) -> str:
