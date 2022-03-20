@@ -73,40 +73,6 @@ class FeatureExtractor:
         return self.dataset
 
 
-    def _get_feature_values(self, offer: Offer) -> List:
-        return [
-            offer.price,
-            offer.has_return_option,
-            offer.description_length,
-            offer.seller.seller_feedback_percentage,
-            offer.seller.year_of_joining,
-            offer.seller.seller_positive_ratings_number,
-            offer.seller.seller_neutral_ratings_number,
-            offer.seller.seller_negative_ratings_number,
-            offer.seller.accurate_description,
-            offer.seller.reasonable_shipping_cost,
-            offer.seller.shipping_speed,
-            offer.seller.communication,
-        ]
-
-
-    def _get_feature_names(self, offer: Offer) -> List[str]:
-        return [
-            nameof(offer.price),
-            nameof(offer.has_return_option),
-            nameof(offer.description_length),
-            nameof(offer.seller.seller_feedback_percentage),
-            nameof(offer.seller.year_of_joining),
-            nameof(offer.seller.seller_positive_ratings_number),
-            nameof(offer.seller.seller_neutral_ratings_number),
-            nameof(offer.seller.seller_negative_ratings_number),
-            nameof(offer.seller.accurate_description),
-            nameof(offer.seller.reasonable_shipping_cost),
-            nameof(offer.seller.shipping_speed),
-            nameof(offer.seller.communication),
-        ]
-
-
     def _calculate_mode(self, ratings: List[ProductRating]) -> int:
         mode = pd.Series([rating.stars_number for rating in ratings]).mode()
         if len(mode) != 1:
@@ -145,3 +111,37 @@ class FeatureExtractor:
 
     def _is_english_language(self, text: str) -> bool:
         return detect(text) == LANGDETECT_ENGLISH
+
+
+    def _get_feature_values(self, offer: Offer) -> List:
+        return [
+            offer.price,
+            offer.has_return_option,
+            offer.description_length,
+            offer.seller.seller_feedback_percentage,
+            offer.seller.year_of_joining,
+            offer.seller.seller_positive_ratings_number,
+            offer.seller.seller_neutral_ratings_number,
+            offer.seller.seller_negative_ratings_number,
+            offer.seller.accurate_description,
+            offer.seller.reasonable_shipping_cost,
+            offer.seller.shipping_speed,
+            offer.seller.communication,
+        ]
+
+
+    def _get_feature_names(self, offer: Offer) -> List[str]:
+        return [
+            nameof(offer.price),
+            nameof(offer.has_return_option),
+            nameof(offer.description_length),
+            nameof(offer.seller.seller_feedback_percentage),
+            nameof(offer.seller.year_of_joining),
+            nameof(offer.seller.seller_positive_ratings_number),
+            nameof(offer.seller.seller_neutral_ratings_number),
+            nameof(offer.seller.seller_negative_ratings_number),
+            nameof(offer.seller.accurate_description),
+            nameof(offer.seller.reasonable_shipping_cost),
+            nameof(offer.seller.shipping_speed),
+            nameof(offer.seller.communication),
+        ]
