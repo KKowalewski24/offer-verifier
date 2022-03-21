@@ -16,6 +16,7 @@ from module.constants import LANGDETECT_ENGLISH
 from module.exception.MoreThanOneModeException import MoreThanOneModeException
 from module.model.Offer import Offer
 from module.model.ProductRating import ProductRating
+from module.model.ProductReview import ProductReview
 from module.utils import list_to_string, remove_dict_entry_by_key
 
 
@@ -69,7 +70,10 @@ class FeatureExtractor:
             self.dataset[name] = label_encoder.fit_transform(self.dataset[name])
 
         self.dataset = self.dataset.astype(float)
-        self.dataset = pd.DataFrame(data=preprocessing.normalize(self.dataset), columns=self.dataset.columns)
+        self.dataset = pd.DataFrame(
+            data=preprocessing.normalize(self.dataset),
+            columns=self.dataset.columns
+        )
 
         return self
 
@@ -122,10 +126,15 @@ class FeatureExtractor:
 
     def _move_not_valid_reviews_to_ratings(self) -> None:
         for offer in self.offers:
+            reviews_to_delete: List[ProductReview] = []
+
             for review in offer.reviews:
                 if not self._is_english_language(review.text_content):
                     offer.ratings.append(ProductRating(str(offer.id), review.stars_number))
-                    offer.reviews.remove(review)
+                    reviews_to_delete.append(review)
+
+            for review_to_delete in reviews_to_delete:
+                offer.reviews.remove(review_to_delete)
 
 
     def _is_english_language(self, text: str) -> bool:
