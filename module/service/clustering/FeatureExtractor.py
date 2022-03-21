@@ -13,12 +13,11 @@ from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 
 from module.constants import LANGDETECT_ENGLISH
-from module.exception.MoreThanOneModeException import MoreThanOneModeException
 from module.model.Offer import Offer
 from module.model.ProductRating import ProductRating
 from module.model.ProductReview import ProductReview
 from module.service.common.Logger import Logger
-from module.utils import list_to_string, remove_dict_entry_by_key, display_and_log_info
+from module.utils import display_and_log_info, list_to_string, remove_dict_entry_by_key
 
 
 class FeatureExtractor:
@@ -47,10 +46,10 @@ class FeatureExtractor:
         self._move_not_valid_reviews_to_ratings()
 
         display_and_log_info(self.logger, f"Started calculating stars_number...")
-        column_names: List[str] = ["rating_stars_dominant", "review_stars_dominant"]
+        column_names: List[str] = ["rating_stars_mean", "review_stars_mean"]
         columns: List[List[float]] = [
-            [self._calculate_mode(offer.ratings) for offer in self.offers],
-            [self._calculate_mode(offer.reviews) for offer in self.offers],
+            [self._calculate_mean(offer.ratings) for offer in self.offers],
+            [self._calculate_mean(offer.reviews) for offer in self.offers],
         ]
         display_and_log_info(self.logger, f"Finished calculating stars_number")
 
@@ -95,11 +94,8 @@ class FeatureExtractor:
         return self.dataset
 
 
-    def _calculate_mode(self, ratings: List[ProductRating]) -> int:
-        mode = pd.Series([rating.stars_number for rating in ratings]).mode()
-        if len(mode) != 1:
-            raise MoreThanOneModeException()
-        return mode[0]
+    def _calculate_mean(self, ratings: List[ProductRating]) -> int:
+        return pd.Series([rating.stars_number for rating in ratings]).mean()
 
 
     def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
@@ -111,6 +107,9 @@ class FeatureExtractor:
                 remove_dict_entry_by_key(NRCLex(review.text_content).affect_frequencies, "anticip")
                 for review in offer.reviews
             ]
+
+            if len(reviews_emotions) == 0:
+                continue
 
             mean: pd.Series = pd.DataFrame(
                 data=[emotions.values() for emotions in reviews_emotions],
