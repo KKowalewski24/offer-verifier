@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional
 from tqdm import tqdm
 
 from module.model.Offer import Offer
-from module.model.ProductRating import ProductRating
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
 from module.service.common.Logger import Logger
@@ -39,24 +38,10 @@ class RequestProvider:
         )
         offer = self._prepare_offer(offer_id)
 
-        modified_ratings = [
-            self._set_rating_properties(offer, index)
-            for index in range(1, len(offer.ratings) + 1)
-        ]
-        modified_reviews = [
+        return [
             self._set_review_properties(offer, index)
             for index in range(1, len(offer.reviews) + 1)
         ]
-
-        return modified_ratings + modified_reviews
-
-
-    def _set_rating_properties(self, offer: Offer, index: int) -> Offer:
-        offer_copy = copy.deepcopy(offer)
-        offer_copy.id = f"{offer.id}__rating__{index}"
-        offer_copy.ratings = offer.ratings[:index]
-        offer_copy.reviews = []
-        return offer_copy
 
 
     def _set_review_properties(self, offer: Offer, index: int) -> Offer:
@@ -82,14 +67,6 @@ class RequestProvider:
 
     def _map_json_to_offer(self, offer_details: Dict[str, Any],
                            seller_details: Dict[str, Any]) -> Offer:
-        ratings: List[ProductRating] = [
-            ProductRating(
-                str(offer_details["id"]),
-                int(rating["stars_number"])
-            )
-            for rating in list(offer_details["ratings"])
-        ]
-
         reviews: List[ProductReview] = [
             ProductReview(
                 str(offer_details["id"]),
@@ -109,7 +86,6 @@ class RequestProvider:
             offer_details["image_url"],
             bool(offer_details["has_return_option"]),
             int(offer_details["description_length"]),
-            ratings,
             reviews,
             Seller(
                 seller_details["id"],
