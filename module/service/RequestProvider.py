@@ -24,18 +24,18 @@ class RequestProvider:
 
     def get_offers(self, search_phrase: str) -> List[Offer]:
         offers_id: List[str] = OfferIdProvider(search_phrase).get_offers_id()
-        display_and_log_info(self.logger, f"Offers to download: {len(offers_id)}")
+        display_and_log_info(self.logger, f"Offers to download: {len(offers_id)} ...")
         return remove_none_items([self._prepare_offer(offer_id) for offer_id in tqdm(offers_id)])
 
 
     def get_offer(self, offer_id: str) -> Offer:
-        display_and_log_info(self.logger, f"Downloading offer for offer_id: {offer_id}")
+        display_and_log_info(self.logger, f"Downloading offer for offer_id: {offer_id} ...")
         return self._prepare_offer(offer_id)
 
 
     def get_offer_splitted_into_snapshots(self, offer_id: str) -> List[Offer]:
         display_and_log_info(
-            self.logger, f"Downloading offer and splitting into snapshots for offer_id: {offer_id}"
+            self.logger, f"Downloading offer and splitting into snapshots for offer_id: {offer_id} ..."
         )
         offer = self._prepare_offer(offer_id)
 

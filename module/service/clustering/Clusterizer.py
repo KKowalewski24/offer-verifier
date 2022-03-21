@@ -21,7 +21,7 @@ class Clusterizer:
         self.offers = offers
         self.cluster_labels: np.ndarray = np.ndarray([])
 
-        display_and_log_info(self.logger, "Extracting features and preparing dataset")
+        display_and_log_info(self.logger, "Extracting features and preparing dataset...")
         self.dataset: pd.DataFrame = (
             FeatureExtractor(self.offers)
                 .insert_elementary_columns()

@@ -17,38 +17,48 @@ from module.exception.MoreThanOneModeException import MoreThanOneModeException
 from module.model.Offer import Offer
 from module.model.ProductRating import ProductRating
 from module.model.ProductReview import ProductReview
-from module.utils import list_to_string, remove_dict_entry_by_key
+from module.service.common.Logger import Logger
+from module.utils import list_to_string, remove_dict_entry_by_key, display_and_log_info
 
 
 class FeatureExtractor:
 
     def __init__(self, offers: List[Offer]) -> None:
         super().__init__()
+        self.logger = Logger().get_logging_instance()
         self.offers = offers
         self.dataset: pd.DataFrame = pd.DataFrame()
         self.stopwords = stopwords.words("english")
 
 
     def insert_elementary_columns(self) -> FeatureExtractor:
+        display_and_log_info(self.logger, f"Started insert_elementary_columns...")
         columns: List = [self._get_feature_values(offer) for offer in self.offers]
         column_names: List[str] = self._get_feature_names(self.offers[0])
 
         self.dataset = pd.DataFrame(columns, columns=column_names)
+
+        display_and_log_info(self.logger, f"Finished insert_elementary_columns")
         return self
 
 
     def insert_extracted_features(self) -> FeatureExtractor:
+        display_and_log_info(self.logger, f"Started insert_extracted_features...")
         self._move_not_valid_reviews_to_ratings()
 
+        display_and_log_info(self.logger, f"Started calculating stars_number...")
         column_names: List[str] = ["rating_stars_dominant", "review_stars_dominant"]
         columns: List[List[float]] = [
             [self._calculate_mode(offer.ratings) for offer in self.offers],
             [self._calculate_mode(offer.reviews) for offer in self.offers],
         ]
+        display_and_log_info(self.logger, f"Finished calculating stars_number")
 
+        display_and_log_info(self.logger, f"Started getting emotions from text content...")
         emotions_column_names, emotions_columns = self._get_emotions_from_text_content()
         column_names = column_names + emotions_column_names
         columns = columns + emotions_columns
+        display_and_log_info(self.logger, f"Finished getting emotions from text content")
 
         if len(columns) != len(column_names):
             raise Exception(f"{nameof(columns)} and {nameof(column_names)} must have equal size!")
@@ -56,10 +66,12 @@ class FeatureExtractor:
         for column_name, column in zip(column_names, columns):
             self.dataset[column_name] = column
 
+        display_and_log_info(self.logger, f"Finished insert_extracted_features")
         return self
 
 
     def normalize_dataset(self) -> FeatureExtractor:
+        display_and_log_info(self.logger, f"Started normalize_dataset...")
         non_numeric_feature_names: List[str] = [
             nameof(self.offers[0].has_return_option),
             # nameof(self.offers[0].reviews[0].contains_images),
@@ -75,6 +87,7 @@ class FeatureExtractor:
             columns=self.dataset.columns
         )
 
+        display_and_log_info(self.logger, f"Finished normalize_dataset")
         return self
 
 

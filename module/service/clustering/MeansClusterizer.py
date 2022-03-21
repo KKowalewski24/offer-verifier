@@ -21,7 +21,7 @@ class MeansClusterizer(Clusterizer):
     def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         start_time = time.time()
 
-        display_and_log_info(self.logger, "Clustering started")
+        display_and_log_info(self.logger, "Clustering started...")
         self.perform_means_clusterization(self.dataset)
         display_and_log_info(self.logger, "Clustering finished")
 
