@@ -64,10 +64,6 @@ class UserInterface:
         print("\tImage URL:", offer.image_url)
         print("\tOption to return item:", offer.has_return_option)
 
-        print("\tInformation about ratings")
-        for index, rating in enumerate(offer.ratings):
-            print(f"\tRating no.{index}, number of stars:", rating.stars_number)
-
         print("\tInformation about reviews")
         for index, review in enumerate(offer.reviews):
             print(f"\tReview no.{index}")

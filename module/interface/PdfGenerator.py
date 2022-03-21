@@ -54,10 +54,6 @@ class PdfDocument:
         self._draw_cell("Image URL - Click here", link=offer.image_url)
         self._draw_cell("Option to return item: " + convert_bool_to_string(offer.has_return_option))
 
-        self._draw_cell("Information about ratings", "C")
-        for index, rating in enumerate(offer.ratings):
-            self._draw_cell(f"Rating no.{index}, number of stars: {rating.stars_number}")
-
         self._draw_cell("Information about reviews", "C")
         for index, review in enumerate(offer.reviews):
             self._draw_cell(f"Review no.{index}")

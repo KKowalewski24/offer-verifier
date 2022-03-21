@@ -19,7 +19,6 @@ class OfferDetailsProvider(BaseProvider):
             self.logger.error("Error Page")
             return {}
 
-        ratings, reviews = self._get_ratings_reviews(soup)
         offer_json: Dict[str, Any] = {
             "id": offer_id,
             "title": self._get_title(soup),
@@ -27,8 +26,7 @@ class OfferDetailsProvider(BaseProvider):
             "image_url": self._get_image_url(soup),
             "has_return_option": self._get_return_option(soup),
             "description_length": self._get_description_length(soup),
-            "ratings": ratings,
-            "reviews": reviews,
+            "reviews": self._get_reviews(soup),
             "seller": {
                 "id": self._get_seller_id(soup)
             }
@@ -100,16 +98,15 @@ class OfferDetailsProvider(BaseProvider):
         return None
 
 
-    def _get_ratings_reviews(self, soup: BeautifulSoup) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    def _get_reviews(self, soup: BeautifulSoup) -> List[Dict[str, Any]]:
         ratings_reviews_div: Tag = soup.find(attrs=OFFER_RATINGS_REVIEWS_ATTRIBUTES)
-        ratings: List[Dict[str, str]] = []
-        reviews: List[Dict[str, str]] = []
+        reviews: List[Dict[str, Any]] = []
 
         if is_valid_item(ratings_reviews_div):
             reviews_header = ratings_reviews_div.find(attrs=REVIEWS_HEADER).find("div")
             if is_valid_item(reviews_header):
                 a_element = reviews_header.find("a")
-                ratings = self.__get_ratings(ratings_reviews_div)
+                ratings: List[int] = self.__get_ratings(ratings_reviews_div)
                 reviews = (
                     self.__get_reviews_when_many(str(a_element.get("href")))
                     if a_element is not None
@@ -119,24 +116,33 @@ class OfferDetailsProvider(BaseProvider):
                 # Removing stars_number from ratings in order to disjoint this two sets - originally
                 # website aggregate stars_number from ratings and reviews that is why it needs to be removed
                 for stars_number in [review["stars_number"] for review in reviews]:
-                    ratings.remove({"stars_number": str(stars_number)})
+                    ratings.remove(int(stars_number))
+
+                for rating in ratings:
+                    reviews.append({
+                        "stars_number": rating,
+                        "text_content": "",
+                        "positive_votes_number": 0,
+                        "negative_votes_number": 0,
+                        "contains_images": False
+                    })
             else:
                 self.logger.info("reviews_header does not exist")
         else:
             self.logger.info("ratings_reviews_div does not exist")
 
-        return ratings, reviews
+        return reviews
 
 
-    def __get_ratings(self, ratings_reviews_div: Tag) -> List[Dict[str, Any]]:
-        ratings: List[Dict[str, str]] = []
+    def __get_ratings(self, ratings_reviews_div: Tag) -> List[int]:
+        ratings: List[int] = []
 
         for rating_div in ratings_reviews_div.find(attrs=RATINGS_HISTOGRAM).find_all("li"):
             div_elements = rating_div.div.find_all("div")
-            star_value = div_elements[0].find("p").get_text(strip=True)
+            star_value = int(div_elements[0].find("p").get_text(strip=True))
             star_count = int(div_elements[1].find("span").get_text(strip=True))
             for _ in range(star_count):
-                ratings.append({"stars_number": str(star_value)})
+                ratings.append(star_value)
 
         return ratings
 
@@ -160,7 +166,7 @@ class OfferDetailsProvider(BaseProvider):
         contains_images: bool = len(review_div.find_all("img")) > 0
 
         return {
-            "stars_number": str(stars),
+            "stars_number": stars,
             "text_content": text_content,
             "positive_votes_number": positive_votes,
             "negative_votes_number": negative_votes,
@@ -207,7 +213,7 @@ class OfferDetailsProvider(BaseProvider):
         contains_images: bool = len(review_div.find_all("img")) > 0
 
         return {
-            "stars_number": str(stars),
+            "stars_number": stars,
             "text_content": text_content,
             "positive_votes_number": positive_votes,
             "negative_votes_number": negative_votes,

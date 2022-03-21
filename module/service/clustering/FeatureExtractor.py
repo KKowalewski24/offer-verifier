@@ -14,7 +14,6 @@ from sklearn.preprocessing import LabelEncoder
 
 from module.constants import LANGDETECT_ENGLISH
 from module.model.Offer import Offer
-from module.model.ProductRating import ProductRating
 from module.model.ProductReview import ProductReview
 from module.service.common.Logger import Logger
 from module.utils import display_and_log_info, list_to_string, remove_dict_entry_by_key
@@ -43,12 +42,11 @@ class FeatureExtractor:
 
     def insert_extracted_features(self) -> FeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_extracted_features...")
-        self._move_not_valid_reviews_to_ratings()
+        self._fix_not_valid_reviews()
 
         display_and_log_info(self.logger, f"Started calculating stars_number...")
-        column_names: List[str] = ["rating_stars_mean", "review_stars_mean"]
+        column_names: List[str] = ["review_stars_mean"]
         columns: List[List[float]] = [
-            [self._calculate_mean(offer.ratings) for offer in self.offers],
             [self._calculate_mean(offer.reviews) for offer in self.offers],
         ]
         display_and_log_info(self.logger, f"Finished calculating stars_number")
@@ -94,8 +92,8 @@ class FeatureExtractor:
         return self.dataset
 
 
-    def _calculate_mean(self, ratings: List[ProductRating]) -> int:
-        return pd.Series([rating.stars_number for rating in ratings]).mean()
+    def _calculate_mean(self, reviews: List[ProductReview]) -> int:
+        return pd.Series([review.stars_number for review in reviews]).mean()
 
 
     def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
@@ -136,17 +134,11 @@ class FeatureExtractor:
         ])
 
 
-    def _move_not_valid_reviews_to_ratings(self) -> None:
+    def _fix_not_valid_reviews(self) -> None:
         for offer in self.offers:
-            reviews_to_delete: List[ProductReview] = []
-
             for review in offer.reviews:
-                if not self._is_english_language(review.text_content):
-                    offer.ratings.append(ProductRating(str(offer.id), review.stars_number))
-                    reviews_to_delete.append(review)
-
-            for review_to_delete in reviews_to_delete:
-                offer.reviews.remove(review_to_delete)
+                if review.text_content != "" and not self._is_english_language(review.text_content):
+                    review.text_content = ""
 
 
     def _is_english_language(self, text: str) -> bool:
