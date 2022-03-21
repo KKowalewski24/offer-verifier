@@ -6,13 +6,12 @@ from module.constants import PICKLE_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Statistics import Statistics
 from module.service.OfferVerifier import OfferVerifier
-from module.service.RequestProvider import RequestProvider
 from module.service.clustering.BenchmarkClusterizer import BenchmarkClusterizer
-from module.service.clustering.FeatureExtractor import FeatureExtractor
 from module.service.clustering.FuzzyCMeansClusterizer import FuzzyCMeansClusterizer
 from module.service.clustering.KMeansClusterizer import KMeansClusterizer
 from module.service.common.LatexGenerator import LatexGenerator
 from module.service.common.Logger import Logger
+from module.utils import run_main
 
 """
 """
@@ -62,14 +61,4 @@ def prepare_args() -> Namespace:
 
 # __MAIN__ ------------------------------------------------------------------- #
 if __name__ == "__main__":
-    # run_main(main)
-    offer = RequestProvider().get_offer("294161433526")
-    df = (
-        FeatureExtractor([offer, offer])
-            .insert_elementary_columns()
-            .insert_extracted_features()
-            .normalize_dataset()
-            .get_dataset()
-    )
-    df.to_csv("abc.csv")
-    print(df.to_numpy())
+    run_main(main)
