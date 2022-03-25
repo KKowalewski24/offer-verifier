@@ -75,7 +75,7 @@ class FeatureExtractor:
             )
 
         for column_name, column in zip(emotions_column_names, emotions_columns):
-            self.dataset[column_name] = column
+            self.dataset[str(column_name)] = column
 
         display_and_log_info(self.logger, f"Finished insert_extracted_features")
         return self
