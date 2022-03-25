@@ -8,7 +8,7 @@ from module.constants import DETAILED_CONTENT_EXTRA_WORD, DETAILED_SELLER_RATING
     EBAY_USER_DETAILS_PATH, EBAY_USER_PATH, FEEDBACK_OVERALL_RATINGS_ATTRIBUTES, POSITIVE_FEEDBACK, \
     SELLER_BASIC_INFO_ATTRIBUTES, SELLER_MEMBER_INFO_ATTRIBUTES
 from module.service.request.BaseProvider import BaseProvider
-from module.utils import is_valid_item, normalize_text, replace_many
+from module.utils import display_and_log_info, is_valid_item, normalize_text, replace_many
 
 
 class SellerDetailsProvider(BaseProvider):
@@ -24,9 +24,12 @@ class SellerDetailsProvider(BaseProvider):
             return {}
 
         feedback_score, feedback_percentage = self._get_basic_stats(basic_soup)
-        positive_ratings, neutral_ratings, negative_ratings = self._get_feedback_ratings(details_soup)
-        (accurate_description, reasonable_shipping_cost,
-         shipping_speed, communication) = self._get_detailed_ratings(details_soup)
+        (
+            positive_ratings, neutral_ratings, negative_ratings
+        ) = self._get_feedback_ratings(details_soup, EBAY_USER_DETAILS_PATH + seller_id)
+        (
+            accurate_description, reasonable_shipping_cost, shipping_speed, communication
+        ) = self._get_detailed_ratings(details_soup, EBAY_USER_DETAILS_PATH + seller_id)
 
         return {
             "id": seller_id,
@@ -74,7 +77,7 @@ class SellerDetailsProvider(BaseProvider):
         return date_text[date_text.index(comma_separator) + len(comma_separator):]
 
 
-    def _get_feedback_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str]:
+    def _get_feedback_ratings(self, soup: BeautifulSoup, url: str) -> Tuple[str, str, str]:
         ratings_section = soup.find(attrs=FEEDBACK_OVERALL_RATINGS_ATTRIBUTES)
         positive_ratings: str = str(0)
         neutral_ratings: str = str(0)
@@ -87,6 +90,9 @@ class SellerDetailsProvider(BaseProvider):
             negative_ratings = self.__get_feedback_td_content(table_rows[2])
         else:
             self.logger.info("ratings_section does not exist")
+            display_and_log_info(
+                self.logger, f"Go to {url} and check if captcha verification is not required"
+            )
 
         return positive_ratings, neutral_ratings, negative_ratings
 
@@ -95,7 +101,7 @@ class SellerDetailsProvider(BaseProvider):
         return table_rows.select("td")[2].get_text()
 
 
-    def _get_detailed_ratings(self, soup: BeautifulSoup) -> Tuple[str, str, str, str]:
+    def _get_detailed_ratings(self, soup: BeautifulSoup, url: str) -> Tuple[str, str, str, str]:
         ratings_section = soup.find(attrs=DETAILED_SELLER_RATINGS_ATTRIBUTES)
         # If seller has no ratings in selected category, neutral value is returned - 3 is neutral
         accurate_description: str = str(3)
@@ -118,6 +124,9 @@ class SellerDetailsProvider(BaseProvider):
             )
         else:
             self.logger.info("ratings_section does not exist")
+            display_and_log_info(
+                self.logger, f"Go to {url} and check if captcha verification is not required"
+            )
 
         return accurate_description, reasonable_shipping_cost, shipping_speed, communication
 

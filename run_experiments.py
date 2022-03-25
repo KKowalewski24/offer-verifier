@@ -1,12 +1,16 @@
 import glob
 from argparse import ArgumentParser, Namespace
+from typing import List
 
 from module.constants import PICKLE_EXTENSION
-from module.service.LatexGenerator import LatexGenerator
-from module.service.Logger import Logger
+from module.interface.PdfGenerator import PdfGenerator
+from module.model.Statistics import Statistics
 from module.service.OfferVerifier import OfferVerifier
-from module.service.PdfGenerator import PdfGenerator
+from module.service.clustering.BenchmarkClusterizer import BenchmarkClusterizer
+from module.service.clustering.FuzzyCMeansClusterizer import FuzzyCMeansClusterizer
 from module.service.clustering.KMeansClusterizer import KMeansClusterizer
+from module.service.common.LatexGenerator import LatexGenerator
+from module.service.common.Logger import Logger
 from module.utils import run_main
 
 """
@@ -14,7 +18,7 @@ from module.utils import run_main
 
 # VAR ------------------------------------------------------------------------ #
 EXPERIMENTS_RESULTS_DIR: str = "experiment_results"
-DATASET_DIR: str = "results/"
+DATASET_DIR: str = "dataset_snapshot/"
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
 pdf_generator: PdfGenerator = PdfGenerator()
@@ -26,31 +30,27 @@ def main() -> None:
     args = prepare_args()
 
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
-    arr = []
+    clusterizers: List = [KMeansClusterizer, FuzzyCMeansClusterizer, BenchmarkClusterizer]
+
     for dataset_path in dataset_paths:
-        offer_verifier: OfferVerifier = OfferVerifier(
-            path_to_local_file=dataset_path, clusterizer=KMeansClusterizer
-        )
-        combined_offers, statistics = offer_verifier.verify()
-        print(f"Is verified: {combined_offers[0][1]}, offers count: {len(combined_offers[0][0])}")
-        print(f"Is verified: {combined_offers[1][1]}, offers count: {len(combined_offers[1][0])}")
-        print()
-        arr.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
-        pdf_generator.generate(combined_offers)
-    print(arr)
+        result = []
+        for clusterizer in clusterizers:
+            offer_verifier: OfferVerifier = OfferVerifier(
+                path_to_local_file=dataset_path, clusterizer=clusterizer
+            )
+            combined_offers, statistics = offer_verifier.verify()
+
+            print(f"Is verified: {combined_offers[0][1]}, offers count: {len(combined_offers[0][0])}")
+            print(f"Is verified: {combined_offers[1][1]}, offers count: {len(combined_offers[1][0])}")
+            print()
+            result.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
+            pdf_generator.generate(combined_offers)
+        print(result)
 
 
 # DEF ------------------------------------------------------------------------ #
-# def _display_statistics(statistics: Statistics) -> None:
-#     print("\n\nNumber of offers :", statistics.offers_number)
-#     print("Silhouette score:", statistics.silhouette_score)
-#     print("Calinski Harabasz score:", statistics.calinski_harabasz_score)
-#     print("Davies Bouldin score:", statistics.davies_bouldin_score)
-#     latex_table_row: str = latex_generator.get_table_body(
-#         [[search_phrase] + statistics.to_list()]
-#     )
-#     print(latex_table_row)
-#     save_to_file(STATISTICS_PATH, latex_table_row + "\n", "a")
+def _display_statistics(statistics: Statistics) -> None:
+    pass
 
 
 def prepare_args() -> Namespace:

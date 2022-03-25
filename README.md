@@ -16,9 +16,3 @@ pip install -r requirements.txt
 * Run `python main.py -h` in order to get information about parameters
 * Run `python main.py -p "OFFER_TITLE" --pdf`
 * Additional parameter `--pdf` generates pdf report
-
-#### Data Analysis
-* For KMeans K is always set to 2 because only 2 clusters are needed
-* For testing of algorithm downloaded offers can be used in order to save time for downloading
-* Field `feedback_score` from Seller is not added to feature vector but it is 
-used to for choosing cluster with more credible offers 

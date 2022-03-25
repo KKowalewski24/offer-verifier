@@ -17,6 +17,7 @@ OFFERS_PATH: str = RESULTS_DIRECTORY + "offers-"
 CURRENCY_US_DOLLAR: str = "US $"
 PICKLE_EXTENSION: str = ".pickle"
 PDF_EXTENSION: str = ".pdf"
+LANGDETECT_ENGLISH = "en"
 
 # ----------------------------------------------------------------------- #
 SLASH: str = "/"
@@ -24,8 +25,10 @@ PARAM_QUERY = "sch/i.html?_nkw="
 PARAM_BRAND_NEW: str = "&LH_ItemCondition=1000"
 PARAM_BUY_NOW: str = "&LH_BIN=1"
 LIST_VIEW: str = "&_dmd=2"
-ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=200", 200)
+ITEMS_PER_PAGE: Tuple[str, int] = ("&_ipg=240", 240)
 PARAM_PAGE_NUMBER: str = "&_pgn="
+REVIEW_ITEMS_PER_PAGE: int = 10
+REVIEW_PARAM_PAGE_NUMBER: str = "&pgn="
 
 ITM: str = "itm/"
 SLASH_ITM: str = SLASH + ITM
@@ -92,8 +95,35 @@ OFFER_RATINGS_REVIEWS_ATTRIBUTES: Dict[str, str] = {
     "id": "rwid"
 }
 
+RATINGS_HISTOGRAM: Dict[str, str] = {
+    "class": "reviews-histogram"
+}
+
 REVIEWS_CLASS_ATTRIBUTE: str = ".reviews > div"
-RATINGS_CLASS_ATTRIBUTE: str = ".ebay-content-wrapper > span"
+
+REVIEWS_HEADER: Dict[str, str] = {
+    "class": "reviews-right"
+}
+
+REVIEWS_COUNT: Dict[str, str] = {
+    "class": "p-rvw-count"
+}
+
+REVIEWS_IMAGES: Dict[str, str] = {
+    "class": "reviews-images"
+}
+
+REVIEW_VOTE: Dict[str, str] = {
+    "name": "vote"
+}
+
+REVIEW_POSITIVE_VOTE: Dict[str, str] = {
+    "class": "positive-h-c"
+}
+
+REVIEW_NEGATIVE_VOTE: Dict[str, str] = {
+    "class": "negative-h-c"
+}
 
 SELLER_PANEL_ATTRIBUTES: Dict[str, str] = {
     "id": "RightSummaryPanel"
@@ -136,6 +166,7 @@ ERROR_PAGE_PHRASE: str = "Error Page"
 ITEMS_NUMBER_PHRASE: str = " results for "
 RETURNS_NOT_ACCEPTED: str = "Seller does not accept returns"
 RETURNS_NEGATION: str = "does not"
+READ_FULL_REVIEW: str = "Read full review..."
 PRODUCT_RATINGS_KEYWORDS: List[str] = [
     " product", " ratings", " rating"
 ]

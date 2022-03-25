@@ -53,9 +53,14 @@ class PdfDocument:
         self._draw_cell("Offer price: " + CURRENCY_US_DOLLAR + " " + str(offer.price))
         self._draw_cell("Image URL - Click here", link=offer.image_url)
         self._draw_cell("Option to return item: " + convert_bool_to_string(offer.has_return_option))
-        self._draw_cell("Number of reviews: " + str(offer.product_reviews_number))
-        self._draw_cell("Ratings of product: " + str(offer.product_rating))
-        self._draw_cell("Number of ratings: " + str(offer.product_ratings_number))
+
+        self._draw_cell("Information about reviews", "C")
+        for index, review in enumerate(offer.reviews):
+            self._draw_cell(f"Review no.{index}")
+            self._draw_cell(f"Number of stars: {review.stars_number}")
+            self._draw_cell(f"Number of positive votes: {review.positive_votes_number}")
+            self._draw_cell(f"Number of negative votes: {review.negative_votes_number}")
+            self._draw_cell(f"Contains image: {convert_bool_to_string(review.contains_images)}")
 
         self._draw_cell("", "C")
         self._draw_cell("Information about seller", "C")

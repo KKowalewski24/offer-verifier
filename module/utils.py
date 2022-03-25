@@ -37,10 +37,7 @@ def check_if_exists_in_args(arg: str) -> bool:
 def has_access_to_internet() -> bool:
     url: str = "https://www.google.com/"
     response = requests.get(url)
-
-    if response.status_code == HTTP_OK:
-        return True
-    return False
+    return True if response.status_code == HTTP_OK else False
 
 
 def check_http_code_get_json(response: requests.models.Response) -> Dict:
@@ -64,6 +61,18 @@ def display_and_log_warning(logger_instance: Any, text: str) -> None:
 def display_and_log_error(logger_instance: Any, text: str) -> None:
     print(text)
     logger_instance.error(text)
+
+
+def list_to_string(items: List) -> str:
+    return " ".join(items)
+
+
+def flat_map_list(items: List, callback: Callable[[int, List], List] = lambda x, y: y) -> List:
+    return [sub_item for index, sub_items in enumerate(items) for sub_item in callback(index, sub_items)]
+
+
+def add_value_to_all_items(items: List[str], value: str) -> List[str]:
+    return [item + value for item in items]
 
 
 def remove_duplicates(items: List[Any]) -> List[Any]:
@@ -97,9 +106,15 @@ def convert_bool_to_json(value: bool) -> str:
 
 
 def convert_bool_to_string(value: bool) -> str:
-    if value:
-        return "Yes"
-    return "No"
+    return "Yes" if value else "No"
+
+
+def remove_dict_entry_by_key(dictionary: Dict, key_to_delete: str) -> Dict:
+    return {
+        key: value
+        for key, value in dictionary.items()
+        if key != key_to_delete
+    }
 
 
 def format_json(data: Dict) -> str:
