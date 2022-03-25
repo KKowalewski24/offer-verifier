@@ -14,9 +14,14 @@ from sklearn.preprocessing import LabelEncoder
 
 from module.constants import LANGDETECT_ENGLISH
 from module.model.Offer import Offer
-from module.model.ProductReview import ProductReview
 from module.service.common.Logger import Logger
 from module.utils import display_and_log_info, list_to_string, remove_dict_entry_by_key
+
+'''
+Order of calling method (fluent api) from FeatureExtractor may be confusing, at first 
+`insert_elementary_columns` should be called, then `normalize_dataset` and then `insert_extracted_features` 
+because extracted features are already normalized. Final step is to get dataset by calling `get_dataset`. 
+'''
 
 
 class FeatureExtractor:
@@ -40,39 +45,9 @@ class FeatureExtractor:
         return self
 
 
-    def insert_extracted_features(self) -> FeatureExtractor:
-        display_and_log_info(self.logger, f"Started insert_extracted_features...")
-        self._fix_not_valid_reviews()
-
-        display_and_log_info(self.logger, f"Started calculating stars_number...")
-        column_names: List[str] = ["review_stars_mean"]
-        columns: List[List[float]] = [
-            [self._calculate_mean(offer.reviews) for offer in self.offers],
-        ]
-        display_and_log_info(self.logger, f"Finished calculating stars_number")
-
-        display_and_log_info(self.logger, f"Started getting emotions from text content...")
-        emotions_column_names, emotions_columns = self._get_emotions_from_text_content()
-        column_names = column_names + emotions_column_names
-        columns = columns + emotions_columns
-        display_and_log_info(self.logger, f"Finished getting emotions from text content")
-
-        if len(columns) != len(column_names):
-            raise Exception(f"{nameof(columns)} and {nameof(column_names)} must have equal size!")
-
-        for column_name, column in zip(column_names, columns):
-            self.dataset[column_name] = column
-
-        display_and_log_info(self.logger, f"Finished insert_extracted_features")
-        return self
-
-
     def normalize_dataset(self) -> FeatureExtractor:
         display_and_log_info(self.logger, f"Started normalize_dataset...")
-        non_numeric_feature_names: List[str] = [
-            nameof(self.offers[0].has_return_option),
-            # nameof(self.offers[0].reviews[0].contains_images),
-        ]
+        non_numeric_feature_names: List[str] = [nameof(self.offers[0].has_return_option)]
 
         label_encoder = LabelEncoder()
         for name in non_numeric_feature_names:
@@ -88,12 +63,26 @@ class FeatureExtractor:
         return self
 
 
+    def insert_extracted_features(self) -> FeatureExtractor:
+        display_and_log_info(self.logger, f"Started insert_extracted_features...")
+        self._fix_not_valid_reviews()
+
+        emotions_column_names, emotions_columns = self._get_emotions_from_text_content()
+
+        if len(emotions_columns) != len(emotions_column_names):
+            raise Exception(
+                f"{nameof(emotions_columns)} and {nameof(emotions_column_names)} must have equal size!"
+            )
+
+        for column_name, column in zip(emotions_column_names, emotions_columns):
+            self.dataset[column_name] = column
+
+        display_and_log_info(self.logger, f"Finished insert_extracted_features")
+        return self
+
+
     def get_dataset(self) -> pd.DataFrame:
         return self.dataset
-
-
-    def _calculate_mean(self, reviews: List[ProductReview]) -> int:
-        return pd.Series([review.stars_number for review in reviews]).mean()
 
 
     def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
@@ -150,6 +139,7 @@ class FeatureExtractor:
             offer.price,
             offer.has_return_option,
             offer.description_length,
+            offer.seller.feedback_score,
             offer.seller.seller_feedback_percentage,
             offer.seller.year_of_joining,
             offer.seller.seller_positive_ratings_number,
@@ -167,6 +157,7 @@ class FeatureExtractor:
             nameof(offer.price),
             nameof(offer.has_return_option),
             nameof(offer.description_length),
+            nameof(offer.seller.feedback_score),
             nameof(offer.seller.seller_feedback_percentage),
             nameof(offer.seller.year_of_joining),
             nameof(offer.seller.seller_positive_ratings_number),

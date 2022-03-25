@@ -25,8 +25,8 @@ class Clusterizer:
         self.dataset: pd.DataFrame = (
             FeatureExtractor(self.offers)
                 .insert_elementary_columns()
-                .insert_extracted_features()
                 .normalize_dataset()
+                .insert_extracted_features()
                 .get_dataset()
         )
         display_and_log_info(self.logger, "Features extracted and dataset prepared")
