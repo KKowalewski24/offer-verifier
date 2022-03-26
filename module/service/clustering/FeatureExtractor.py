@@ -91,7 +91,10 @@ class FeatureExtractor:
 
         for offer in self.offers:
             reviews_emotions: List[Dict] = [
-                remove_dict_entry_by_key(NRCLex(review.text_content).affect_frequencies, "anticip")
+                remove_dict_entry_by_key(
+                    NRCLex(self._prepare_text(review.text_content)).affect_frequencies,
+                    "anticip"
+                )
                 for review in offer.reviews
             ]
 
