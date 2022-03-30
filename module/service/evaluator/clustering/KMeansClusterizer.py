@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 
-from module.service.clustering.Clusterizer import Clusterizer
-from module.service.clustering.MeansClusterizer import MeansClusterizer
+from module.service.evaluator.Clusterizer import Clusterizer
+from module.service.evaluator.clustering.MeansClusterizer import MeansClusterizer
 
 
 class KMeansClusterizer(MeansClusterizer):

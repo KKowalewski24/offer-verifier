@@ -10,8 +10,8 @@ from module.exception.ChoosingCredibleOfferNotPossibleException import \
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Statistics import Statistics
-from module.service.clustering.Clusterizer import Clusterizer
-from module.service.clustering.MeansFeatureExtractor import MeansFeatureExtractor
+from module.service.evaluator.Clusterizer import Clusterizer
+from module.service.evaluator.clustering.MeansFeatureExtractor import MeansFeatureExtractor
 from module.utils import display_and_log_info
 
 

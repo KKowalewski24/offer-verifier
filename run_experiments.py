@@ -6,9 +6,9 @@ from module.constants import PICKLE_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Statistics import Statistics
 from module.service.OfferVerifier import OfferVerifier
-from module.service.clustering.BenchmarkClusterizer import BenchmarkClusterizer
-from module.service.clustering.FuzzyCMeansClusterizer import FuzzyCMeansClusterizer
-from module.service.clustering.KMeansClusterizer import KMeansClusterizer
+from module.service.evaluator.benchmark.BenchmarkClusterizer import BenchmarkClusterizer
+from module.service.evaluator.clustering.FuzzyCMeansClusterizer import FuzzyCMeansClusterizer
+from module.service.evaluator.clustering.KMeansClusterizer import KMeansClusterizer
 from module.service.common.LatexGenerator import LatexGenerator
 from module.service.common.Logger import Logger
 from module.utils import run_main

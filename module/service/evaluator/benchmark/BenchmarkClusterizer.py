@@ -5,7 +5,7 @@ import pandas as pd
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
-from module.service.clustering.Clusterizer import Clusterizer
+from module.service.evaluator.Clusterizer import Clusterizer
 
 
 class BenchmarkClusterizer(Clusterizer):
