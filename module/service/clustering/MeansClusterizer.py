@@ -11,12 +11,27 @@ from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Statistics import Statistics
 from module.service.clustering.Clusterizer import Clusterizer
+from module.service.clustering.FeatureExtractor import FeatureExtractor
 from module.utils import display_and_log_info
 
 
 class MeansClusterizer(Clusterizer):
     # K is set to 2 in order to always get 2 clusters whether it is optimal or not
     K_PARAM: int = 2
+
+
+    def __init__(self, offers: List[Offer]) -> None:
+        super().__init__(offers)
+
+        display_and_log_info(self.logger, "Extracting features and preparing dataset...")
+        self.dataset: pd.DataFrame = (
+            FeatureExtractor(self.offers)
+                .insert_elementary_columns()
+                .normalize_dataset()
+                .insert_extracted_features()
+                .get_dataset()
+        )
+        display_and_log_info(self.logger, "Features extracted and dataset prepared")
 
 
     def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
