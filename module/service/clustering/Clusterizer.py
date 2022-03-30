@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from typing import List, Tuple
 
-import numpy as np
 import pandas as pd
 
 from module.model.Offer import Offer
@@ -16,7 +15,6 @@ class Clusterizer:
     def __init__(self, offers: List[Offer]) -> None:
         self.logger = Logger().get_logging_instance()
         self.offers = offers
-        self.cluster_labels: np.ndarray = np.ndarray([])
 
 
     @abstractmethod

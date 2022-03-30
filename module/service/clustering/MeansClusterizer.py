@@ -11,7 +11,7 @@ from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Statistics import Statistics
 from module.service.clustering.Clusterizer import Clusterizer
-from module.service.clustering.FeatureExtractor import FeatureExtractor
+from module.service.clustering.MeansFeatureExtractor import MeansFeatureExtractor
 from module.utils import display_and_log_info
 
 
@@ -22,10 +22,11 @@ class MeansClusterizer(Clusterizer):
 
     def __init__(self, offers: List[Offer]) -> None:
         super().__init__(offers)
+        self.cluster_labels: np.ndarray = np.ndarray([])
 
         display_and_log_info(self.logger, "Extracting features and preparing dataset...")
         self.dataset: pd.DataFrame = (
-            FeatureExtractor(self.offers)
+            MeansFeatureExtractor(self.offers)
                 .insert_elementary_columns()
                 .normalize_dataset()
                 .insert_extracted_features()

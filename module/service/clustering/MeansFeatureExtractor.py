@@ -18,13 +18,13 @@ from module.service.common.Logger import Logger
 from module.utils import display_and_log_info, list_to_string, remove_dict_entry_by_key
 
 '''
-Order of calling method (fluent api) from FeatureExtractor may be confusing, at first 
+Order of calling method (fluent api) from MeansFeatureExtractor may be confusing, at first 
 `insert_elementary_columns` should be called, then `normalize_dataset` and then `insert_extracted_features` 
 because extracted features are already normalized. Final step is to get dataset by calling `get_dataset`. 
 '''
 
 
-class FeatureExtractor:
+class MeansFeatureExtractor:
 
     def __init__(self, offers: List[Offer]) -> None:
         super().__init__()
@@ -34,7 +34,7 @@ class FeatureExtractor:
         self.stopwords = stopwords.words("english")
 
 
-    def insert_elementary_columns(self) -> FeatureExtractor:
+    def insert_elementary_columns(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_elementary_columns...")
         columns: List = [self._get_feature_values(offer) for offer in self.offers]
         column_names: List[str] = self._get_feature_names(self.offers[0])
@@ -45,7 +45,7 @@ class FeatureExtractor:
         return self
 
 
-    def normalize_dataset(self) -> FeatureExtractor:
+    def normalize_dataset(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started normalize_dataset...")
         non_numeric_feature_names: List[str] = [nameof(self.offers[0].has_return_option)]
 
@@ -63,7 +63,7 @@ class FeatureExtractor:
         return self
 
 
-    def insert_extracted_features(self) -> FeatureExtractor:
+    def insert_extracted_features(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_extracted_features...")
         self._fix_not_valid_reviews()
 
