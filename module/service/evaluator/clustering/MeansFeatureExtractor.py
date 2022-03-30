@@ -6,8 +6,6 @@ import numpy as np
 import pandas as pd
 from nameof import nameof
 from nrclex import NRCLex
-from sklearn import preprocessing
-from sklearn.preprocessing import LabelEncoder
 
 from module.model.Offer import Offer
 from module.service.evaluator.FeatureExtractor import FeatureExtractor
@@ -35,17 +33,9 @@ class MeansFeatureExtractor(FeatureExtractor):
 
     def normalize_dataset(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started normalize_dataset...")
-        non_numeric_feature_names: List[str] = [nameof(self.offers[0].has_return_option)]
 
-        label_encoder = LabelEncoder()
-        for name in non_numeric_feature_names:
-            self.dataset[name] = label_encoder.fit_transform(self.dataset[name])
-
-        self.dataset = self.dataset.astype(float)
-        self.dataset = pd.DataFrame(
-            data=preprocessing.normalize(self.dataset),
-            columns=self.dataset.columns
-        )
+        self._encode_columns([nameof(self.offers[0].has_return_option)])
+        self._normalize_columns()
 
         display_and_log_info(self.logger, f"Finished normalize_dataset")
         return self
@@ -53,7 +43,7 @@ class MeansFeatureExtractor(FeatureExtractor):
 
     def insert_extracted_features(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_extracted_features...")
-        self.fix_not_valid_reviews()
+        self._fix_not_valid_reviews()
 
         emotions_column_names, emotions_columns = self._get_emotions_from_text_content()
 
@@ -76,7 +66,7 @@ class MeansFeatureExtractor(FeatureExtractor):
         for offer in self.offers:
             reviews_emotions: List[Dict] = [
                 remove_dict_entry_by_key(
-                    NRCLex(self.prepare_text(review.text_content)).affect_frequencies,
+                    NRCLex(self._prepare_text(review.text_content)).affect_frequencies,
                     "anticip"
                 )
                 for review in offer.reviews
