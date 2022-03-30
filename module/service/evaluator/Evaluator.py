@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 import pandas as pd
@@ -8,7 +8,7 @@ from module.model.Statistics import Statistics
 from module.service.common.Logger import Logger
 
 
-class Evaluator:
+class Evaluator(ABC):
     RANDOM_STATE: int = 21
 
 

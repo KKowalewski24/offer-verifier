@@ -1,9 +1,11 @@
+from abc import ABC
+
 from nameof import nameof
 
 from module.utils import to_string_class_formatter
 
 
-class BaseItem:
+class BaseItem(ABC):
 
     def __init__(self, id: str) -> None:
         self.id = id

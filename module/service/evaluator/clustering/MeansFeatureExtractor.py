@@ -4,18 +4,14 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-from langdetect import detect
 from nameof import nameof
-from nltk import WordNetLemmatizer, word_tokenize
-from nltk.corpus import stopwords
 from nrclex import NRCLex
 from sklearn import preprocessing
 from sklearn.preprocessing import LabelEncoder
 
-from module.constants import LANGDETECT_ENGLISH
 from module.model.Offer import Offer
-from module.service.common.Logger import Logger
-from module.utils import display_and_log_info, list_to_string, remove_dict_entry_by_key
+from module.service.evaluator.FeatureExtractor import FeatureExtractor
+from module.utils import display_and_log_info, remove_dict_entry_by_key
 
 '''
 Order of calling method (fluent api) from MeansFeatureExtractor may be confusing, at first 
@@ -24,15 +20,7 @@ because extracted features are already normalized. Final step is to get dataset 
 '''
 
 
-class MeansFeatureExtractor:
-
-    def __init__(self, offers: List[Offer]) -> None:
-        super().__init__()
-        self.logger = Logger().get_logging_instance()
-        self.offers = offers
-        self.dataset: pd.DataFrame = pd.DataFrame()
-        self.stopwords = stopwords.words("english")
-
+class MeansFeatureExtractor(FeatureExtractor):
 
     def insert_elementary_columns(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_elementary_columns...")
@@ -65,7 +53,7 @@ class MeansFeatureExtractor:
 
     def insert_extracted_features(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_extracted_features...")
-        self._fix_not_valid_reviews()
+        self.fix_not_valid_reviews()
 
         emotions_column_names, emotions_columns = self._get_emotions_from_text_content()
 
@@ -81,10 +69,6 @@ class MeansFeatureExtractor:
         return self
 
 
-    def get_dataset(self) -> pd.DataFrame:
-        return self.dataset
-
-
     def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
         emotions_column_names: List[List[str]] = []
         emotions_columns: List[List[float]] = []
@@ -92,7 +76,7 @@ class MeansFeatureExtractor:
         for offer in self.offers:
             reviews_emotions: List[Dict] = [
                 remove_dict_entry_by_key(
-                    NRCLex(self._prepare_text(review.text_content)).affect_frequencies,
+                    NRCLex(self.prepare_text(review.text_content)).affect_frequencies,
                     "anticip"
                 )
                 for review in offer.reviews
@@ -116,25 +100,6 @@ class MeansFeatureExtractor:
         ]
 
         return list(np.unique(emotions_column_names)), rotated_emotions_columns
-
-
-    def _prepare_text(self, text: str) -> str:
-        return list_to_string([
-            WordNetLemmatizer().lemmatize(x)
-            for x in word_tokenize(text.casefold())
-            if x.isalpha() and x not in self.stopwords
-        ])
-
-
-    def _fix_not_valid_reviews(self) -> None:
-        for offer in self.offers:
-            for review in offer.reviews:
-                if review.text_content != "" and not self._is_english_language(review.text_content):
-                    review.text_content = ""
-
-
-    def _is_english_language(self, text: str) -> bool:
-        return detect(text) == LANGDETECT_ENGLISH
 
 
     def _get_feature_values(self, offer: Offer) -> List:
