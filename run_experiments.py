@@ -6,9 +6,9 @@ from module.constants import PICKLE_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Statistics import Statistics
 from module.service.OfferVerifier import OfferVerifier
-from module.service.evaluator.benchmark.BenchmarkClusterizer import BenchmarkClusterizer
-from module.service.evaluator.clustering.FuzzyCMeansClusterizer import FuzzyCMeansClusterizer
-from module.service.evaluator.clustering.KMeansClusterizer import KMeansClusterizer
+from module.service.evaluator.benchmark.BenchmarkEvaluator import BenchmarkEvaluator
+from module.service.evaluator.clustering.FuzzyCMeansEvaluator import FuzzyCMeansEvaluator
+from module.service.evaluator.clustering.KMeansEvaluator import KMeansEvaluator
 from module.service.common.LatexGenerator import LatexGenerator
 from module.service.common.Logger import Logger
 from module.utils import run_main
@@ -30,13 +30,13 @@ def main() -> None:
     args = prepare_args()
 
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
-    clusterizers: List = [KMeansClusterizer, FuzzyCMeansClusterizer, BenchmarkClusterizer]
+    evaluators: List = [KMeansEvaluator, FuzzyCMeansEvaluator, BenchmarkEvaluator]
 
     for dataset_path in dataset_paths:
         result = []
-        for clusterizer in clusterizers:
+        for evaluator in evaluators:
             offer_verifier: OfferVerifier = OfferVerifier(
-                path_to_local_file=dataset_path, clusterizer=clusterizer
+                path_to_local_file=dataset_path, evaluator=evaluator
             )
             combined_offers, statistics = offer_verifier.verify()
 

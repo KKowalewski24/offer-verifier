@@ -8,8 +8,8 @@ from module.exception.WrongConstructorParams import WrongConstructorParams
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.RequestProvider import RequestProvider
-from module.service.evaluator.Clusterizer import Clusterizer
-from module.service.evaluator.clustering.KMeansClusterizer import KMeansClusterizer
+from module.service.evaluator.Evaluator import Evaluator
+from module.service.evaluator.clustering.KMeansEvaluator import KMeansEvaluator
 from module.service.common.Logger import Logger
 from module.utils import display_and_log_error, display_and_log_info, display_and_log_warning, \
     get_filename, read_object_from_file, save_object_to_file
@@ -20,12 +20,12 @@ class OfferVerifier:
     def __init__(self, search_phrase: str = None,
                  path_to_local_file: str = None,
                  save_offers: bool = False,
-                 clusterizer: Callable[[List[Offer]], Clusterizer] = KMeansClusterizer) -> None:
+                 evaluator: Callable[[List[Offer]], Evaluator] = KMeansEvaluator) -> None:
         self.logger = Logger().get_logging_instance()
         self.search_phrase = search_phrase
         self.path_to_local_file = path_to_local_file
         self.save_offers = save_offers
-        self.clusterizer: Callable[[Any], Clusterizer] = clusterizer
+        self.evaluator: Callable[[Any], Evaluator] = evaluator
         self._validate_init_params()
 
 
@@ -38,7 +38,7 @@ class OfferVerifier:
             raise EmptyDatasetException()
 
         display_and_log_info(self.logger, "Performing the analysis of the offers, Please wait ...")
-        verified_offers, statistics = self.clusterizer(offers).clusterize()
+        verified_offers, statistics = self.evaluator(offers).evaluate()
         display_and_log_info(self.logger, "Analysis of the offers done!")
 
         return verified_offers, statistics

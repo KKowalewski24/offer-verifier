@@ -8,7 +8,7 @@ from module.model.Statistics import Statistics
 from module.service.common.Logger import Logger
 
 
-class Clusterizer:
+class Evaluator:
     RANDOM_STATE: int = 21
 
 
@@ -18,7 +18,7 @@ class Clusterizer:
 
 
     @abstractmethod
-    def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         pass
 
 

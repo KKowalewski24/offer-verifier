@@ -10,12 +10,12 @@ from module.exception.ChoosingCredibleOfferNotPossibleException import \
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Statistics import Statistics
-from module.service.evaluator.Clusterizer import Clusterizer
+from module.service.evaluator.Evaluator import Evaluator
 from module.service.evaluator.clustering.MeansFeatureExtractor import MeansFeatureExtractor
 from module.utils import display_and_log_info
 
 
-class MeansClusterizer(Clusterizer):
+class MeansEvaluator(Evaluator):
     # K is set to 2 in order to always get 2 clusters whether it is optimal or not
     K_PARAM: int = 2
 
@@ -35,7 +35,7 @@ class MeansClusterizer(Clusterizer):
         display_and_log_info(self.logger, "Features extracted and dataset prepared")
 
 
-    def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         start_time = time.time()
 
         display_and_log_info(self.logger, "Clustering started...")
