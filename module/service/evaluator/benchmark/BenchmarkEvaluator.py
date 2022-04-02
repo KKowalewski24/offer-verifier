@@ -15,7 +15,7 @@ class BenchmarkEvaluator(Evaluator):
         super().__init__(offers)
         self.dataset: List[Tuple[Offer, float]] = (
             BenchmarkFeatureExtractor(self.offers)
-
+                .calculate_score()
                 .get_dataset()
         )
 

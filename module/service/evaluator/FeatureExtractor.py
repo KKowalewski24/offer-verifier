@@ -22,6 +22,7 @@ class FeatureExtractor(ABC):
         super().__init__()
         self.logger = Logger().get_logging_instance()
         self.offers = offers
+        self.stopwords = stopwords.words("english")
 
 
     def _encode_columns(self, dataset: pd.DataFrame, column_names: List[str]) -> pd.DataFrame:
@@ -41,11 +42,10 @@ class FeatureExtractor(ABC):
 
 
     def _prepare_text(self, text: str) -> str:
-        stop_words = stopwords.words("english")
         return list_to_string([
             WordNetLemmatizer().lemmatize(x)
             for x in word_tokenize(text.casefold())
-            if x.isalpha() and x not in stop_words
+            if x.isalpha() and x not in self.stopwords
         ])
 
 
