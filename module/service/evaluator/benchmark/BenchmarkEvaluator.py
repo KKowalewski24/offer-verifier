@@ -38,4 +38,4 @@ class BenchmarkEvaluator(Evaluator):
         execution_time = end_time - start_time
 
         offers_count: int = len(credible_offers[0]) + len(not_credible_offers[0])
-        return result, self._calculate_statistics(offers_count, execution_time)
+        return result, Statistics(offers_count, execution_time)

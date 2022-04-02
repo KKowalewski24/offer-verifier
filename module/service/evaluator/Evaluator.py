@@ -18,11 +18,3 @@ class Evaluator(ABC):
     @abstractmethod
     def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         pass
-
-
-    def _calculate_statistics(self, offers_count: int, execution_time: float) -> Statistics:
-        # TODO ADD MORE STATISTICS
-        return Statistics(
-            offers_count,
-            execution_time
-        )
