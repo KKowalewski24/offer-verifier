@@ -20,6 +20,11 @@ because extracted features are already normalized. Final step is to get dataset 
 
 class MeansFeatureExtractor(FeatureExtractor):
 
+    def __init__(self, offers: List[Offer]) -> None:
+        super().__init__(offers)
+        self.dataset: pd.DataFrame = pd.DataFrame()
+
+
     def insert_elementary_columns(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_elementary_columns...")
         columns: List = [self._get_feature_values(offer) for offer in self.offers]
@@ -34,8 +39,8 @@ class MeansFeatureExtractor(FeatureExtractor):
     def normalize_dataset(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started normalize_dataset...")
 
-        self._encode_columns([nameof(self.offers[0].has_return_option)])
-        self._normalize_columns()
+        self._encode_columns(self.dataset, [nameof(self.offers[0].has_return_option)])
+        self._normalize_columns(self.dataset)
 
         display_and_log_info(self.logger, f"Finished normalize_dataset")
         return self
@@ -57,6 +62,10 @@ class MeansFeatureExtractor(FeatureExtractor):
 
         display_and_log_info(self.logger, f"Finished insert_extracted_features")
         return self
+
+
+    def get_dataset(self) -> pd.DataFrame:
+        return self.dataset
 
 
     def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:

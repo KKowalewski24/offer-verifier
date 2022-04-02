@@ -22,33 +22,30 @@ class FeatureExtractor(ABC):
         super().__init__()
         self.logger = Logger().get_logging_instance()
         self.offers = offers
-        self.dataset: pd.DataFrame = pd.DataFrame()
-        self.stopwords = stopwords.words("english")
 
 
-    def get_dataset(self) -> pd.DataFrame:
-        return self.dataset
-
-
-    def _encode_columns(self, column_names: List[str]) -> None:
+    def _encode_columns(self, dataset: pd.DataFrame, column_names: List[str]) -> pd.DataFrame:
         label_encoder = LabelEncoder()
         for name in column_names:
-            self.dataset[name] = label_encoder.fit_transform(self.dataset[name])
+            dataset[name] = label_encoder.fit_transform(dataset[name])
+
+        return dataset
 
 
-    def _normalize_columns(self) -> None:
-        self.dataset = self.dataset.astype(float)
-        self.dataset = pd.DataFrame(
-            data=preprocessing.normalize(self.dataset),
-            columns=self.dataset.columns
+    def _normalize_columns(self, dataset: pd.DataFrame) -> pd.DataFrame:
+        dataset = dataset.astype(float)
+        return pd.DataFrame(
+            data=preprocessing.normalize(dataset),
+            columns=dataset.columns
         )
 
 
     def _prepare_text(self, text: str) -> str:
+        stop_words = stopwords.words("english")
         return list_to_string([
             WordNetLemmatizer().lemmatize(x)
             for x in word_tokenize(text.casefold())
-            if x.isalpha() and x not in self.stopwords
+            if x.isalpha() and x not in stop_words
         ])
 
 

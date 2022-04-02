@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-import pandas as pd
-
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.common.Logger import Logger
@@ -22,9 +20,9 @@ class Evaluator(ABC):
         pass
 
 
-    def _calculate_statistics(self, dataset: pd.DataFrame, execution_time: float) -> Statistics:
+    def _calculate_statistics(self, offers_count: int, execution_time: float) -> Statistics:
         # TODO ADD MORE STATISTICS
         return Statistics(
-            dataset.shape[0],
+            offers_count,
             execution_time
         )

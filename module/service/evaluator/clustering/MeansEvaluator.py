@@ -47,7 +47,7 @@ class MeansEvaluator(Evaluator):
         end_time = time.time()
         execution_time = end_time - start_time
 
-        return result, self._calculate_statistics(self.dataset, execution_time)
+        return result, self._calculate_statistics(self.dataset.shape[0], execution_time)
 
 
     @abstractmethod
