@@ -4,37 +4,28 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-from langdetect import detect
 from nameof import nameof
-from nltk import WordNetLemmatizer, word_tokenize
-from nltk.corpus import stopwords
 from nrclex import NRCLex
-from sklearn import preprocessing
-from sklearn.preprocessing import LabelEncoder
 
-from module.constants import LANGDETECT_ENGLISH
 from module.model.Offer import Offer
-from module.service.common.Logger import Logger
-from module.utils import display_and_log_info, list_to_string, remove_dict_entry_by_key
+from module.service.evaluator.FeatureExtractor import FeatureExtractor
+from module.utils import display_and_log_info, remove_dict_entry_by_key
 
 '''
-Order of calling method (fluent api) from FeatureExtractor may be confusing, at first 
+Order of calling method (fluent api) from MeansFeatureExtractor may be confusing, at first 
 `insert_elementary_columns` should be called, then `normalize_dataset` and then `insert_extracted_features` 
 because extracted features are already normalized. Final step is to get dataset by calling `get_dataset`. 
 '''
 
 
-class FeatureExtractor:
+class MeansFeatureExtractor(FeatureExtractor):
 
     def __init__(self, offers: List[Offer]) -> None:
-        super().__init__()
-        self.logger = Logger().get_logging_instance()
-        self.offers = offers
+        super().__init__(offers)
         self.dataset: pd.DataFrame = pd.DataFrame()
-        self.stopwords = stopwords.words("english")
 
 
-    def insert_elementary_columns(self) -> FeatureExtractor:
+    def insert_elementary_columns(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_elementary_columns...")
         columns: List = [self._get_feature_values(offer) for offer in self.offers]
         column_names: List[str] = self._get_feature_names(self.offers[0])
@@ -45,25 +36,17 @@ class FeatureExtractor:
         return self
 
 
-    def normalize_dataset(self) -> FeatureExtractor:
+    def normalize_dataset(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started normalize_dataset...")
-        non_numeric_feature_names: List[str] = [nameof(self.offers[0].has_return_option)]
 
-        label_encoder = LabelEncoder()
-        for name in non_numeric_feature_names:
-            self.dataset[name] = label_encoder.fit_transform(self.dataset[name])
-
-        self.dataset = self.dataset.astype(float)
-        self.dataset = pd.DataFrame(
-            data=preprocessing.normalize(self.dataset),
-            columns=self.dataset.columns
-        )
+        self.dataset = self._encode_columns(self.dataset, [nameof(self.offers[0].has_return_option)])
+        self.dataset = self._normalize_columns(self.dataset)
 
         display_and_log_info(self.logger, f"Finished normalize_dataset")
         return self
 
 
-    def insert_extracted_features(self) -> FeatureExtractor:
+    def insert_extracted_features(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started insert_extracted_features...")
         self._fix_not_valid_reviews()
 
@@ -91,7 +74,10 @@ class FeatureExtractor:
 
         for offer in self.offers:
             reviews_emotions: List[Dict] = [
-                remove_dict_entry_by_key(NRCLex(review.text_content).affect_frequencies, "anticip")
+                remove_dict_entry_by_key(
+                    NRCLex(self._prepare_text(review.text_content)).affect_frequencies,
+                    "anticip"
+                )
                 for review in offer.reviews
             ]
 
@@ -113,25 +99,6 @@ class FeatureExtractor:
         ]
 
         return list(np.unique(emotions_column_names)), rotated_emotions_columns
-
-
-    def _prepare_text(self, text: str) -> str:
-        return list_to_string([
-            WordNetLemmatizer().lemmatize(x)
-            for x in word_tokenize(text.casefold())
-            if x.isalpha() and x not in self.stopwords
-        ])
-
-
-    def _fix_not_valid_reviews(self) -> None:
-        for offer in self.offers:
-            for review in offer.reviews:
-                if review.text_content != "" and not self._is_english_language(review.text_content):
-                    review.text_content = ""
-
-
-    def _is_english_language(self, text: str) -> bool:
-        return detect(text) == LANGDETECT_ENGLISH
 
 
     def _get_feature_values(self, offer: Offer) -> List:

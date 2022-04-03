@@ -10,16 +10,32 @@ from module.exception.ChoosingCredibleOfferNotPossibleException import \
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Statistics import Statistics
-from module.service.clustering.Clusterizer import Clusterizer
+from module.service.evaluator.Evaluator import Evaluator
+from module.service.evaluator.clustering.MeansFeatureExtractor import MeansFeatureExtractor
 from module.utils import display_and_log_info
 
 
-class MeansClusterizer(Clusterizer):
+class MeansEvaluator(Evaluator):
     # K is set to 2 in order to always get 2 clusters whether it is optimal or not
     K_PARAM: int = 2
 
 
-    def clusterize(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    def __init__(self, offers: List[Offer]) -> None:
+        super().__init__(offers)
+        self.cluster_labels: np.ndarray = np.ndarray([])
+
+        display_and_log_info(self.logger, "Extracting features and preparing dataset...")
+        self.dataset: pd.DataFrame = (
+            MeansFeatureExtractor(self.offers)
+                .insert_elementary_columns()
+                .normalize_dataset()
+                .insert_extracted_features()
+                .get_dataset()
+        )
+        display_and_log_info(self.logger, "Features extracted and dataset prepared")
+
+
+    def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
         start_time = time.time()
 
         display_and_log_info(self.logger, "Clustering started...")
@@ -31,7 +47,7 @@ class MeansClusterizer(Clusterizer):
         end_time = time.time()
         execution_time = end_time - start_time
 
-        return result, self._calculate_statistics(self.dataset, execution_time)
+        return result, Statistics(self.dataset.shape[0], execution_time)
 
 
     @abstractmethod
