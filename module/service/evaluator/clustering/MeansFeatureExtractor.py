@@ -39,8 +39,8 @@ class MeansFeatureExtractor(FeatureExtractor):
     def normalize_dataset(self) -> MeansFeatureExtractor:
         display_and_log_info(self.logger, f"Started normalize_dataset...")
 
-        self._encode_columns(self.dataset, [nameof(self.offers[0].has_return_option)])
-        self._normalize_columns(self.dataset)
+        self.dataset = self._encode_columns(self.dataset, [nameof(self.offers[0].has_return_option)])
+        self.dataset = self._normalize_columns(self.dataset)
 
         display_and_log_info(self.logger, f"Finished normalize_dataset")
         return self

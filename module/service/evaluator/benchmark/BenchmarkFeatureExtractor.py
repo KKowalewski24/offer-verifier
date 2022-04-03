@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List, Tuple
 
 import pandas as pd
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from textblob import TextBlob
 
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
@@ -38,6 +38,6 @@ class BenchmarkFeatureExtractor(FeatureExtractor):
 
 
     def _is_credible_review(self, review: ProductReview) -> bool:
-        SentimentIntensityAnalyzer().polarity_scores(self._prepare_text(review.text_content))
+        polarity: float = TextBlob(self._prepare_text(review.text_content)).sentiment.polarity
         # TODO
         return False
