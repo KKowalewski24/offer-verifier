@@ -117,6 +117,13 @@ def remove_dict_entry_by_key(dictionary: Dict, key_to_delete: str) -> Dict:
     }
 
 
+def remove_dict_entry_by_key_if_contains_key(dictionary: Dict, condition_key: str,
+                                             key_to_delete: str) -> Dict:
+    if condition_key in dictionary.keys():
+        return remove_dict_entry_by_key(dictionary, key_to_delete)
+    return dictionary
+
+
 def format_json(data: Dict) -> str:
     return json.dumps(data, indent=4)
 

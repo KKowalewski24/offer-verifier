@@ -3,6 +3,7 @@ from __future__ import annotations, annotations
 from abc import ABC
 from typing import List
 
+import numpy as np
 import pandas as pd
 from langdetect import detect
 from nltk import WordNetLemmatizer, word_tokenize
@@ -23,6 +24,14 @@ class FeatureExtractor(ABC):
         self.logger = Logger().get_logging_instance()
         self.offers = offers
         self.stopwords = stopwords.words("english")
+
+
+    def _normalize_array(self, items: np.ndarray) -> List:
+        return list((items - items.min()) / (items.max() - items.min()))
+
+
+    def _normalize_single_value_on_range(self, value: float, range_begin: float, range_end: float) -> float:
+        return (value - range_begin) / (range_end - range_begin)
 
 
     def _encode_columns(self, dataset: pd.DataFrame, column_names: List[str]) -> pd.DataFrame:
