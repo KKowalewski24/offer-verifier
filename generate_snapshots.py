@@ -20,7 +20,7 @@ def main() -> None:
     args = prepare_args()
 
     offers_id: List[Tuple[str, str]] = [
-        ("294161433526", "AMD Ryzen 9 5950X 16-core & 32-thread Desktop Processor")
+        ("293882212178", "AMD Ryzen 9 5900X 12-core 24-thread Desktop Processor - 12 cores And 24 threads")
     ]
 
     for offer_id, offer_name in offers_id:

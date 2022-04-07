@@ -7,9 +7,10 @@ import pandas as pd
 from nameof import nameof
 from nrclex import NRCLex
 
+from module.constants import AFFECT_FREQUENCIES_KEY
 from module.model.Offer import Offer
 from module.service.evaluator.FeatureExtractor import FeatureExtractor
-from module.utils import display_and_log_info, remove_dict_entry_by_key
+from module.utils import display_and_log_info
 
 '''
 Order of calling method (fluent api) from MeansFeatureExtractor may be confusing, at first 
@@ -69,27 +70,19 @@ class MeansFeatureExtractor(FeatureExtractor):
 
 
     def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
-        emotions_column_names: List[List[str]] = []
         emotions_columns: List[List[float]] = []
 
         for offer in self.offers:
             reviews_emotions: List[Dict] = [
-                remove_dict_entry_by_key(
-                    NRCLex(self._prepare_text(review.text_content)).affect_frequencies,
-                    "anticip"
-                )
+                NRCLex(self._prepare_text(review.text_content)).affect_frequencies
                 for review in offer.reviews
             ]
 
             if len(reviews_emotions) == 0:
+                emotions_columns.append(list(np.zeros(len(AFFECT_FREQUENCIES_KEY), dtype=float)))
                 continue
 
-            mean: pd.Series = pd.DataFrame(
-                data=[emotions.values() for emotions in reviews_emotions],
-                columns=reviews_emotions[0].keys()
-            ).mean()
-
-            emotions_column_names.append(mean.index.to_list())
+            mean: pd.Series = pd.DataFrame(data=[emotions.values() for emotions in reviews_emotions]).mean()
             emotions_columns.append(mean.to_list())
 
         emotions_columns_ndarray = np.array(emotions_columns)
@@ -98,7 +91,7 @@ class MeansFeatureExtractor(FeatureExtractor):
             for index in range(emotions_columns_ndarray.shape[1])
         ]
 
-        return list(np.unique(emotions_column_names)), rotated_emotions_columns
+        return AFFECT_FREQUENCIES_KEY, rotated_emotions_columns
 
 
     def _get_feature_values(self, offer: Offer) -> List:

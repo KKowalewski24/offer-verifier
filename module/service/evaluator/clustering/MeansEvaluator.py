@@ -84,9 +84,10 @@ class MeansEvaluator(Evaluator):
 
 
     def _average_stars_number_for_offers_list(self, offers: List[Offer]) -> float:
-        offers_mean_sum = np.sum([self._calculate_reviews_mean(offer.reviews) for offer in offers])
+        reviews_mean = [self._calculate_reviews_mean(offer.reviews) for offer in offers]
+        offers_mean_sum = np.sum(pd.Series(reviews_mean).dropna().tolist())
         return round(offers_mean_sum / len(offers), 2)
 
 
     def _calculate_reviews_mean(self, reviews: List[ProductReview]) -> int:
-        return pd.Series([review.stars_number for review in reviews]).mean()
+        return pd.Series([review.stars_number for review in reviews], dtype=float).mean()
