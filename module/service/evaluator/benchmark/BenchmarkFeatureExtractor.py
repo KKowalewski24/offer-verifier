@@ -32,7 +32,7 @@ class BenchmarkFeatureExtractor(FeatureExtractor):
             ]
 
             offer.reviews = credible_reviews
-            score = pd.Series([review.stars_number for review in offer.reviews]).mean()
+            score = pd.Series([review.stars_number for review in offer.reviews], dtype=float).mean()
             self.dataset.append((offer, score))
 
         return self

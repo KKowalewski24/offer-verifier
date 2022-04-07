@@ -27,6 +27,8 @@ class FeatureExtractor(ABC):
 
 
     def _normalize_array(self, items: np.ndarray) -> List:
+        if items.size == 0:
+            return list(items)
         return list((items - items.min()) / (items.max() - items.min()))
 
 

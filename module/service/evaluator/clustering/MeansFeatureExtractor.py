@@ -88,11 +88,7 @@ class MeansFeatureExtractor(FeatureExtractor):
                 )
                 continue
 
-            mean: pd.Series = pd.DataFrame(
-                data=[emotions.values() for emotions in reviews_emotions],
-                columns=MeansFeatureExtractor.AFFECT_FREQUENCIES_KEY
-            ).mean()
-
+            mean: pd.Series = pd.DataFrame(data=[emotions.values() for emotions in reviews_emotions]).mean()
             emotions_columns.append(mean.to_list())
 
         emotions_columns_ndarray = np.array(emotions_columns)

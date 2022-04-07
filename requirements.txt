@@ -1,5 +1,5 @@
 textblob
-nrclex
+nrclex==2.0.2
 langdetect
 nltk
 matplotlib
