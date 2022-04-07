@@ -18,6 +18,11 @@ CURRENCY_US_DOLLAR: str = "US $"
 PICKLE_EXTENSION: str = ".pickle"
 PDF_EXTENSION: str = ".pdf"
 LANGDETECT_ENGLISH = "en"
+MIN_MAX_REVIEW_VALUE: Tuple[float, float] = (1.0, 5.0)
+AFFECT_FREQUENCIES_KEY: List[str] = [
+    "fear", "anger", "anticip", "trust", "surprise",
+    "positive", "negative", "sadness", "disgust", "joy"
+]
 
 # ----------------------------------------------------------------------- #
 SLASH: str = "/"

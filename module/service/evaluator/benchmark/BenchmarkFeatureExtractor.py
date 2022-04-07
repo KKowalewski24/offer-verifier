@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from textblob import TextBlob
 
+from module.constants import MIN_MAX_REVIEW_VALUE
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.service.evaluator.FeatureExtractor import FeatureExtractor
@@ -23,7 +24,8 @@ class BenchmarkFeatureExtractor(FeatureExtractor):
 
         for offer in self.offers:
             normalized_stars_numbers = self._normalize_array(
-                np.array([review.stars_number for review in offer.reviews])
+                np.array([review.stars_number for review in offer.reviews]),
+                MIN_MAX_REVIEW_VALUE[0], MIN_MAX_REVIEW_VALUE[1]
             )
 
             credible_reviews: List[ProductReview] = [

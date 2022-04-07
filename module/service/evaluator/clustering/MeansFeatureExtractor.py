@@ -7,6 +7,7 @@ import pandas as pd
 from nameof import nameof
 from nrclex import NRCLex
 
+from module.constants import AFFECT_FREQUENCIES_KEY
 from module.model.Offer import Offer
 from module.service.evaluator.FeatureExtractor import FeatureExtractor
 from module.utils import display_and_log_info
@@ -19,11 +20,6 @@ because extracted features are already normalized. Final step is to get dataset 
 
 
 class MeansFeatureExtractor(FeatureExtractor):
-    AFFECT_FREQUENCIES_KEY: List[str] = [
-        "fear", "anger", "anticip", "trust", "surprise",
-        "positive", "negative", "sadness", "disgust", "joy"
-    ]
-
 
     def __init__(self, offers: List[Offer]) -> None:
         super().__init__(offers)
@@ -83,9 +79,7 @@ class MeansFeatureExtractor(FeatureExtractor):
             ]
 
             if len(reviews_emotions) == 0:
-                emotions_columns.append(
-                    list(np.zeros(len(MeansFeatureExtractor.AFFECT_FREQUENCIES_KEY), dtype=float))
-                )
+                emotions_columns.append(list(np.zeros(len(AFFECT_FREQUENCIES_KEY), dtype=float)))
                 continue
 
             mean: pd.Series = pd.DataFrame(data=[emotions.values() for emotions in reviews_emotions]).mean()
@@ -97,7 +91,7 @@ class MeansFeatureExtractor(FeatureExtractor):
             for index in range(emotions_columns_ndarray.shape[1])
         ]
 
-        return MeansFeatureExtractor.AFFECT_FREQUENCIES_KEY, rotated_emotions_columns
+        return AFFECT_FREQUENCIES_KEY, rotated_emotions_columns
 
 
     def _get_feature_values(self, offer: Offer) -> List:

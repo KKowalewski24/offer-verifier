@@ -26,10 +26,10 @@ class FeatureExtractor(ABC):
         self.stopwords = stopwords.words("english")
 
 
-    def _normalize_array(self, items: np.ndarray) -> List:
+    def _normalize_array(self, items: np.ndarray, min_value: float, max_value: float) -> List:
         if items.size == 0:
             return list(items)
-        return list((items - items.min()) / (items.max() - items.min()))
+        return list((items - min_value) / (max_value - min_value))
 
 
     def _normalize_single_value_on_range(self, value: float, range_begin: float, range_end: float) -> float:
