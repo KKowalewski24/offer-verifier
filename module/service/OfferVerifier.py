@@ -1,31 +1,36 @@
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 from nameof import nameof
 
 from module.constants import OFFERS_PATH, PICKLE_EXTENSION
 from module.exception.EmptyDatasetException import EmptyDatasetException
-from module.exception.WrongConstructorParams import WrongConstructorParams
+from module.exception.WrongConstructorParamsException import WrongConstructorParamsException
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.RequestProvider import RequestProvider
+from module.service.common.Logger import Logger
 from module.service.evaluator.Evaluator import Evaluator
 from module.service.evaluator.clustering.KMeansEvaluator import KMeansEvaluator
-from module.service.common.Logger import Logger
 from module.utils import display_and_log_error, display_and_log_info, display_and_log_warning, \
     get_filename, read_object_from_file, save_object_to_file
 
 
 class OfferVerifier:
 
-    def __init__(self, search_phrase: str = None,
-                 path_to_local_file: str = None,
-                 save_offers: bool = False,
-                 evaluator: Callable[[List[Offer]], Evaluator] = KMeansEvaluator) -> None:
+    def __init__(
+            self, search_phrase: str = None,
+            path_to_local_file: str = None,
+            save_offers: bool = False,
+            evaluator_params: Tuple[
+                Callable[[List[Offer], Dict[str, float]], Evaluator], Dict[str, float]
+            ] = (KMeansEvaluator, {})
+    ) -> None:
         self.logger = Logger().get_logging_instance()
         self.search_phrase = search_phrase
         self.path_to_local_file = path_to_local_file
         self.save_offers = save_offers
-        self.evaluator: Callable[[Any], Evaluator] = evaluator
+        self.evaluator: Callable[[List[Offer], Dict[str, float]], Evaluator] = evaluator_params[0]
+        self.params: Dict[str, float] = evaluator_params[1]
         self._validate_init_params()
 
 
@@ -38,7 +43,7 @@ class OfferVerifier:
             raise EmptyDatasetException()
 
         display_and_log_info(self.logger, "Performing the analysis of the offers, Please wait ...")
-        verified_offers, statistics = self.evaluator(offers).evaluate()
+        verified_offers, statistics = self.evaluator(offers, self.params).evaluate()
         display_and_log_info(self.logger, "Analysis of the offers done!")
 
         return verified_offers, statistics
@@ -63,7 +68,7 @@ class OfferVerifier:
             message: str = (f"{nameof(self.search_phrase)} must be provided or "
                             f"{nameof(self.path_to_local_file)} cannot be None")
             display_and_log_error(self.logger, message)
-            raise WrongConstructorParams(message)
+            raise WrongConstructorParamsException(message)
 
         # Both activated
         if self.search_phrase is not None and self.path_to_local_file is not None:
@@ -74,4 +79,4 @@ class OfferVerifier:
         if self.save_offers and self.path_to_local_file is not None:
             message: str = f"Local file cannot be saved ones again"
             display_and_log_error(self.logger, message)
-            raise WrongConstructorParams(message)
+            raise WrongConstructorParamsException(message)

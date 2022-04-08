@@ -146,7 +146,7 @@ def create_directory(path: str) -> None:
 
 
 def get_filename(name: str, extension: str) -> str:
-    return (name + "-" + datetime.now().strftime("%H%M%S") + extension).replace(" ", "")
+    return (name + "-" + datetime.now().strftime("%H%M%S__%f") + extension).replace(" ", "")
 
 
 def read_from_text_file(path: str) -> str:

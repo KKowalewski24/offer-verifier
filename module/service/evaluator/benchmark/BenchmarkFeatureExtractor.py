@@ -13,10 +13,13 @@ from module.service.evaluator.FeatureExtractor import FeatureExtractor
 
 
 class BenchmarkFeatureExtractor(FeatureExtractor):
+    POLARITY_THRESHOLD_PARAM_KEY: str = "polarity_threshold"
 
-    def __init__(self, offers: List[Offer]) -> None:
+
+    def __init__(self, offers: List[Offer], polarity_threshold: float) -> None:
         super().__init__(offers)
         self.dataset: List[Tuple[Offer, float]] = []
+        self.polarity_threshold = polarity_threshold
 
 
     def calculate_score(self) -> BenchmarkFeatureExtractor:
@@ -51,6 +54,6 @@ class BenchmarkFeatureExtractor(FeatureExtractor):
         polarity: float = TextBlob(self._prepare_text(text_content)).sentiment.polarity
         normalized_polarity: float = self._normalize_single_value_on_range(polarity, -1, 1)
 
-        if normalized_polarity - 0.2 < normalized_stars_number < normalized_polarity + 0.2:
-            return True
-        return False
+        left_side = normalized_polarity - self.polarity_threshold
+        right_side = normalized_polarity + self.polarity_threshold
+        return left_side < normalized_stars_number < right_side

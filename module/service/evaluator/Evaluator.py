@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -10,9 +10,10 @@ class Evaluator(ABC):
     RANDOM_STATE: int = 21
 
 
-    def __init__(self, offers: List[Offer]) -> None:
+    def __init__(self, offers: List[Offer], params: Dict[str, float]) -> None:
         self.logger = Logger().get_logging_instance()
         self.offers = offers
+        self.params = params
 
 
     @abstractmethod
