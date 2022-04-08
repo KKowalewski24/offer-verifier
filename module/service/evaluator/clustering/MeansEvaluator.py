@@ -1,6 +1,6 @@
 import time
 from abc import abstractmethod
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -20,8 +20,8 @@ class MeansEvaluator(Evaluator):
     K_PARAM: int = 2
 
 
-    def __init__(self, offers: List[Offer]) -> None:
-        super().__init__(offers)
+    def __init__(self, offers: List[Offer], params: Dict[str, float] = {}) -> None:
+        super().__init__(offers, params)
         self.cluster_labels: np.ndarray = np.ndarray([])
 
         display_and_log_info(self.logger, "Extracting features and preparing dataset...")

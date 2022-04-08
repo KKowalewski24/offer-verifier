@@ -1,5 +1,5 @@
 import time
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -8,13 +8,15 @@ from module.service.evaluator.benchmark.BenchmarkFeatureExtractor import Benchma
 
 
 class BenchmarkEvaluator(Evaluator):
-    CREDIBILITY_THRESHOLD: float = 2.8
+    CREDIBILITY_THRESHOLD_PARAM_KEY: str = "credibility_threshold"
 
 
-    def __init__(self, offers: List[Offer]) -> None:
-        super().__init__(offers)
+    def __init__(self, offers: List[Offer], params: Dict[str, float] = {}) -> None:
+        super().__init__(offers, params)
+        self.credibility_threshold = params[BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY]
+        self.polarity_threshold = params[BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY]
         self.dataset: List[Tuple[Offer, float]] = (
-            BenchmarkFeatureExtractor(self.offers)
+            BenchmarkFeatureExtractor(self.offers, self.polarity_threshold)
                 .calculate_score()
                 .get_dataset()
         )
@@ -27,7 +29,7 @@ class BenchmarkEvaluator(Evaluator):
         not_credible_offers: Tuple[List[Offer], bool] = ([], False)
 
         for offer, score in self.dataset:
-            if score > BenchmarkEvaluator.CREDIBILITY_THRESHOLD:
+            if score > self.credibility_threshold:
                 credible_offers[0].append(offer)
             else:
                 not_credible_offers[0].append(offer)

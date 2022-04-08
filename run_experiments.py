@@ -1,7 +1,7 @@
 import glob
 from argparse import ArgumentParser, Namespace
 from concurrent.futures.process import ProcessPoolExecutor
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from module.constants import PICKLE_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
@@ -11,6 +11,7 @@ from module.service.OfferVerifier import OfferVerifier
 from module.service.common.LatexGenerator import LatexGenerator
 from module.service.common.Logger import Logger
 from module.service.evaluator.benchmark.BenchmarkEvaluator import BenchmarkEvaluator
+from module.service.evaluator.benchmark.BenchmarkFeatureExtractor import BenchmarkFeatureExtractor
 from module.service.evaluator.clustering.FuzzyCMeansEvaluator import FuzzyCMeansEvaluator
 from module.service.evaluator.clustering.KMeansEvaluator import KMeansEvaluator
 from module.utils import run_main
@@ -33,40 +34,47 @@ def main() -> None:
     args = prepare_args()
 
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
-    evaluators: List = [KMeansEvaluator, FuzzyCMeansEvaluator, BenchmarkEvaluator]
+    evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
+        (KMeansEvaluator, {}),
+        (FuzzyCMeansEvaluator, {}),
+        (BenchmarkEvaluator, {
+            BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 2.8,
+            BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
+        })
+    ]
 
     for dataset_path in dataset_paths:
         if not ENABLE_PARALLEL:
             result = []
-            for evaluator in evaluators:
+            for evaluator in evaluators_params:
                 offer_verifier: OfferVerifier = OfferVerifier(
-                    path_to_local_file=dataset_path, evaluator=evaluator
+                    path_to_local_file=dataset_path, evaluator_params=evaluator
                 )
                 combined_offers, statistics = offer_verifier.verify()
 
-                _display_result(evaluator.__name__, combined_offers)
+                _display_result(evaluator[0].__name__, combined_offers)
                 print()
                 result.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
             print(result)
 
         else:
-            evaluators_len = len(evaluators)
+            evaluators_len = len(evaluators_params)
             with ProcessPoolExecutor() as executor:
                 executor.map(
                     run_parallel,
-                    evaluators,
+                    evaluators_params,
                     [dataset_path] * evaluators_len
                 )
 
 
 # DEF ------------------------------------------------------------------------ #
-def run_parallel(evaluator, dataset_path: str) -> Any:
+def run_parallel(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:
     offer_verifier: OfferVerifier = OfferVerifier(
-        path_to_local_file=dataset_path, evaluator=evaluator
+        path_to_local_file=dataset_path, evaluator_params=evaluator
     )
 
     combined_offers, statistics = offer_verifier.verify()
-    _display_result(evaluator.__name__, combined_offers)
+    _display_result(evaluator[0].__name__, combined_offers)
 
 
 def _display_result(
