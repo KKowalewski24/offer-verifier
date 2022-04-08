@@ -1,6 +1,7 @@
 import time
 from typing import Dict, List, Tuple
 
+from module.exception.WrongConstructorParamsException import WrongConstructorParamsException
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.evaluator.Evaluator import Evaluator
@@ -11,7 +12,7 @@ class BenchmarkEvaluator(Evaluator):
     CREDIBILITY_THRESHOLD_PARAM_KEY: str = "credibility_threshold"
 
 
-    def __init__(self, offers: List[Offer], params: Dict[str, float] = {}) -> None:
+    def __init__(self, offers: List[Offer], params: Dict[str, float]) -> None:
         super().__init__(offers, params)
         self.credibility_threshold = params[BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY]
         self.polarity_threshold = params[BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY]

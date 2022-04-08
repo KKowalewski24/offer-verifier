@@ -1,0 +1,2 @@
+class WrongConstructorParamsException(Exception):
+    pass

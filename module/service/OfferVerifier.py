@@ -4,7 +4,7 @@ from nameof import nameof
 
 from module.constants import OFFERS_PATH, PICKLE_EXTENSION
 from module.exception.EmptyDatasetException import EmptyDatasetException
-from module.exception.WrongConstructorParams import WrongConstructorParams
+from module.exception.WrongConstructorParamsException import WrongConstructorParamsException
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.RequestProvider import RequestProvider
@@ -68,7 +68,7 @@ class OfferVerifier:
             message: str = (f"{nameof(self.search_phrase)} must be provided or "
                             f"{nameof(self.path_to_local_file)} cannot be None")
             display_and_log_error(self.logger, message)
-            raise WrongConstructorParams(message)
+            raise WrongConstructorParamsException(message)
 
         # Both activated
         if self.search_phrase is not None and self.path_to_local_file is not None:
@@ -79,4 +79,4 @@ class OfferVerifier:
         if self.save_offers and self.path_to_local_file is not None:
             message: str = f"Local file cannot be saved ones again"
             display_and_log_error(self.logger, message)
-            raise WrongConstructorParams(message)
+            raise WrongConstructorParamsException(message)

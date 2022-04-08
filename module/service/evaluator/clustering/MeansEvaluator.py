@@ -20,7 +20,7 @@ class MeansEvaluator(Evaluator):
     K_PARAM: int = 2
 
 
-    def __init__(self, offers: List[Offer], params: Dict[str, float] = {}) -> None:
+    def __init__(self, offers: List[Offer], params: Dict[str, float]) -> None:
         super().__init__(offers, params)
         self.cluster_labels: np.ndarray = np.ndarray([])
 
