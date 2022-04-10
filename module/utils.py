@@ -145,7 +145,7 @@ def create_directory(path: str) -> None:
         os.makedirs(path)
 
 
-def get_filename(name: str, extension: str) -> str:
+def get_filename(name: str, extension: str = "") -> str:
     return (name + "-" + datetime.now().strftime("%H%M%S__%f") + extension).replace(" ", "")
 
 

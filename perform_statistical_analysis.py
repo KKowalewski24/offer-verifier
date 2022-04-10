@@ -1,41 +1,89 @@
 import glob
 from argparse import ArgumentParser, Namespace
-from typing import List
+from typing import List, Tuple
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from module.constants import PICKLE_EXTENSION
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
+from module.service.common.LatexGenerator import LatexGenerator
 from module.service.common.Logger import Logger
-from module.utils import read_object_from_file, run_main
+from module.utils import create_directory, get_filename, read_object_from_file, run_main
 
 """
 """
 
 # VAR ------------------------------------------------------------------------ #
-ANALYSIS_RESULTS_DIR: str = "analysis_results"
+ANALYSIS_RESULTS_DIR: str = "analysis_results/"
 DATASET_DIR: str = "dataset_snapshot/"
 
 logger = Logger().get_logging_instance()
+latex_generator: LatexGenerator = LatexGenerator(ANALYSIS_RESULTS_DIR)
+SAVE_CHARTS: bool = True
 
 
 # DEF ----------------------------------------------------------------------- #
 def main() -> None:
     args = prepare_args()
+    create_directory(ANALYSIS_RESULTS_DIR)
+
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
     for dataset_path in dataset_paths:
         offers: List[Offer] = list(read_object_from_file(dataset_path))
+        draw_charts(offers)
 
-        offers_seller = [
-            Fields.get_offer_values(offer) + Fields.get_seller_values(offer.seller)
-            for offer in offers
-        ]
-        df_offers_seller: pd.DataFrame = pd.DataFrame(
-            data=offers_seller,
-            columns=Fields.get_offer_names() + Fields.get_seller_names()
-        )
+
+def draw_charts(offers: List[Offer]) -> None:
+    offers_seller = [
+        Fields.get_offer_values(offer) + Fields.get_seller_values(offer.seller)
+        for offer in offers
+    ]
+    df_offers_seller: pd.DataFrame = pd.DataFrame(
+        data=offers_seller,
+        columns=Fields.get_offer_names() + Fields.get_seller_names()
+    )
+
+    draw_subplots_2x2(
+        df_offers_seller,
+        [
+            Fields.OFFER_PRICE,
+            Fields.OFFER_DESCRIPTION_LENGTH,
+            Fields.SELLER_FEEDBACK_SCORE,
+            Fields.SELLER_FEEDBACK_PERCENTAGE
+        ],
+        SAVE_CHARTS
+    )
+
+
+def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str], save: bool = False) -> None:
+    fig, axs = prepare_subplots(2, 2)
+    set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
+    set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
+    set_subplot(df[field_names[2]], field_names[2], axs, 1, 0)
+    set_subplot(df[field_names[3]], field_names[3], axs, 1, 1)
+    show_and_save("_".join(field_names), save)
+
+
+def prepare_subplots(row: int, column: int) -> Tuple:
+    fig, axs = plt.subplots(row, column)
+    plt.subplots_adjust(hspace=0.5)
+    plt.subplots_adjust(wspace=0.5)
+    return fig, axs
+
+
+def set_subplot(data: pd.Series, subtitle: str, axs, row: int, column: int) -> None:
+    axs[row, column].set_title(subtitle)
+    axs[row, column].hist(data)
+
+
+def show_and_save(name: str, save: bool = False) -> None:
+    if save:
+        plt.savefig(ANALYSIS_RESULTS_DIR + get_filename(name))
+        plt.close()
+    plt.show()
 
 
 def prepare_args() -> Namespace:
@@ -54,11 +102,11 @@ class Fields:
 
     SELLER_ID: str = "seller_id"
     SELLER_FEEDBACK_SCORE: str = "seller_feedback_score"
-    SELLER_SELLER_FEEDBACK_PERCENTAGE: str = "seller_seller_feedback_percentage"
+    SELLER_FEEDBACK_PERCENTAGE: str = "seller_feedback_percentage"
     SELLER_YEAR_OF_JOINING: str = "seller_year_of_joining"
-    SELLER_SELLER_POSITIVE_RATINGS_NUMBER: str = "seller_seller_positive_ratings_number"
-    SELLER_SELLER_NEUTRAL_RATINGS_NUMBER: str = "seller_seller_neutral_ratings_number"
-    SELLER_SELLER_NEGATIVE_RATINGS_NUMBER: str = "seller_seller_negative_ratings_number"
+    SELLER_POSITIVE_RATINGS_NUMBER: str = "seller_positive_ratings_number"
+    SELLER_NEUTRAL_RATINGS_NUMBER: str = "seller_neutral_ratings_number"
+    SELLER_NEGATIVE_RATINGS_NUMBER: str = "seller_negative_ratings_number"
     SELLER_ACCURATE_DESCRIPTION: str = "seller_accurate_description"
     SELLER_REASONABLE_SHIPPING_COST: str = "seller_reasonable_shipping_cost"
     SELLER_SHIPPING_SPEED: str = "seller_shipping_speed"
@@ -101,11 +149,11 @@ class Fields:
         return [
             Fields.SELLER_ID,
             Fields.SELLER_FEEDBACK_SCORE,
-            Fields.SELLER_SELLER_FEEDBACK_PERCENTAGE,
+            Fields.SELLER_FEEDBACK_PERCENTAGE,
             Fields.SELLER_YEAR_OF_JOINING,
-            Fields.SELLER_SELLER_POSITIVE_RATINGS_NUMBER,
-            Fields.SELLER_SELLER_NEUTRAL_RATINGS_NUMBER,
-            Fields.SELLER_SELLER_NEGATIVE_RATINGS_NUMBER,
+            Fields.SELLER_POSITIVE_RATINGS_NUMBER,
+            Fields.SELLER_NEUTRAL_RATINGS_NUMBER,
+            Fields.SELLER_NEGATIVE_RATINGS_NUMBER,
             Fields.SELLER_ACCURATE_DESCRIPTION,
             Fields.SELLER_REASONABLE_SHIPPING_COST,
             Fields.SELLER_SHIPPING_SPEED,
