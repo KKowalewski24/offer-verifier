@@ -1,4 +1,5 @@
 import glob
+import os
 from argparse import ArgumentParser, Namespace
 from typing import List, Tuple
 
@@ -32,59 +33,75 @@ def main() -> None:
 
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
     for dataset_path in dataset_paths:
+        dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         offers: List[Offer] = list(read_object_from_file(dataset_path))
-        draw_charts(offers)
+        draw_charts_offers_sellers(offers, dataset_name)
+        draw_charts_reviews(offers, dataset_name)
 
 
-def draw_charts(offers: List[Offer]) -> None:
-    offers_seller = [
+def draw_charts_offers_sellers(offers: List[Offer], dataset_name: str) -> None:
+    offers_sellers = [
         Fields.get_offer_values(offer) + Fields.get_seller_values(offer.seller)
         for offer in offers
     ]
-    df_offers_seller: pd.DataFrame = pd.DataFrame(
-        data=offers_seller,
+    df_offers_sellers: pd.DataFrame = pd.DataFrame(
+        data=offers_sellers,
         columns=Fields.get_offer_names() + Fields.get_seller_names()
     )
 
     draw_subplots_2x2(
-        df_offers_seller,
+        df_offers_sellers,
         [
             Fields.OFFER_PRICE,
             Fields.OFFER_DESCRIPTION_LENGTH,
             Fields.SELLER_FEEDBACK_SCORE,
             Fields.SELLER_FEEDBACK_PERCENTAGE,
         ],
+        dataset_name,
         SAVE_CHARTS
     )
     draw_subplots_2x2(
-        df_offers_seller,
+        df_offers_sellers,
         [
             Fields.SELLER_YEAR_OF_JOINING,
             Fields.SELLER_POSITIVE_RATINGS_NUMBER,
             Fields.SELLER_NEUTRAL_RATINGS_NUMBER,
             Fields.SELLER_NEGATIVE_RATINGS_NUMBER,
         ],
+        dataset_name,
         SAVE_CHARTS
     )
     draw_subplots_2x2(
-        df_offers_seller,
+        df_offers_sellers,
         [
             Fields.SELLER_ACCURATE_DESCRIPTION,
             Fields.SELLER_REASONABLE_SHIPPING_COST,
             Fields.SELLER_SHIPPING_SPEED,
             Fields.SELLER_COMMUNICATION,
         ],
+        dataset_name,
         SAVE_CHARTS
     )
 
 
-def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str], save: bool = False) -> None:
+def draw_charts_reviews(offers: List[Offer], dataset_name: str) -> None:
+    for offer in offers:
+        fig, axs = prepare_subplots(2, 2)
+        # set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
+        # set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
+        # set_subplot(df[field_names[2]], field_names[2], axs, 1, 0)
+        # set_subplot(df[field_names[3]], field_names[3], axs, 1, 1)
+        # show_and_save("_".join(field_names), SAVE_CHARTS)
+
+
+def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str],
+                      dataset_name: str, save: bool = False) -> None:
     fig, axs = prepare_subplots(2, 2)
     set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
     set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
     set_subplot(df[field_names[2]], field_names[2], axs, 1, 0)
     set_subplot(df[field_names[3]], field_names[3], axs, 1, 1)
-    show_and_save("_".join(field_names), save)
+    show_and_save("_".join(field_names) + dataset_name, save)
 
 
 def prepare_subplots(row: int, column: int) -> Tuple:
