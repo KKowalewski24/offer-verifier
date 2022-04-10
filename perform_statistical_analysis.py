@@ -52,7 +52,27 @@ def draw_charts(offers: List[Offer]) -> None:
             Fields.OFFER_PRICE,
             Fields.OFFER_DESCRIPTION_LENGTH,
             Fields.SELLER_FEEDBACK_SCORE,
-            Fields.SELLER_FEEDBACK_PERCENTAGE
+            Fields.SELLER_FEEDBACK_PERCENTAGE,
+        ],
+        SAVE_CHARTS
+    )
+    draw_subplots_2x2(
+        df_offers_seller,
+        [
+            Fields.SELLER_YEAR_OF_JOINING,
+            Fields.SELLER_POSITIVE_RATINGS_NUMBER,
+            Fields.SELLER_NEUTRAL_RATINGS_NUMBER,
+            Fields.SELLER_NEGATIVE_RATINGS_NUMBER,
+        ],
+        SAVE_CHARTS
+    )
+    draw_subplots_2x2(
+        df_offers_seller,
+        [
+            Fields.SELLER_ACCURATE_DESCRIPTION,
+            Fields.SELLER_REASONABLE_SHIPPING_COST,
+            Fields.SELLER_SHIPPING_SPEED,
+            Fields.SELLER_COMMUNICATION,
         ],
         SAVE_CHARTS
     )
@@ -76,7 +96,7 @@ def prepare_subplots(row: int, column: int) -> Tuple:
 
 def set_subplot(data: pd.Series, subtitle: str, axs, row: int, column: int) -> None:
     axs[row, column].set_title(subtitle)
-    axs[row, column].hist(data)
+    axs[row, column].hist(data, edgecolor='black')
 
 
 def show_and_save(name: str, save: bool = False) -> None:
