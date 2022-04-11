@@ -6,7 +6,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import PICKLE_EXTENSION
+from module.constants import MIN_MAX_REVIEW_VALUE, PICKLE_EXTENSION
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
@@ -49,59 +49,49 @@ def draw_charts_offers_sellers(offers: List[Offer], dataset_name: str) -> None:
         columns=Fields.get_offer_names() + Fields.get_seller_names()
     )
 
-    draw_subplots_2x2(
-        df_offers_sellers,
+    fields_groups: List[List[str]] = [
         [
             Fields.OFFER_PRICE,
             Fields.OFFER_DESCRIPTION_LENGTH,
             Fields.SELLER_FEEDBACK_SCORE,
             Fields.SELLER_FEEDBACK_PERCENTAGE,
         ],
-        dataset_name,
-        SAVE_CHARTS
-    )
-    draw_subplots_2x2(
-        df_offers_sellers,
         [
             Fields.SELLER_YEAR_OF_JOINING,
             Fields.SELLER_POSITIVE_RATINGS_NUMBER,
             Fields.SELLER_NEUTRAL_RATINGS_NUMBER,
             Fields.SELLER_NEGATIVE_RATINGS_NUMBER,
         ],
-        dataset_name,
-        SAVE_CHARTS
-    )
-    draw_subplots_2x2(
-        df_offers_sellers,
         [
             Fields.SELLER_ACCURATE_DESCRIPTION,
             Fields.SELLER_REASONABLE_SHIPPING_COST,
             Fields.SELLER_SHIPPING_SPEED,
             Fields.SELLER_COMMUNICATION,
-        ],
-        dataset_name,
-        SAVE_CHARTS
-    )
+        ]
+    ]
+    for index, fields_group in enumerate(fields_groups):
+        draw_subplots_2x2(df_offers_sellers, fields_group, dataset_name, index, SAVE_CHARTS)
 
 
 def draw_charts_reviews(offers: List[Offer], dataset_name: str) -> None:
-    for offer in offers:
-        fig, axs = prepare_subplots(2, 2)
-        # set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
-        # set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
-        # set_subplot(df[field_names[2]], field_names[2], axs, 1, 0)
-        # set_subplot(df[field_names[3]], field_names[3], axs, 1, 1)
-        # show_and_save("_".join(field_names), SAVE_CHARTS)
+    offer_stars_number_mean: List = [
+        pd.Series([review.stars_number for review in offer.reviews], dtype=float).mean()
+        for offer in offers
+    ]
+    plt.hist(offer_stars_number_mean, range=MIN_MAX_REVIEW_VALUE)
+    set_descriptions(f"{dataset_name} mean_{Fields.REVIEW_STARS_NUMBER}")
+    show_and_save(f"{dataset_name}_mean_{Fields.REVIEW_STARS_NUMBER}", SAVE_CHARTS)
 
 
-def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str],
-                      dataset_name: str, save: bool = False) -> None:
+def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
+                      order_number: int, save: bool = False) -> None:
     fig, axs = prepare_subplots(2, 2)
+    fig.suptitle(dataset_name)
     set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
     set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
     set_subplot(df[field_names[2]], field_names[2], axs, 1, 0)
     set_subplot(df[field_names[3]], field_names[3], axs, 1, 1)
-    show_and_save("_".join(field_names) + dataset_name, save)
+    show_and_save(f"{dataset_name}_{order_number + 1}", save)
 
 
 def prepare_subplots(row: int, column: int) -> Tuple:
@@ -114,6 +104,12 @@ def prepare_subplots(row: int, column: int) -> Tuple:
 def set_subplot(data: pd.Series, subtitle: str, axs, row: int, column: int) -> None:
     axs[row, column].set_title(subtitle)
     axs[row, column].hist(data, edgecolor='black')
+
+
+def set_descriptions(title: str, x_label: str = "", y_label: str = "") -> None:
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
 
 
 def show_and_save(name: str, save: bool = False) -> None:
