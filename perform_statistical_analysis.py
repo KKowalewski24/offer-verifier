@@ -6,7 +6,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import MIN_MAX_REVIEW_VALUE, PICKLE_EXTENSION
+from module.constants import MIN_MAX_REVIEW_VALUE, PICKLE_EXTENSION, UTF_8
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
@@ -20,6 +20,7 @@ from module.utils import create_directory, get_filename, read_object_from_file, 
 # VAR ------------------------------------------------------------------------ #
 ANALYSIS_RESULTS_DIR: str = "analysis_results/"
 DATASET_DIR: str = "dataset_snapshot/"
+LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 
 logger = Logger().get_logging_instance()
 latex_generator: LatexGenerator = LatexGenerator(ANALYSIS_RESULTS_DIR)
@@ -114,8 +115,11 @@ def set_descriptions(title: str, x_label: str = "", y_label: str = "") -> None:
 
 def show_and_save(name: str, save: bool = False) -> None:
     if save:
-        plt.savefig(ANALYSIS_RESULTS_DIR + get_filename(name))
+        filename = get_filename(name)
+        plt.savefig(ANALYSIS_RESULTS_DIR + filename)
         plt.close()
+        with open(ANALYSIS_RESULTS_DIR + LATEX_IMAGE_FILENAME, "a", encoding=UTF_8) as file:
+            file.write(f"{latex_generator.generate_chart_image(filename, False)}\n\n")
     plt.show()
 
 

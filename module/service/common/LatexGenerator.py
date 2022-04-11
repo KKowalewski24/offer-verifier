@@ -57,7 +57,7 @@ class Image(LatexItem):
 
     def get_caption(self, text: str) -> str:
         replaced_text = replace_char_for_caption(text)
-        return "\caption\n[" + replaced_text + "]{" + replaced_text + "}\n"
+        return "\caption\n[" + replaced_text + "]\n{" + replaced_text + "}\n"
 
 
     def get_label(self, label: str) -> str:
@@ -124,13 +124,16 @@ class LatexGenerator:
         self._save_to_file(result, filename)
 
 
-    def generate_chart_image(self, filename: str) -> None:
+    def generate_chart_image(self, filename: str, save: bool = True) -> str:
         result: str = self.image.begin + self.image.centering + self.image.include + self.image.width
         result += self.image.get_latex_path(filename)
         result += self.image.get_caption(self._remove_png_extension(filename))
         result += self.image.get_label(self._remove_png_extension(filename))
         result += self.image.end
-        self._save_to_file(result, filename)
+        if save:
+            self._save_to_file(result, filename)
+
+        return result
 
 
     def _save_to_file(self, data: str, filename: str) -> None:
