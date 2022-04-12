@@ -27,7 +27,7 @@ latex_generator: LatexGenerator = LatexGenerator(ANALYSIS_RESULTS_DIR)
 SAVE_CHARTS: bool = True
 
 
-# DEF ----------------------------------------------------------------------- #
+# MAIN ----------------------------------------------------------------------- #
 def main() -> None:
     args = prepare_args()
     create_directory(ANALYSIS_RESULTS_DIR)
@@ -37,7 +37,9 @@ def main() -> None:
         dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         offers: List[Offer] = list(read_object_from_file(dataset_path))
         df: pd.DataFrame = build_data_frame(offers)
+
         draw_hists(df, dataset_name)
+        # draw_charts(df, dataset_name)
 
 
 def build_data_frame(offers: List[Offer]) -> pd.DataFrame:
@@ -82,6 +84,19 @@ def draw_hists(df: pd.DataFrame, dataset_name: str) -> None:
     show_and_save(f"{dataset_name}_{Fields.REVIEW_MEAN_STARS_NUMBER}", SAVE_CHARTS)
 
 
+def draw_charts(df: pd.DataFrame, dataset_name: str) -> None:
+    fields_groups: List[List[Tuple[str, str]]] = [
+        [
+            (Fields.OFFER_PRICE, Fields.OFFER_DESCRIPTION_LENGTH),
+            (Fields.REVIEW_MEAN_STARS_NUMBER, Fields.OFFER_DESCRIPTION_LENGTH),
+            (Fields.SELLER_FEEDBACK_SCORE, Fields.OFFER_DESCRIPTION_LENGTH),
+            (Fields.SELLER_ACCURATE_DESCRIPTION, Fields.OFFER_DESCRIPTION_LENGTH),
+        ],
+    ]
+    for index, fields_group in enumerate(fields_groups):
+        draw_plot_2x2(df, fields_group, dataset_name, index, SAVE_CHARTS)
+
+
 def draw_hist_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
                   order_number: int, save: bool = False) -> None:
     fig, axs = prepare_subplots(2, 2)
@@ -91,23 +106,60 @@ def draw_hist_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
             a.ticklabel_format(useOffset=False, style="plain")
 
     fig.suptitle(dataset_name)
-    set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
-    set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
-    set_subplot(df[field_names[2]], field_names[2], axs, 1, 0)
-    set_subplot(df[field_names[3]], field_names[3], axs, 1, 1)
+    set_subplot_hist(df[field_names[0]], field_names[0], axs, 0, 0)
+    set_subplot_hist(df[field_names[1]], field_names[1], axs, 0, 1)
+    set_subplot_hist(df[field_names[2]], field_names[2], axs, 1, 0)
+    set_subplot_hist(df[field_names[3]], field_names[3], axs, 1, 1)
     show_and_save(f"{dataset_name}_{order_number + 1}", save)
 
 
+def draw_plot_2x2(df: pd.DataFrame, field_names_x_y: List[Tuple[str, str]],
+                  dataset_name: str, order_number: int, save: bool = False) -> None:
+    fig, axs = prepare_subplots(2, 2)
+    # Disable scientific notation - for 2d arrays
+    for ax in axs:
+        for a in ax:
+            a.ticklabel_format(useOffset=False, style="plain")
+
+    fig.suptitle(dataset_name)
+    set_subplot_plot(
+        df[field_names_x_y[0][0]], df[field_names_x_y[0][1]],
+        field_names_x_y[0][0], field_names_x_y[0][1], axs, 0, 0
+    )
+    set_subplot_plot(
+        df[field_names_x_y[1][0]], df[field_names_x_y[1][1]],
+        field_names_x_y[1][0], field_names_x_y[1][1], axs, 0, 1
+    )
+    set_subplot_plot(
+        df[field_names_x_y[2][0]], df[field_names_x_y[2][1]],
+        field_names_x_y[2][0], field_names_x_y[2][1], axs, 1, 0
+    )
+    set_subplot_plot(
+        df[field_names_x_y[3][0]], df[field_names_x_y[3][1]],
+        field_names_x_y[3][0], field_names_x_y[3][1], axs, 1, 1
+    )
+    show_and_save(f"{dataset_name}_{order_number + 1}", save)
+
+
+def set_subplot_hist(data: pd.Series, subtitle: str, axs, row: int, column: int) -> None:
+    axs[row, column].set_title(subtitle)
+    axs[row, column].hist(data, edgecolor="black")
+
+
+def set_subplot_plot(data_x_axis: pd.Series, data_y_axis: pd.Series, subtitle_x_axis: str,
+                     subtitle_y_axis: str, axs, row: int, column: int) -> None:
+    axs[row, column].set(xlabel=subtitle_x_axis, ylabel=subtitle_y_axis)
+    axs[row, column].plot(data_x_axis, data_y_axis)
+    print(data_x_axis)
+    print(data_y_axis)
+
+
+# DEF ----------------------------------------------------------------------- #
 def prepare_subplots(row: int, column: int) -> Tuple:
     fig, axs = plt.subplots(row, column)
     plt.subplots_adjust(hspace=0.5)
     plt.subplots_adjust(wspace=0.5)
     return fig, axs
-
-
-def set_subplot(data: pd.Series, subtitle: str, axs, row: int, column: int) -> None:
-    axs[row, column].set_title(subtitle)
-    axs[row, column].hist(data, edgecolor='black')
 
 
 def set_descriptions(title: str, x_label: str = "", y_label: str = "") -> None:
