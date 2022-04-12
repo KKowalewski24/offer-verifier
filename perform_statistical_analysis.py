@@ -36,21 +36,24 @@ def main() -> None:
     for dataset_path in dataset_paths:
         dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         offers: List[Offer] = list(read_object_from_file(dataset_path))
-        draw_charts(offers, dataset_name)
+        df: pd.DataFrame = build_data_frame(offers)
+        draw_hists(df, dataset_name)
 
 
-def draw_charts(offers: List[Offer], dataset_name: str) -> None:
+def build_data_frame(offers: List[Offer]) -> pd.DataFrame:
     offers_sellers = [
         Fields.get_offer_values(offer)
         + Fields.get_seller_values(offer.seller)
         + [pd.Series([review.stars_number for review in offer.reviews], dtype=float).mean()]
         for offer in offers
     ]
-    df_offers_sellers: pd.DataFrame = pd.DataFrame(
+    return pd.DataFrame(
         data=offers_sellers,
         columns=Fields.get_offer_names() + Fields.get_seller_names() + [Fields.REVIEW_MEAN_STARS_NUMBER]
     )
 
+
+def draw_hists(df: pd.DataFrame, dataset_name: str) -> None:
     fields_groups: List[List[str]] = [
         [
             Fields.OFFER_PRICE,
@@ -72,15 +75,15 @@ def draw_charts(offers: List[Offer], dataset_name: str) -> None:
         ]
     ]
     for index, fields_group in enumerate(fields_groups):
-        draw_subplots_2x2(df_offers_sellers, fields_group, dataset_name, index, SAVE_CHARTS)
+        draw_hist_2x2(df, fields_group, dataset_name, index, SAVE_CHARTS)
 
-    plt.hist(df_offers_sellers[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE)
+    plt.hist(df[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE)
     set_descriptions(f"{dataset_name} {Fields.REVIEW_MEAN_STARS_NUMBER}")
     show_and_save(f"{dataset_name}_{Fields.REVIEW_MEAN_STARS_NUMBER}", SAVE_CHARTS)
 
 
-def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
-                      order_number: int, save: bool = False) -> None:
+def draw_hist_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
+                  order_number: int, save: bool = False) -> None:
     fig, axs = prepare_subplots(2, 2)
     # Disable scientific notation - for 2d arrays
     for ax in axs:
