@@ -82,6 +82,11 @@ def draw_charts(offers: List[Offer], dataset_name: str) -> None:
 def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
                       order_number: int, save: bool = False) -> None:
     fig, axs = prepare_subplots(2, 2)
+    # Disable scientific notation - for 2d arrays
+    for ax in axs:
+        for a in ax:
+            a.ticklabel_format(useOffset=False, style="plain")
+
     fig.suptitle(dataset_name)
     set_subplot(df[field_names[0]], field_names[0], axs, 0, 0)
     set_subplot(df[field_names[1]], field_names[1], axs, 0, 1)
