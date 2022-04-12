@@ -36,18 +36,19 @@ def main() -> None:
     for dataset_path in dataset_paths:
         dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         offers: List[Offer] = list(read_object_from_file(dataset_path))
-        draw_charts_offers_sellers(offers, dataset_name)
-        draw_charts_reviews(offers, dataset_name)
+        draw_charts(offers, dataset_name)
 
 
-def draw_charts_offers_sellers(offers: List[Offer], dataset_name: str) -> None:
+def draw_charts(offers: List[Offer], dataset_name: str) -> None:
     offers_sellers = [
-        Fields.get_offer_values(offer) + Fields.get_seller_values(offer.seller)
+        Fields.get_offer_values(offer)
+        + Fields.get_seller_values(offer.seller)
+        + [pd.Series([review.stars_number for review in offer.reviews], dtype=float).mean()]
         for offer in offers
     ]
     df_offers_sellers: pd.DataFrame = pd.DataFrame(
         data=offers_sellers,
-        columns=Fields.get_offer_names() + Fields.get_seller_names()
+        columns=Fields.get_offer_names() + Fields.get_seller_names() + [Fields.REVIEW_MEAN_STARS_NUMBER]
     )
 
     fields_groups: List[List[str]] = [
@@ -73,15 +74,9 @@ def draw_charts_offers_sellers(offers: List[Offer], dataset_name: str) -> None:
     for index, fields_group in enumerate(fields_groups):
         draw_subplots_2x2(df_offers_sellers, fields_group, dataset_name, index, SAVE_CHARTS)
 
-
-def draw_charts_reviews(offers: List[Offer], dataset_name: str) -> None:
-    offer_stars_number_mean: List = [
-        pd.Series([review.stars_number for review in offer.reviews], dtype=float).mean()
-        for offer in offers
-    ]
-    plt.hist(offer_stars_number_mean, range=MIN_MAX_REVIEW_VALUE)
-    set_descriptions(f"{dataset_name} mean_{Fields.REVIEW_STARS_NUMBER}")
-    show_and_save(f"{dataset_name}_mean_{Fields.REVIEW_STARS_NUMBER}", SAVE_CHARTS)
+    plt.hist(df_offers_sellers[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE)
+    set_descriptions(f"{dataset_name} {Fields.REVIEW_MEAN_STARS_NUMBER}")
+    show_and_save(f"{dataset_name}_{Fields.REVIEW_MEAN_STARS_NUMBER}", SAVE_CHARTS)
 
 
 def draw_subplots_2x2(df: pd.DataFrame, field_names: List[str], dataset_name: str,
@@ -151,6 +146,7 @@ class Fields:
 
     REVIEW_ID: str = "review_id"
     REVIEW_STARS_NUMBER: str = "review_stars_number"
+    REVIEW_MEAN_STARS_NUMBER: str = "mean_review_stars_number"
     REVIEW_TEXT_CONTENT: str = "review_text_content"
     REVIEW_POSITIVE_VOTES_NUMBER: str = "review_positive_votes_number"
     REVIEW_NEGATIVE_VOTES_NUMBER: str = "review_negative_votes_number"
