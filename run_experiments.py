@@ -44,7 +44,9 @@ def main() -> None:
     ]
 
     for dataset_path in dataset_paths:
-        if not ENABLE_PARALLEL:
+        if ENABLE_PARALLEL:
+            run_parallel(dataset_path, evaluators_params)
+        else:
             result = []
             for evaluator in evaluators_params:
                 offer_verifier: OfferVerifier = OfferVerifier(
@@ -57,26 +59,8 @@ def main() -> None:
                 result.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
             print(result)
 
-        else:
-            evaluators_len = len(evaluators_params)
-            with ProcessPoolExecutor() as executor:
-                executor.map(
-                    run_parallel,
-                    evaluators_params,
-                    [dataset_path] * evaluators_len
-                )
-
 
 # DEF ------------------------------------------------------------------------ #
-def run_parallel(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:
-    offer_verifier: OfferVerifier = OfferVerifier(
-        path_to_local_file=dataset_path, evaluator_params=evaluator
-    )
-
-    combined_offers, statistics = offer_verifier.verify()
-    _display_result(evaluator[0].__name__, combined_offers)
-
-
 def _display_result(
         evaluator_name: str, combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
 ) -> None:
@@ -88,6 +72,25 @@ def _display_result(
 
 def _display_statistics(statistics: Statistics) -> None:
     pass
+
+
+def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:
+    offer_verifier: OfferVerifier = OfferVerifier(
+        path_to_local_file=dataset_path, evaluator_params=evaluator
+    )
+
+    combined_offers, statistics = offer_verifier.verify()
+    _display_result(evaluator[0].__name__, combined_offers)
+
+
+def run_parallel(dataset_path: str, evaluators_params: List[Tuple[Any, Dict[str, float]]]) -> None:
+    evaluators_len = len(evaluators_params)
+    with ProcessPoolExecutor() as executor:
+        executor.map(
+            run_single_thread,
+            evaluators_params,
+            [dataset_path] * evaluators_len
+        )
 
 
 def prepare_args() -> Namespace:
