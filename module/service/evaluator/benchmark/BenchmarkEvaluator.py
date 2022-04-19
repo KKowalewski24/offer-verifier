@@ -4,7 +4,7 @@ from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.evaluator.Evaluator import Evaluator
 from module.service.evaluator.benchmark.BenchmarkFeatureExtractor import BenchmarkFeatureExtractor
-from module.utils import display_and_log_error
+from module.utils import display_and_log_error, display_and_log_info
 
 
 class BenchmarkEvaluator(Evaluator):
@@ -17,11 +17,13 @@ class BenchmarkEvaluator(Evaluator):
 
         self.credibility_threshold = params[BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY]
         self.polarity_threshold = params[BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY]
+        display_and_log_info(self.logger, "Extracting features and preparing dataset...")
         self.dataset: List[Tuple[Offer, float]] = (
             BenchmarkFeatureExtractor(self.offers, self.polarity_threshold)
                 .calculate_score()
                 .get_dataset()
         )
+        display_and_log_info(self.logger, "Features extracted and dataset prepared")
 
 
     def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:

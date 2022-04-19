@@ -55,7 +55,6 @@ def main() -> None:
                 combined_offers, statistics = offer_verifier.verify()
 
                 _display_result(combined_offers, statistics, evaluator[0].__name__)
-                print()
                 result.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
             print(result)
 
@@ -65,14 +64,18 @@ def _display_result(
         combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
         statistics: Statistics, evaluator_name: str
 ) -> None:
-    print("\n--------------------------------------------------")
-    print(evaluator_name)
-    print(f"Liczba wszystkich ofert {statistics.offers_count}")
-    print(f"Czas wykonania {round(statistics.execution_time, 3)} sek")
+    message: str = "\n--------------------------------------------------\n"
+    message += f"{evaluator_name}\n"
+    message += f"Liczba wszystkich ofert {statistics.offers_count}\n"
+    message += f"Czas wykonania {round(statistics.execution_time, 3)} sek\n"
     for combined_offer in combined_offers:
-        message = "wiarygodne" if combined_offer[1] else "niewiarogodne"
-        print(f"Liczba ofert określona jako {message}: {len(combined_offer[0])}")
-    print("--------------------------------------------------")
+        message += (
+            f"Liczba ofert określona jako "
+            f"{'wiarygodne' if combined_offer[1] else 'niewiarogodne'}: "
+            f"{len(combined_offer[0])}\n"
+        )
+    message += "--------------------------------------------------\n"
+    print(message)
 
     if GENERATE_PDF:
         pdf_generator.generate(combined_offers)
