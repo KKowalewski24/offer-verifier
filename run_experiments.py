@@ -43,7 +43,6 @@ def main() -> None:
             BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
         })
     ]
-
     for dataset_path in dataset_paths:
         if ENABLE_PARALLEL:
             run_parallel(dataset_path, evaluators_params)
@@ -66,14 +65,14 @@ def _display_result(
         combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
         statistics: Statistics, evaluator_name: str
 ) -> None:
+    print("\n--------------------------------------------------")
     print(evaluator_name)
+    print(f"Liczba wszystkich ofert {statistics.offers_count}")
+    print(f"Czas wykonania {round(statistics.execution_time, 3)} sek")
     for combined_offer in combined_offers:
-        print("\n\n--------------------------------------------------")
-        print(f"Liczba wszystkich ofert {statistics.offers_count}")
-        print(f"Czas wykonania {statistics.execution_time}")
         message = "wiarygodne" if combined_offer[1] else "niewiarogodne"
         print(f"Liczba ofert określona jako {message}: {len(combined_offer[0])}")
-        print("--------------------------------------------------\n")
+    print("--------------------------------------------------")
 
     if GENERATE_PDF:
         pdf_generator.generate(combined_offers)

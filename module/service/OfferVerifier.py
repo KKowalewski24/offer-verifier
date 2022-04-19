@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, List, Tuple
+import time
+from typing import Callable, Dict, List, Tuple
 
 from nameof import nameof
 
@@ -43,7 +44,10 @@ class OfferVerifier:
             raise EmptyDatasetException()
 
         display_and_log_info(self.logger, "Performing the analysis of the offers, Please wait ...")
+        start_time = time.time()
         verified_offers, statistics = self.evaluator(offers, self.params).evaluate()
+        end_time = time.time()
+        statistics.execution_time = end_time - start_time
         display_and_log_info(self.logger, "Analysis of the offers done!")
 
         return verified_offers, statistics

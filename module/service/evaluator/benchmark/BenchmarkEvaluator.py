@@ -1,4 +1,3 @@
-import time
 from typing import Dict, List, Tuple
 
 from module.model.Offer import Offer
@@ -26,8 +25,6 @@ class BenchmarkEvaluator(Evaluator):
 
 
     def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
-        start_time = time.time()
-
         credible_offers: Tuple[List[Offer], bool] = ([], True)
         not_credible_offers: Tuple[List[Offer], bool] = ([], False)
 
@@ -38,12 +35,8 @@ class BenchmarkEvaluator(Evaluator):
                 not_credible_offers[0].append(offer)
 
         result = (credible_offers, not_credible_offers)
-
-        end_time = time.time()
-        execution_time = end_time - start_time
-
         offers_count: int = len(credible_offers[0]) + len(not_credible_offers[0])
-        return result, Statistics(offers_count, execution_time)
+        return result, Statistics(offers_count)
 
 
     def are_required_params_exist(self, params: Dict[str, float]) -> None:

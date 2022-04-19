@@ -1,4 +1,3 @@
-import time
 from abc import abstractmethod
 from typing import Dict, List, Tuple
 
@@ -36,18 +35,12 @@ class MeansEvaluator(Evaluator):
 
 
     def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
-        start_time = time.time()
-
         display_and_log_info(self.logger, "Clustering started...")
         self.perform_means_clusterization(self.dataset)
         display_and_log_info(self.logger, "Clustering finished")
 
         result = self._choose_list_with_more_credible_offers(self._combine_offers())
-
-        end_time = time.time()
-        execution_time = end_time - start_time
-
-        return result, Statistics(self.dataset.shape[0], execution_time)
+        return result, Statistics(self.dataset.shape[0])
 
 
     @abstractmethod

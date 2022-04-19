@@ -7,7 +7,7 @@ from module.utils import to_string_class_formatter
 
 class Statistics:
 
-    def __init__(self, offers_count: int, execution_time: float) -> None:
+    def __init__(self, offers_count: int, execution_time: float = None) -> None:
         self.offers_count = offers_count
         self.execution_time = execution_time
 
