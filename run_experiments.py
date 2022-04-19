@@ -20,7 +20,8 @@ from module.utils import run_main
 """
 
 # VAR ------------------------------------------------------------------------ #
-ENABLE_PARALLEL: bool = True
+ENABLE_PARALLEL: bool = False
+GENERATE_PDF: bool = False
 EXPERIMENTS_RESULTS_DIR: str = "experiment_results"
 DATASET_DIR: str = "dataset_snapshot/"
 
@@ -54,7 +55,7 @@ def main() -> None:
                 )
                 combined_offers, statistics = offer_verifier.verify()
 
-                _display_result(evaluator[0].__name__, combined_offers)
+                _display_result(combined_offers, statistics, evaluator[0].__name__)
                 print()
                 result.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
             print(result)
@@ -62,16 +63,20 @@ def main() -> None:
 
 # DEF ------------------------------------------------------------------------ #
 def _display_result(
-        evaluator_name: str, combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
+        combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
+        statistics: Statistics, evaluator_name: str
 ) -> None:
-    pdf_generator.generate(combined_offers)
     print(evaluator_name)
     for combined_offer in combined_offers:
-        print(f"Is verified: {combined_offer[1]}, offers count: {len(combined_offer[0])}")
+        print("\n\n--------------------------------------------------")
+        print(f"Liczba wszystkich ofert {statistics.offers_count}")
+        print(f"Czas wykonania {statistics.execution_time}")
+        message = "wiarygodne" if combined_offer[1] else "niewiarogodne"
+        print(f"Liczba ofert określona jako {message}: {len(combined_offer[0])}")
+        print("--------------------------------------------------\n")
 
-
-def _display_statistics(statistics: Statistics) -> None:
-    pass
+    if GENERATE_PDF:
+        pdf_generator.generate(combined_offers)
 
 
 def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:
@@ -80,7 +85,7 @@ def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str
     )
 
     combined_offers, statistics = offer_verifier.verify()
-    _display_result(evaluator[0].__name__, combined_offers)
+    _display_result(combined_offers, statistics, evaluator[0].__name__)
 
 
 def run_parallel(dataset_path: str, evaluators_params: List[Tuple[Any, Dict[str, float]]]) -> None:
