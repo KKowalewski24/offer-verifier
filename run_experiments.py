@@ -43,6 +43,10 @@ def main() -> None:
         (BenchmarkEvaluator, {
             BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 2.8,
             BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
+        }),
+        (BenchmarkEvaluator, {
+            BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 3.2,
+            BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.4
         })
     ]
     for dataset_path in dataset_paths:
@@ -56,8 +60,11 @@ def main() -> None:
                 )
                 combined_offers, statistics = offer_verifier.verify()
 
-                _display_result(combined_offers, statistics, evaluator[0].__name__)
-                results.append((*combined_offers, evaluator[0].__name__))
+                name, params = evaluator
+                _display_result(combined_offers, statistics, name.__name__)
+                results.append(
+                    (*combined_offers, f"{name.__name__}\n {' '.join([str(params[x]) for x in params])}")
+                )
             plot_results(results)
 
 
@@ -94,6 +101,7 @@ def plot_results(results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer]
         )
     plt.xticks(rotation=90)
     plt.grid(axis="y")
+    plt.margins(x=0)
     plt.tight_layout()
     plt.show()
 
