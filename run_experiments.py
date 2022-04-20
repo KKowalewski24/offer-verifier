@@ -3,6 +3,8 @@ from argparse import ArgumentParser, Namespace
 from concurrent.futures.process import ProcessPoolExecutor
 from typing import Any, Dict, List, Tuple
 
+import matplotlib.pyplot as plt
+
 from module.constants import PICKLE_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
@@ -47,7 +49,7 @@ def main() -> None:
         if ENABLE_PARALLEL:
             run_parallel(dataset_path, evaluators_params)
         else:
-            result = []
+            results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]] = []
             for evaluator in evaluators_params:
                 offer_verifier: OfferVerifier = OfferVerifier(
                     path_to_local_file=dataset_path, evaluator_params=evaluator
@@ -55,8 +57,8 @@ def main() -> None:
                 combined_offers, statistics = offer_verifier.verify()
 
                 _display_result(combined_offers, statistics, evaluator[0].__name__)
-                result.append([len(combined_offers[0][0]), len(combined_offers[1][0])])
-            print(result)
+                results.append((*combined_offers, evaluator[0].__name__))
+            plot_results(results)
 
 
 # DEF ------------------------------------------------------------------------ #
@@ -79,6 +81,31 @@ def _display_result(
 
     if GENERATE_PDF:
         pdf_generator.generate(combined_offers)
+
+
+def plot_results(results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]]) -> None:
+    for result in results:
+        first = result[0]
+        second = result[1]
+        evaluator_name = result[2]
+        plt.bar(
+            [get_bar_description(first[1], evaluator_name), get_bar_description(second[1], evaluator_name)],
+            [len(first[0]), len(second[0])]
+        )
+    plt.xticks(rotation=90)
+    plt.grid(axis="y")
+    plt.tight_layout()
+    plt.show()
+
+
+def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
+    verified_offer_text: str = "Oferty\n wiarygodne\n "
+    not_verified_offer_text: str = "Oferty\n niewiarygodne\n "
+    return (
+        f"{verified_offer_text} {evaluator_name}"
+        if is_verified
+        else f"{not_verified_offer_text} {evaluator_name}"
+    )
 
 
 def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:

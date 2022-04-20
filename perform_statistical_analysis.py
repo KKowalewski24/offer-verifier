@@ -150,8 +150,6 @@ def set_subplot_plot(data_x_axis: pd.Series, data_y_axis: pd.Series, subtitle_x_
                      subtitle_y_axis: str, axs, row: int, column: int) -> None:
     axs[row, column].set(xlabel=subtitle_x_axis, ylabel=subtitle_y_axis)
     axs[row, column].plot(data_x_axis, data_y_axis)
-    print(data_x_axis)
-    print(data_y_axis)
 
 
 # DEF ----------------------------------------------------------------------- #
