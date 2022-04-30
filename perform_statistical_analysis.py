@@ -79,7 +79,7 @@ def draw_hists(df: pd.DataFrame, dataset_name: str) -> None:
     for index, fields_group in enumerate(fields_groups):
         draw_hist_2x2(df, fields_group, dataset_name, index, SAVE_CHARTS)
 
-    plt.hist(df[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE)
+    plt.hist(df[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE, edgecolor="black")
     set_descriptions(f"{dataset_name} {Fields.REVIEW_MEAN_STARS_NUMBER}")
     show_and_save(f"{dataset_name}_{Fields.REVIEW_MEAN_STARS_NUMBER}", SAVE_CHARTS)
 

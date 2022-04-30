@@ -49,6 +49,7 @@ def main() -> None:
             BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.4
         })
     ]
+
     for dataset_path in dataset_paths:
         if ENABLE_PARALLEL:
             run_parallel(dataset_path, evaluators_params)
@@ -107,8 +108,8 @@ def plot_results(results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer]
 
 
 def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
-    verified_offer_text: str = "Oferty\n wiarygodne\n "
-    not_verified_offer_text: str = "Oferty\n niewiarygodne\n "
+    verified_offer_text: str = "Oferty wiarygodne\n "
+    not_verified_offer_text: str = "Oferty niewiarygodne\n "
     return (
         f"{verified_offer_text} {evaluator_name}"
         if is_verified
