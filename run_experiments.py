@@ -1,11 +1,12 @@
 import glob
+import os
 from argparse import ArgumentParser, Namespace
 from concurrent.futures.process import ProcessPoolExecutor
 from typing import Any, Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 
-from module.constants import PICKLE_EXTENSION
+from module.constants import PICKLE_EXTENSION, UTF_8
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -16,16 +17,18 @@ from module.service.evaluator.benchmark.BenchmarkEvaluator import BenchmarkEvalu
 from module.service.evaluator.benchmark.BenchmarkFeatureExtractor import BenchmarkFeatureExtractor
 from module.service.evaluator.clustering.FuzzyCMeansEvaluator import FuzzyCMeansEvaluator
 from module.service.evaluator.clustering.KMeansEvaluator import KMeansEvaluator
-from module.utils import run_main
+from module.utils import create_directory, get_filename, run_main
 
 """
 """
 
 # VAR ------------------------------------------------------------------------ #
+EXPERIMENTS_RESULTS_DIR: str = "experiment_results/"
+DATASET_DIR: str = "dataset_snapshot/"
+LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 ENABLE_PARALLEL: bool = False
 GENERATE_PDF: bool = False
-EXPERIMENTS_RESULTS_DIR: str = "experiment_results"
-DATASET_DIR: str = "dataset_snapshot/"
+SAVE_CHARTS: bool = True
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
 pdf_generator: PdfGenerator = PdfGenerator()
@@ -35,6 +38,7 @@ logger = Logger().get_logging_instance()
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
     args = prepare_args()
+    create_directory(EXPERIMENTS_RESULTS_DIR)
 
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
     evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
@@ -51,6 +55,7 @@ def main() -> None:
     ]
 
     for dataset_path in dataset_paths:
+        dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         if ENABLE_PARALLEL:
             run_parallel(dataset_path, evaluators_params)
         else:
@@ -66,7 +71,7 @@ def main() -> None:
                 results.append(
                     (*combined_offers, f"{name.__name__}\n {' '.join([str(params[x]) for x in params])}")
                 )
-            plot_results(results)
+            plot_results(results, dataset_name)
 
 
 # DEF ------------------------------------------------------------------------ #
@@ -91,7 +96,9 @@ def _display_result(
         pdf_generator.generate(combined_offers)
 
 
-def plot_results(results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]]) -> None:
+def plot_results(
+        results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]], dataset_name: str
+) -> None:
     for result in results:
         first = result[0]
         second = result[1]
@@ -104,7 +111,7 @@ def plot_results(results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer]
     plt.grid(axis="y")
     plt.margins(x=0)
     plt.tight_layout()
-    plt.show()
+    show_and_save(f"{dataset_name}_results", SAVE_CHARTS)
 
 
 def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
@@ -115,6 +122,22 @@ def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
         if is_verified
         else f"{not_verified_offer_text} {evaluator_name}"
     )
+
+
+def set_descriptions(title: str, x_label: str = "", y_label: str = "") -> None:
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+
+
+def show_and_save(name: str, save: bool = False) -> None:
+    if save:
+        filename = get_filename(name)
+        plt.savefig(EXPERIMENTS_RESULTS_DIR + filename)
+        plt.close()
+        with open(EXPERIMENTS_RESULTS_DIR + LATEX_IMAGE_FILENAME, "a", encoding=UTF_8) as file:
+            file.write(f"{latex_generator.generate_chart_image(filename, False)}\n\n")
+    plt.show()
 
 
 def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:
