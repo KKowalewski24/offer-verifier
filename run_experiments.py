@@ -34,44 +34,49 @@ latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
 pdf_generator: PdfGenerator = PdfGenerator()
 logger = Logger().get_logging_instance()
 
+evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
+    (KMeansEvaluator, {}),
+    (FuzzyCMeansEvaluator, {}),
+    (BenchmarkEvaluator, {
+        BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 2.8,
+        BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
+    }),
+    (BenchmarkEvaluator, {
+        BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 3.2,
+        BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.4
+    })
+]
+
 
 # MAIN ----------------------------------------------------------------------- #
 def main() -> None:
     args = prepare_args()
     create_directory(EXPERIMENTS_RESULTS_DIR)
-
     dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
-    evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
-        (KMeansEvaluator, {}),
-        (FuzzyCMeansEvaluator, {}),
-        (BenchmarkEvaluator, {
-            BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 2.8,
-            BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
-        }),
-        (BenchmarkEvaluator, {
-            BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 3.2,
-            BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.4
-        })
-    ]
 
     for dataset_path in dataset_paths:
         dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         if ENABLE_PARALLEL:
             run_parallel(dataset_path, evaluators_params)
         else:
-            results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]] = []
-            for evaluator in evaluators_params:
+            offers_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]] = []
+            execution_time_results: List[Tuple[float, str]] = []
+
+            for evaluator_params in evaluators_params:
                 offer_verifier: OfferVerifier = OfferVerifier(
-                    path_to_local_file=dataset_path, evaluator_params=evaluator
+                    path_to_local_file=dataset_path, evaluator_params=evaluator_params
                 )
                 combined_offers, statistics = offer_verifier.verify()
 
-                name, params = evaluator
+                name, params = evaluator_params
+                formatted_params = f"{name.__name__}\n {' '.join([str(params[x]) for x in params])}"
+                offers_results.append((*combined_offers, formatted_params))
+                execution_time_results.append((statistics.execution_time, formatted_params))
+
                 _display_result(combined_offers, statistics, name.__name__)
-                results.append(
-                    (*combined_offers, f"{name.__name__}\n {' '.join([str(params[x]) for x in params])}")
-                )
-            plot_results(results, dataset_name)
+
+            plot_offers_results(offers_results, dataset_name)
+            plot_execution_time(execution_time_results, dataset_name)
 
 
 # DEF ------------------------------------------------------------------------ #
@@ -96,10 +101,23 @@ def _display_result(
         pdf_generator.generate(combined_offers)
 
 
-def plot_results(
-        results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]], dataset_name: str
+def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset_name: str) -> None:
+    for result in execution_time_results:
+        execution_time = result[0]
+        evaluator_name = result[1]
+        plt.bar(evaluator_name, execution_time)
+    plt.xticks(rotation=90)
+    plt.grid(axis="y")
+    plt.margins(x=0)
+    plt.tight_layout()
+    show_and_save(f"{dataset_name}_time_results", SAVE_CHARTS)
+
+
+def plot_offers_results(
+        offer_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]],
+        dataset_name: str
 ) -> None:
-    for result in results:
+    for result in offer_results:
         first = result[0]
         second = result[1]
         evaluator_name = result[2]
@@ -111,7 +129,7 @@ def plot_results(
     plt.grid(axis="y")
     plt.margins(x=0)
     plt.tight_layout()
-    show_and_save(f"{dataset_name}_results", SAVE_CHARTS)
+    show_and_save(f"{dataset_name}_offer_results", SAVE_CHARTS)
 
 
 def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
