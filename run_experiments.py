@@ -29,6 +29,7 @@ LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 ENABLE_PARALLEL: bool = False
 GENERATE_PDF: bool = False
 SAVE_CHARTS: bool = True
+plt.figure(figsize=(10, 5))
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
 pdf_generator: PdfGenerator = PdfGenerator()
@@ -101,18 +102,6 @@ def _display_result(
         pdf_generator.generate(combined_offers)
 
 
-def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset_name: str) -> None:
-    for result in execution_time_results:
-        execution_time = result[0]
-        evaluator_name = result[1]
-        plt.bar(evaluator_name, execution_time)
-    plt.xticks(rotation=90)
-    plt.grid(axis="y")
-    plt.margins(x=0)
-    plt.tight_layout()
-    show_and_save(f"{dataset_name}_time_results", SAVE_CHARTS)
-
-
 def plot_offers_results(
         offer_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]],
         dataset_name: str
@@ -128,8 +117,24 @@ def plot_offers_results(
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
-    plt.tight_layout()
+    plt.tight_layout(pad=3)
+    set_descriptions("", "Algorytm oceniający wiarygodność (Evaluator)", "Liczba ofert")
     show_and_save(f"{dataset_name}_offer_results", SAVE_CHARTS)
+
+
+def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset_name: str) -> None:
+    for result in execution_time_results:
+        execution_time = result[0]
+        evaluator_name = result[1]
+        plt.bar(evaluator_name, execution_time)
+    plt.xticks(rotation=90)
+    plt.grid(axis="y")
+    plt.margins(x=0)
+    plt.tight_layout(pad=3)
+    set_descriptions(
+        "Czas w sekundach (s)", "Algorytm oceniający wiarygodność (Evaluator)", "Czasy wykonania algorytmów"
+    )
+    show_and_save(f"{dataset_name}_time_results", SAVE_CHARTS)
 
 
 def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
