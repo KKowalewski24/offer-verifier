@@ -106,14 +106,18 @@ def plot_offers_results(
         offer_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]],
         dataset_name: str
 ) -> None:
-    for index, result in enumerate(offer_results):
+    index: int = 0
+    for result in offer_results:
         first = result[0]
         second = result[1]
         evaluator_name = result[2]
-        plt.bar(
-            [get_bar_description(first[1], evaluator_name), get_bar_description(second[1], evaluator_name)],
-            [len(first[0]), len(second[0])]
-        )
+
+        plt.bar(get_bar_description(first[1], evaluator_name), len(first[0]))
+        plt.text(index, len(first[0]), len(first[0]), color="blue", fontweight="bold", ha="center")
+        plt.bar(get_bar_description(second[1], evaluator_name), len(second[0]))
+        plt.text(index + 1, len(second[0]), len(second[0]), color="blue", fontweight="bold", ha="center")
+        index += 2
+
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
@@ -127,7 +131,7 @@ def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset
         execution_time = round(result[0], 3)
         evaluator_name = result[1]
         plt.bar(evaluator_name, execution_time)
-        plt.text(index - 0.1, execution_time / 2, f"{execution_time}s", color="white", fontweight="bold")
+        plt.text(index, execution_time, f"{execution_time}s", color="blue", fontweight="bold", ha="center")
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
