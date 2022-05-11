@@ -106,7 +106,7 @@ def plot_offers_results(
         offer_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]],
         dataset_name: str
 ) -> None:
-    for result in offer_results:
+    for index, result in enumerate(offer_results):
         first = result[0]
         second = result[1]
         evaluator_name = result[2]
@@ -123,10 +123,11 @@ def plot_offers_results(
 
 
 def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset_name: str) -> None:
-    for result in execution_time_results:
-        execution_time = result[0]
+    for index, result in enumerate(execution_time_results):
+        execution_time = round(result[0], 3)
         evaluator_name = result[1]
         plt.bar(evaluator_name, execution_time)
+        plt.text(index - 0.1, execution_time / 2, f"{execution_time}s", color="white", fontweight="bold")
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
