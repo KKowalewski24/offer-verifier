@@ -5,6 +5,7 @@ from concurrent.futures.process import ProcessPoolExecutor
 from typing import Any, Dict, List, Tuple
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from module.constants import DATASET_BACKUP_DIRECTORY, PICKLE_EXTENSION, UTF_8
 from module.interface.PdfGenerator import PdfGenerator
@@ -74,21 +75,23 @@ def main() -> None:
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
 
-                _display_result(combined_offers, statistics, name.__name__)
+                display_result(combined_offers, statistics, dataset_name, name.__name__)
+                generate_table(combined_offers, statistics, dataset_name, name.__name__)
 
             plot_offers_results(offers_results, dataset_name)
             plot_execution_time(execution_time_results, dataset_name)
 
 
 # DEF ------------------------------------------------------------------------ #
-def _display_result(
+def display_result(
         combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
-        statistics: Statistics, evaluator_name: str
+        statistics: Statistics, dataset_name: str, evaluator_name: str
 ) -> None:
     message: str = "\n--------------------------------------------------\n"
+    message += f"{dataset_name}\n"
     message += f"{evaluator_name}\n"
-    message += f"Liczba wszystkich ofert {statistics.offers_count}\n"
-    message += f"Czas wykonania {round(statistics.execution_time, 3)} sek\n"
+    message += f"Liczba wszystkich ofert: {statistics.offers_count}\n"
+    message += f"Czas wykonania: {round(statistics.execution_time, 3)} sek\n"
     for combined_offer in combined_offers:
         message += (
             f"Liczba ofert określona jako "
@@ -100,6 +103,31 @@ def _display_result(
 
     if GENERATE_PDF:
         pdf_generator.generate(combined_offers)
+
+
+def generate_table(
+        combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
+        statistics: Statistics, dataset_name: str, evaluator_name: str
+) -> None:
+    if combined_offers[0][1] == True:
+        verified_offers = combined_offers[0][0]
+        not_verified_offers = combined_offers[1][0]
+    else:
+        not_verified_offers = combined_offers[0][0]
+        verified_offers = combined_offers[1][0]
+
+    info: pd.DataFrame = pd.DataFrame(
+        columns=["Nazwa", "Wartość"],
+        data=[
+            ["Nazwa zbioru", dataset_name],
+            ["Nazwa algorytmu", evaluator_name],
+            ["Liczba wszystkich ofert", statistics.offers_count],
+            ["Czas wykonania (s)", f"{round(statistics.execution_time, 3)}"],
+            ["Liczba ofert określona jako wiarygodne", str(len(verified_offers))],
+            ["Liczba ofert określona jako niewiarogodne", str(len(not_verified_offers))],
+        ]
+    )
+    latex_generator.generate_vertical_table_df(info, dataset_name)
 
 
 def plot_offers_results(
@@ -174,7 +202,7 @@ def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str
     )
 
     combined_offers, statistics = offer_verifier.verify()
-    _display_result(combined_offers, statistics, evaluator[0].__name__)
+    display_result(combined_offers, statistics, evaluator[0].__name__)
 
 
 def run_parallel(dataset_path: str, evaluators_params: List[Tuple[Any, Dict[str, float]]]) -> None:
