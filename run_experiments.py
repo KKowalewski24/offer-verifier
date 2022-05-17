@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 
-from module.constants import PICKLE_EXTENSION, UTF_8
+from module.constants import DATASET_BACKUP_DIRECTORY, PICKLE_EXTENSION, UTF_8
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -23,8 +23,8 @@ from module.utils import create_directory, get_filename, run_main
 """
 
 # VAR ------------------------------------------------------------------------ #
-EXPERIMENTS_RESULTS_DIR: str = "experiment_results/"
-DATASET_DIR: str = "dataset_snapshot/"
+DATASET_DIR: str = DATASET_BACKUP_DIRECTORY
+EXPERIMENTS_RESULTS_DIR: str = "_experiment_results/"
 LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 ENABLE_PARALLEL: bool = False
 GENERATE_PDF: bool = False

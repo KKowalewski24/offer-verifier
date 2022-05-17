@@ -6,7 +6,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import MIN_MAX_REVIEW_VALUE, PICKLE_EXTENSION
+from module.constants import DATASET_BACKUP_DIRECTORY, MIN_MAX_REVIEW_VALUE, PICKLE_EXTENSION
 from module.model.Offer import Offer
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
@@ -18,9 +18,8 @@ from module.utils import create_directory, get_filename, read_object_from_file, 
 """
 
 # VAR ------------------------------------------------------------------------ #
-ANALYSIS_RESULTS_DIR: str = "analysis_results/"
-DATASET_DIR: str = "dataset_snapshot/"
-LATEX_IMAGE_FILENAME: str = "latex_images.txt"
+DATASET_DIR: str = DATASET_BACKUP_DIRECTORY
+ANALYSIS_RESULTS_DIR: str = "_analysis_results/"
 
 logger = Logger().get_logging_instance()
 latex_generator: LatexGenerator = LatexGenerator(ANALYSIS_RESULTS_DIR)
@@ -38,6 +37,7 @@ def main() -> None:
         offers: List[Offer] = list(read_object_from_file(dataset_path))
         df: pd.DataFrame = build_data_frame(offers)
 
+        generate_table(dataset_name, len(offers))
         draw_hists(df, dataset_name)
         # draw_charts(df, dataset_name)
 
@@ -53,6 +53,14 @@ def build_data_frame(offers: List[Offer]) -> pd.DataFrame:
         data=offers_sellers,
         columns=Fields.get_offer_names() + Fields.get_seller_names() + [Fields.REVIEW_MEAN_STARS_NUMBER]
     )
+
+
+def generate_table(dataset_name: str, offers_number: int) -> None:
+    info: pd.DataFrame = pd.DataFrame(
+        columns=["Nazwa", "Wartość"],
+        data=[["Nazwa katalogowa", dataset_name], ["Liczba ofert", str(offers_number)]]
+    )
+    latex_generator.generate_vertical_table_df(info, dataset_name)
 
 
 def draw_hists(df: pd.DataFrame, dataset_name: str) -> None:

@@ -11,7 +11,8 @@ OFFER_REPORT_FILENAME: Tuple[str, str] = (
     "credible_offer_report", "not_credible_offer_report"
 )
 PDF_MAX_LINE_LENGTH: int = 85
-RESULTS_DIRECTORY: str = "results/"
+RESULTS_DIRECTORY: str = "_results/"
+DATASET_BACKUP_DIRECTORY: str = "_dataset_backup/"
 STATISTICS_PATH: str = RESULTS_DIRECTORY + "statistics.txt"
 OFFERS_PATH: str = RESULTS_DIRECTORY + "offers-"
 CURRENCY_US_DOLLAR: str = "US $"
