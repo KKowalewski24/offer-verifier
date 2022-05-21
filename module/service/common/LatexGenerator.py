@@ -13,6 +13,7 @@ class LatexItem:
 
 class Table(LatexItem):
     begin: str = "\\begin{table}[H]\n"
+    small: str = "\\small\n"
     back_slashes: str = "\\\\"
     hline: str = "\hline\n"
     end_tabular: str = "\end{tabular}\n"
@@ -29,7 +30,7 @@ class Table(LatexItem):
 
     def get_caption(self, text: str) -> str:
         replaced_text = replace_char_for_caption(text)
-        return "\caption\n[" + replaced_text + "]{" + replaced_text + "}\n"
+        return "\caption\n[" + replaced_text + "]\n{" + replaced_text + "}\n"
 
 
     def get_label(self, label: str) -> str:
@@ -73,7 +74,7 @@ class LatexGenerator:
 
 
     def generate_vertical_table_df(self, df: pd.DataFrame, filename: str) -> None:
-        result: str = (self.table.begin + self.table.centering
+        result: str = (self.table.begin + self.table.small + self.table.centering
                        + self.table.get_begin_tabular(len(df.columns)) + self.table.hline)
 
         header: str = ""
@@ -98,7 +99,7 @@ class LatexGenerator:
 
 
     def generate_horizontal_table_df(self, df: pd.DataFrame, filename: str) -> None:
-        result: str = (self.table.begin + self.table.centering
+        result: str = (self.table.begin + self.table.small + self.table.centering
                        + self.table.get_begin_tabular(len(df.columns) + 1) + self.table.hline)
 
         header: str = ""
