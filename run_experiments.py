@@ -138,9 +138,9 @@ def plot_offers_results(
         second = result[1]
         evaluator_name = result[2]
 
-        plt.bar(get_bar_description(first[1], evaluator_name), len(first[0]))
+        plt.bar(get_bar_description(first[1], evaluator_name), len(first[0]), width=0.3)
         plt.text(index, len(first[0]), len(first[0]), color="blue", fontweight="bold", ha="center")
-        plt.bar(get_bar_description(second[1], evaluator_name), len(second[0]))
+        plt.bar(get_bar_description(second[1], evaluator_name), len(second[0]), width=0.3)
         plt.text(index + 1, len(second[0]), len(second[0]), color="blue", fontweight="bold", ha="center")
         index += 2
 
@@ -156,7 +156,7 @@ def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset
     for index, result in enumerate(execution_time_results):
         execution_time = round(result[0], 3)
         evaluator_name = result[1]
-        plt.bar(evaluator_name, execution_time)
+        plt.bar(evaluator_name, execution_time, width=0.3)
         plt.text(index, execution_time, f"{execution_time}s", color="blue", fontweight="bold", ha="center")
     plt.xticks(rotation=90)
     plt.grid(axis="y")
