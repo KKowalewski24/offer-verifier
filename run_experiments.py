@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from sklearn.metrics import ConfusionMatrixDisplay
 
 from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
@@ -74,6 +75,11 @@ def main() -> None:
 
                 display_result(combined_offers, statistics, statistics.dataset_name, name.__name__)
                 generate_table(combined_offers, statistics, statistics.dataset_name, name.__name__)
+                ConfusionMatrixDisplay(
+                    confusion_matrix=statistics.confusion_matrix, display_labels=[False, True]
+                ).plot(cmap="binary")
+                set_descriptions(f"Macierz pomyłek, {name.__name__} {formatted_params}")
+                show_and_save(f"{statistics.dataset_name}_{name.__name__}", SAVE_CHARTS)
 
             plot_offers_results(offers_results, statistics.dataset_name)
             plot_execution_time(execution_time_results, statistics.dataset_name)

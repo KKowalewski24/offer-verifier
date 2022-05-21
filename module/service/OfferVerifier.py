@@ -1,7 +1,9 @@
 import time
 from typing import Callable, Dict, List, Tuple
 
+import numpy as np
 from nameof import nameof
+from sklearn.metrics import confusion_matrix
 
 from module.constants import JSON_EXTENSION, OFFERS_PATH
 from module.exception.EmptyDatasetException import EmptyDatasetException
@@ -65,9 +67,11 @@ class OfferVerifier:
         start_time = time.time()
         verified_offers, statistics = self.evaluator(offers_wrapper.offers, self.params).evaluate()
         end_time = time.time()
+        display_and_log_info(self.logger, "Analysis of the offers done!")
+
         statistics.execution_time = end_time - start_time
         statistics.dataset_name = offers_wrapper.dataset_name
-        display_and_log_info(self.logger, "Analysis of the offers done!")
+        statistics.confusion_matrix = self._calculate_confusion_matrix(offers_wrapper.offers, verified_offers)
 
         return verified_offers, statistics
 
@@ -82,6 +86,26 @@ class OfferVerifier:
             )
 
         return offers
+
+
+    def _calculate_confusion_matrix(
+            self, offers: List[Offer],
+            verified_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
+    ) -> np.ndarray:
+        mapped_offers: List[Tuple] = [(offer.id, offer.is_specified_as_credible) for offer in offers]
+        mapped_evaluated_offers: List[Tuple] = (
+                [(offer.id, verified_offers[0][1]) for offer in verified_offers[0][0]]
+                + [(offer.id, verified_offers[1][1]) for offer in verified_offers[1][0]]
+        )
+        mapped_evaluated_offers_dict: Dict = {
+            eval_offer[0]: (eval_offer[0], eval_offer[1])
+            for eval_offer in mapped_evaluated_offers
+        }
+
+        y_true = [mapped_offer[1] for mapped_offer in mapped_offers]
+        y_pred = [mapped_evaluated_offers_dict[x[0]][1] for x in mapped_offers]
+
+        return confusion_matrix(y_true, y_pred, labels=[False, True])
 
 
     def _validate_init_params(self) -> None:
