@@ -1,11 +1,13 @@
-from typing import List, Any
+from __future__ import annotations, annotations
+
+from typing import Any, Dict, List
 
 from nameof import nameof
 
 from module.model.BaseItem import BaseItem
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
-from module.utils import to_string_class_formatter
+from module.utils import remove_dict_entry_by_key, to_string_class_formatter
 
 
 class Offer(BaseItem):
@@ -37,4 +39,18 @@ class Offer(BaseItem):
                 nameof(self.reviews), nameof(self.seller), nameof(self.is_specified_as_credible)
             ],
             "\n"
+        )
+
+
+    @staticmethod
+    def from_dict(json_data: Dict) -> Offer:
+        json_seller: Dict = json_data["seller"]
+        json_data = remove_dict_entry_by_key(json_data, "seller")
+        json_review: Dict = json_data["reviews"]
+        json_data = remove_dict_entry_by_key(json_data, "reviews")
+
+        return Offer(
+            **json_data,
+            reviews=[ProductReview(**review) for review in json_review],
+            seller=Seller(**json_seller),
         )

@@ -3,17 +3,18 @@ from typing import Callable, Dict, List, Tuple
 
 from nameof import nameof
 
-from module.constants import OFFERS_PATH, PICKLE_EXTENSION
+from module.constants import JSON_EXTENSION, OFFERS_PATH
 from module.exception.EmptyDatasetException import EmptyDatasetException
 from module.exception.WrongConstructorParamsException import WrongConstructorParamsException
 from module.model.Offer import Offer
+from module.model.OffersWrapper import OffersWrapper
 from module.model.Statistics import Statistics
 from module.service.RequestProvider import RequestProvider
 from module.service.common.Logger import Logger
 from module.service.evaluator.Evaluator import Evaluator
 from module.service.evaluator.clustering.KMeansEvaluator import KMeansEvaluator
 from module.utils import display_and_log_error, display_and_log_info, display_and_log_warning, \
-    get_filename, read_object_from_file, save_object_to_file
+    get_filename, read_json_from_file, save_json_to_file
 
 
 class OfferVerifier:
@@ -54,14 +55,16 @@ class OfferVerifier:
 
 
     def download_offers(self) -> List[Offer]:
-        offers: List[Offer] = (
-            list(read_object_from_file(self.path_to_local_file))
-            if self.path_to_local_file is not None
-            else RequestProvider().get_offers(self.search_phrase)
-        )
+        if self.path_to_local_file is not None:
+            offers = OffersWrapper.from_dict(read_json_from_file(self.path_to_local_file)).offers
+        else:
+            offers = RequestProvider().get_offers(self.search_phrase)
 
         if self.save_offers and self.path_to_local_file is None:
-            save_object_to_file(get_filename(OFFERS_PATH + self.search_phrase, PICKLE_EXTENSION), offers)
+            save_json_to_file(
+                get_filename(OFFERS_PATH + self.search_phrase, JSON_EXTENSION),
+                OffersWrapper(offers).__dict__
+            )
 
         return offers
 

@@ -1,18 +1,18 @@
 import glob
-import os
 from argparse import ArgumentParser, Namespace
 from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import DATASET_BACKUP_DIRECTORY, MIN_MAX_REVIEW_VALUE, PICKLE_EXTENSION
+from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION, MIN_MAX_REVIEW_VALUE
 from module.model.Offer import Offer
+from module.model.OffersWrapper import OffersWrapper
 from module.model.ProductReview import ProductReview
 from module.model.Seller import Seller
 from module.service.common.LatexGenerator import LatexGenerator
 from module.service.common.Logger import Logger
-from module.utils import create_directory, get_filename, read_object_from_file, run_main
+from module.utils import create_directory, get_filename, read_json_from_file, run_main
 
 """
 """
@@ -31,14 +31,13 @@ def main() -> None:
     args = prepare_args()
     create_directory(ANALYSIS_RESULTS_DIR)
 
-    dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
+    dataset_paths = glob.glob(DATASET_DIR + "*" + JSON_EXTENSION)
     for dataset_path in dataset_paths:
-        dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
-        offers: List[Offer] = list(read_object_from_file(dataset_path))
-        df: pd.DataFrame = build_data_frame(offers)
+        offers_wrapper: OffersWrapper = OffersWrapper.from_dict(read_json_from_file(dataset_path))
+        df: pd.DataFrame = build_data_frame(offers_wrapper.offers)
 
-        generate_table(dataset_name, len(offers))
-        draw_hists(df, dataset_name)
+        generate_table(offers_wrapper.dataset_name, len(offers_wrapper.offers))
+        draw_hists(df, offers_wrapper.dataset_name)
         # draw_charts(df, dataset_name)
 
 
