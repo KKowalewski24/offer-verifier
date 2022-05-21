@@ -145,7 +145,7 @@ def create_directory(path: str) -> None:
         os.makedirs(path)
 
 
-def get_filename(name: str, extension: str) -> str:
+def get_filename(name: str, extension: str = "") -> str:
     return (name + "-" + datetime.now().strftime("%H%M%S__%f") + extension).replace(" ", "")
 
 
@@ -159,14 +159,14 @@ def save_to_file(path: str, data: Any, mode: str = "w") -> None:
         file.write(data)
 
 
-def save_object_to_file(path: str, data: object) -> None:
-    with open(path, "wb") as file:
-        pickle.dump(data, file, protocol=pickle.HIGHEST_PROTOCOL)
+def save_json_to_file(path: str, data: Dict) -> None:
+    with open(path, "w", encoding=UTF_8) as file:
+        file.write(json.dumps(data, default=lambda o: o.__dict__, indent=4))
 
 
-def read_object_from_file(path: str) -> Any:
-    with open(path, "rb") as file:
-        return pickle.load(file)
+def read_json_from_file(path: str) -> Dict:
+    with open(path, encoding=UTF_8) as file:
+        return json.load(file)
 
 
 def replace_unsupported_characters(text: str, begin: int = 0, end: int = 256) -> str:

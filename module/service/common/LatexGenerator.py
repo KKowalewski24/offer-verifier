@@ -13,6 +13,7 @@ class LatexItem:
 
 class Table(LatexItem):
     begin: str = "\\begin{table}[H]\n"
+    small: str = "\\small\n"
     back_slashes: str = "\\\\"
     hline: str = "\hline\n"
     end_tabular: str = "\end{tabular}\n"
@@ -29,7 +30,7 @@ class Table(LatexItem):
 
     def get_caption(self, text: str) -> str:
         replaced_text = replace_char_for_caption(text)
-        return "\caption\n[" + replaced_text + "]{" + replaced_text + "}\n"
+        return "\caption\n[" + replaced_text + "]\n{" + replaced_text + "}\n"
 
 
     def get_label(self, label: str) -> str:
@@ -57,7 +58,7 @@ class Image(LatexItem):
 
     def get_caption(self, text: str) -> str:
         replaced_text = replace_char_for_caption(text)
-        return "\caption\n[" + replaced_text + "]{" + replaced_text + "}\n"
+        return "\caption\n[" + replaced_text + "]\n{" + replaced_text + "}\n"
 
 
     def get_label(self, label: str) -> str:
@@ -73,7 +74,7 @@ class LatexGenerator:
 
 
     def generate_vertical_table_df(self, df: pd.DataFrame, filename: str) -> None:
-        result: str = (self.table.begin + self.table.centering
+        result: str = (self.table.begin + self.table.small + self.table.centering
                        + self.table.get_begin_tabular(len(df.columns)) + self.table.hline)
 
         header: str = ""
@@ -98,7 +99,7 @@ class LatexGenerator:
 
 
     def generate_horizontal_table_df(self, df: pd.DataFrame, filename: str) -> None:
-        result: str = (self.table.begin + self.table.centering
+        result: str = (self.table.begin + self.table.small + self.table.centering
                        + self.table.get_begin_tabular(len(df.columns) + 1) + self.table.hline)
 
         header: str = ""
@@ -124,13 +125,16 @@ class LatexGenerator:
         self._save_to_file(result, filename)
 
 
-    def generate_chart_image(self, filename: str) -> None:
+    def generate_chart_image(self, filename: str, save: bool = True) -> str:
         result: str = self.image.begin + self.image.centering + self.image.include + self.image.width
         result += self.image.get_latex_path(filename)
         result += self.image.get_caption(self._remove_png_extension(filename))
         result += self.image.get_label(self._remove_png_extension(filename))
         result += self.image.end
-        self._save_to_file(result, filename)
+        if save:
+            self._save_to_file(result, filename)
+
+        return result
 
 
     def _save_to_file(self, data: str, filename: str) -> None:

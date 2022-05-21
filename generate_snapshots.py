@@ -1,11 +1,11 @@
 from argparse import ArgumentParser, Namespace
 from typing import List, Tuple
 
-from module.constants import OFFERS_PATH, PICKLE_EXTENSION
-from module.model.Offer import Offer
+from module.constants import JSON_EXTENSION, OFFERS_PATH
+from module.model.OffersWrapper import OffersWrapper
 from module.service.RequestProvider import RequestProvider
 from module.service.common.Logger import Logger
-from module.utils import get_filename, run_main, save_object_to_file
+from module.utils import get_filename, run_main, save_json_to_file
 
 """
 """
@@ -24,8 +24,10 @@ def main() -> None:
     ]
 
     for offer_id, offer_name in offers_id:
-        offers: List[Offer] = RequestProvider().get_offer_splitted_into_snapshots(offer_id)
-        save_object_to_file(get_filename(f"{OFFERS_PATH}{offer_id}-{offer_name}", PICKLE_EXTENSION), offers)
+        save_json_to_file(
+            get_filename(f"{OFFERS_PATH}{offer_id}-{offer_name}", JSON_EXTENSION),
+            OffersWrapper(RequestProvider().get_offer_splitted_into_snapshots(offer_id)).__dict__
+        )
 
 
 # DEF ------------------------------------------------------------------------ #

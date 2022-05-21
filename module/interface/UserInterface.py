@@ -28,7 +28,7 @@ class UserInterface:
 
     def display_result(self) -> None:
         try:
-            combined_offers, statistics = self.offer_verifier.verify()
+            combined_offers = self.offer_verifier.verify()
             print("------------------------------------------------------------------------")
             self._display_offers(combined_offers[0])
             print("------------------------------------------------------------------------")
