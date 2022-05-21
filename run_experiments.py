@@ -68,18 +68,14 @@ def main() -> None:
                 )
                 combined_offers, statistics = offer_verifier.verify_by_local_file()
 
-                name, params = evaluator_params
-                formatted_params = f"{name.__name__}\n {' '.join([str(params[x]) for x in params])}"
+                evaluator_name, params = evaluator_params
+                formatted_params = f"{evaluator_name.__name__}\n {' '.join([str(params[x]) for x in params])}"
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
 
-                display_result(combined_offers, statistics, statistics.dataset_name, name.__name__)
-                generate_table(combined_offers, statistics, statistics.dataset_name, name.__name__)
-                ConfusionMatrixDisplay(
-                    confusion_matrix=statistics.confusion_matrix, display_labels=[False, True]
-                ).plot(cmap="binary")
-                set_descriptions(f"Macierz pomyłek, {name.__name__} {formatted_params}")
-                show_and_save(f"{statistics.dataset_name}_{name.__name__}", SAVE_CHARTS)
+                display_result(combined_offers, statistics, statistics.dataset_name, evaluator_name.__name__)
+                generate_table(combined_offers, statistics, statistics.dataset_name, evaluator_name.__name__)
+                plot_confusion_matrix(statistics, formatted_params, evaluator_name)
 
             plot_offers_results(offers_results, statistics.dataset_name)
             plot_execution_time(execution_time_results, statistics.dataset_name)
@@ -133,10 +129,18 @@ def generate_table(
     latex_generator.generate_vertical_table_df(info, dataset_name)
 
 
+def plot_confusion_matrix(statistics: Statistics, formatted_params: str, evaluator_name: str) -> None:
+    cmd = ConfusionMatrixDisplay(confusion_matrix=statistics.confusion_matrix, display_labels=[True, False])
+    cmd.plot(colorbar=False, cmap="binary")
+    set_descriptions(f"Macierz pomyłek, {formatted_params}")
+    show_and_save(f"{statistics.dataset_name}_{evaluator_name.__name__}", SAVE_CHARTS)
+
+
 def plot_offers_results(
         offer_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]],
         dataset_name: str
 ) -> None:
+    plt.figure(figsize=(7, 5))
     index: int = 0
     for result in offer_results:
         first = result[0]
@@ -149,7 +153,6 @@ def plot_offers_results(
         plt.text(index + 1, len(second[0]), len(second[0]), color="blue", fontweight="bold", ha="center")
         index += 2
 
-    plt.figure(figsize=(7, 5))
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
@@ -159,13 +162,13 @@ def plot_offers_results(
 
 
 def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset_name: str) -> None:
+    # plt.figure(figsize=(6, 5))
     for index, result in enumerate(execution_time_results):
         execution_time = round(result[0], 3)
         evaluator_name = result[1]
-        plt.bar(evaluator_name, execution_time, width=0.3)
+        plt.bar(evaluator_name, execution_time, width=0.1)
         plt.text(index, execution_time, f"{execution_time}s", color="blue", fontweight="bold", ha="center")
 
-    plt.figure(figsize=(3, 4))
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)

@@ -105,7 +105,7 @@ class OfferVerifier:
         y_true = [mapped_offer[1] for mapped_offer in mapped_offers]
         y_pred = [mapped_evaluated_offers_dict[x[0]][1] for x in mapped_offers]
 
-        return confusion_matrix(y_true, y_pred, labels=[False, True])
+        return confusion_matrix(y_true, y_pred, labels=[True, False])
 
 
     def _validate_init_params(self) -> None:
