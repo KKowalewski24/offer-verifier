@@ -57,7 +57,6 @@ def main() -> None:
     dataset_paths = glob.glob(DATASET_DIR + "*" + JSON_EXTENSION)
 
     for dataset_path in dataset_paths:
-        dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
         if ENABLE_PARALLEL:
             run_parallel(dataset_path, evaluators_params)
         else:
@@ -68,18 +67,18 @@ def main() -> None:
                 offer_verifier: OfferVerifier = OfferVerifier(
                     path_to_local_file=dataset_path, evaluator_params=evaluator_params
                 )
-                combined_offers, statistics = offer_verifier.verify()
+                combined_offers, statistics = offer_verifier.verify_by_local_file()
 
                 name, params = evaluator_params
                 formatted_params = f"{name.__name__}\n {' '.join([str(params[x]) for x in params])}"
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
 
-                display_result(combined_offers, statistics, dataset_name, name.__name__)
-                generate_table(combined_offers, statistics, dataset_name, name.__name__)
+                display_result(combined_offers, statistics, statistics.dataset_name, name.__name__)
+                generate_table(combined_offers, statistics, statistics.dataset_name, name.__name__)
 
-            plot_offers_results(offers_results, dataset_name)
-            plot_execution_time(execution_time_results, dataset_name)
+            plot_offers_results(offers_results, statistics.dataset_name)
+            plot_execution_time(execution_time_results, statistics.dataset_name)
 
 
 # DEF ------------------------------------------------------------------------ #
@@ -191,8 +190,6 @@ def show_and_save(name: str, save: bool = False) -> None:
         filename = get_filename(name)
         plt.savefig(EXPERIMENTS_RESULTS_DIR + filename)
         plt.close()
-        with open(EXPERIMENTS_RESULTS_DIR + LATEX_IMAGE_FILENAME, "a", encoding=UTF_8) as file:
-            file.write(f"{latex_generator.generate_chart_image(filename, False)}\n\n")
     plt.show()
 
 
@@ -201,7 +198,7 @@ def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str
         path_to_local_file=dataset_path, evaluator_params=evaluator
     )
 
-    combined_offers, statistics = offer_verifier.verify()
+    combined_offers, statistics = offer_verifier.verify_by_local_file()
     display_result(combined_offers, statistics, evaluator[0].__name__)
 
 

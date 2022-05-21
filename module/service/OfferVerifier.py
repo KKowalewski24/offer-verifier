@@ -36,7 +36,7 @@ class OfferVerifier:
         self._validate_init_params()
 
 
-    def verify(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    def verify(self) -> Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]:
         display_and_log_info(self.logger, "Downloading offers, Please wait ...")
         offers: List[Offer] = self.download_offers()
         display_and_log_info(self.logger, f"Downloading offers done! Offers count: {len(offers)}")
@@ -45,22 +45,37 @@ class OfferVerifier:
             raise EmptyDatasetException()
 
         display_and_log_info(self.logger, "Performing the analysis of the offers, Please wait ...")
-        start_time = time.time()
         verified_offers, statistics = self.evaluator(offers, self.params).evaluate()
+        display_and_log_info(self.logger, "Analysis of the offers done!")
+
+        return verified_offers
+
+
+    def verify_by_local_file(
+            self
+    ) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+        offers_wrapper: OffersWrapper = OffersWrapper.from_dict(
+            read_json_from_file(self.path_to_local_file)
+        )
+
+        if len(offers_wrapper.offers) == 0:
+            raise EmptyDatasetException()
+
+        display_and_log_info(self.logger, "Performing the analysis of the offers, Please wait ...")
+        start_time = time.time()
+        verified_offers, statistics = self.evaluator(offers_wrapper.offers, self.params).evaluate()
         end_time = time.time()
         statistics.execution_time = end_time - start_time
+        statistics.dataset_name = offers_wrapper.dataset_name
         display_and_log_info(self.logger, "Analysis of the offers done!")
 
         return verified_offers, statistics
 
 
     def download_offers(self) -> List[Offer]:
-        if self.path_to_local_file is not None:
-            offers = OffersWrapper.from_dict(read_json_from_file(self.path_to_local_file)).offers
-        else:
-            offers = RequestProvider().get_offers(self.search_phrase)
+        offers = RequestProvider().get_offers(self.search_phrase)
 
-        if self.save_offers and self.path_to_local_file is None:
+        if self.save_offers:
             save_json_to_file(
                 get_filename(OFFERS_PATH + self.search_phrase, JSON_EXTENSION),
                 OffersWrapper(offers).__dict__
