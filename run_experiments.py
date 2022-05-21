@@ -1,5 +1,4 @@
 import glob
-import os
 from argparse import ArgumentParser, Namespace
 from concurrent.futures.process import ProcessPoolExecutor
 from typing import Any, Dict, List, Tuple
@@ -7,7 +6,7 @@ from typing import Any, Dict, List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION, UTF_8
+from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -109,11 +108,11 @@ def generate_table(
         statistics: Statistics, dataset_name: str, evaluator_name: str
 ) -> None:
     if combined_offers[0][1] == True:
-        verified_offers = combined_offers[0][0]
-        not_verified_offers = combined_offers[1][0]
+        credible_offers = combined_offers[0][0]
+        not_credible_offers = combined_offers[1][0]
     else:
-        not_verified_offers = combined_offers[0][0]
-        verified_offers = combined_offers[1][0]
+        not_credible_offers = combined_offers[0][0]
+        credible_offers = combined_offers[1][0]
 
     info: pd.DataFrame = pd.DataFrame(
         columns=["Nazwa", "Wartość"],
@@ -122,8 +121,8 @@ def generate_table(
             ["Nazwa algorytmu", evaluator_name],
             ["Liczba wszystkich ofert", statistics.offers_count],
             ["Czas wykonania (s)", f"{round(statistics.execution_time, 3)}"],
-            ["Liczba ofert określona jako wiarygodne", str(len(verified_offers))],
-            ["Liczba ofert określona jako niewiarogodne", str(len(not_verified_offers))],
+            ["Liczba ofert określona jako wiarygodne", str(len(credible_offers))],
+            ["Liczba ofert określona jako niewiarogodne", str(len(not_credible_offers))],
         ]
     )
     latex_generator.generate_vertical_table_df(info, dataset_name)
@@ -169,13 +168,13 @@ def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset
     show_and_save(f"{dataset_name}_time_results", SAVE_CHARTS)
 
 
-def get_bar_description(is_verified: bool, evaluator_name: str) -> str:
-    verified_offer_text: str = "Oferty wiarygodne\n "
-    not_verified_offer_text: str = "Oferty niewiarygodne\n "
+def get_bar_description(is_credible: bool, evaluator_name: str) -> str:
+    credible_offer_text: str = "Oferty wiarygodne\n "
+    not_credible_offer_text: str = "Oferty niewiarygodne\n "
     return (
-        f"{verified_offer_text} {evaluator_name}"
-        if is_verified
-        else f"{not_verified_offer_text} {evaluator_name}"
+        f"{credible_offer_text} {evaluator_name}"
+        if is_credible
+        else f"{not_credible_offer_text} {evaluator_name}"
     )
 
 

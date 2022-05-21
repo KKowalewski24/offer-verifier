@@ -36,7 +36,11 @@ def main() -> None:
         offers_wrapper: OffersWrapper = OffersWrapper.from_dict(read_json_from_file(dataset_path))
         df: pd.DataFrame = build_data_frame(offers_wrapper.offers)
 
-        generate_table(offers_wrapper.dataset_name, len(offers_wrapper.offers))
+        generate_table(
+            offers_wrapper.dataset_name, len(offers_wrapper.offers),
+            len([offer for offer in offers_wrapper.offers if offer.is_specified_as_credible is True]),
+            len([offer for offer in offers_wrapper.offers if offer.is_specified_as_credible is False]),
+        )
         draw_hists(df, offers_wrapper.dataset_name)
         # draw_charts(df, dataset_name)
 
@@ -54,10 +58,17 @@ def build_data_frame(offers: List[Offer]) -> pd.DataFrame:
     )
 
 
-def generate_table(dataset_name: str, offers_number: int) -> None:
+def generate_table(
+        dataset_name: str, offers_number: int, credible_offers_number: int, not_credible_offers_number: int
+) -> None:
     info: pd.DataFrame = pd.DataFrame(
         columns=["Nazwa", "Wartość"],
-        data=[["Nazwa katalogowa", dataset_name], ["Liczba ofert", str(offers_number)]]
+        data=[
+            ["Nazwa katalogowa", dataset_name],
+            ["Liczba ofert", str(offers_number)],
+            ["Liczba ofert określona jako wiarygodna przez eksperta", str(credible_offers_number)],
+            ["Liczba ofert określona jako niewiarygodna przez eksperta", str(not_credible_offers_number)],
+        ]
     )
     latex_generator.generate_vertical_table_df(info, dataset_name)
 
@@ -197,6 +208,7 @@ class Fields:
     OFFER_IMAGE_URL: str = "offer_image_url"
     OFFER_HAS_RETURN_OPTION: str = "offer_has_return_option"
     OFFER_DESCRIPTION_LENGTH: str = "offer_description_length"
+    OFFER_IS_SPECIFIED_AS_CREDIBLE: str = "offer_is_specified_as_credible"
 
     SELLER_ID: str = "seller_id"
     SELLER_FEEDBACK_SCORE: str = "seller_feedback_score"
@@ -228,6 +240,7 @@ class Fields:
             Fields.OFFER_IMAGE_URL,
             Fields.OFFER_HAS_RETURN_OPTION,
             Fields.OFFER_DESCRIPTION_LENGTH,
+            Fields.OFFER_IS_SPECIFIED_AS_CREDIBLE
         ]
 
 
@@ -240,6 +253,7 @@ class Fields:
             offer.image_url,
             offer.has_return_option,
             offer.description_length,
+            offer.is_specified_as_credible
         ]
 
 
