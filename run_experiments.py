@@ -29,7 +29,6 @@ LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 ENABLE_PARALLEL: bool = False
 GENERATE_PDF: bool = False
 SAVE_CHARTS: bool = True
-plt.figure(figsize=(10, 5))
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
 pdf_generator: PdfGenerator = PdfGenerator()
@@ -144,6 +143,7 @@ def plot_offers_results(
         plt.text(index + 1, len(second[0]), len(second[0]), color="blue", fontweight="bold", ha="center")
         index += 2
 
+    plt.figure(figsize=(7, 5))
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
@@ -158,6 +158,8 @@ def plot_execution_time(execution_time_results: List[Tuple[float, str]], dataset
         evaluator_name = result[1]
         plt.bar(evaluator_name, execution_time, width=0.3)
         plt.text(index, execution_time, f"{execution_time}s", color="blue", fontweight="bold", ha="center")
+
+    plt.figure(figsize=(3, 4))
     plt.xticks(rotation=90)
     plt.grid(axis="y")
     plt.margins(x=0)
