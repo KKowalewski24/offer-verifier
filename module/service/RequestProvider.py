@@ -99,5 +99,6 @@ class RequestProvider:
                 float(seller_details["reasonable_shipping_cost"]),
                 float(seller_details["shipping_speed"]),
                 float(seller_details["communication"]),
-            )
+            ),
+            "TODO - MUST BE FILLED BY EXPERT"
         )
