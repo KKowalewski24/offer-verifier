@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import DATASET_BACKUP_DIRECTORY, PICKLE_EXTENSION, UTF_8
+from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION, UTF_8
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -54,7 +54,7 @@ evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
 def main() -> None:
     args = prepare_args()
     create_directory(EXPERIMENTS_RESULTS_DIR)
-    dataset_paths = glob.glob(DATASET_DIR + "*" + PICKLE_EXTENSION)
+    dataset_paths = glob.glob(DATASET_DIR + "*" + JSON_EXTENSION)
 
     for dataset_path in dataset_paths:
         dataset_name: str = str(os.path.basename(dataset_path).split(".")[0])
