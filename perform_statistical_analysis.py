@@ -38,6 +38,7 @@ def main() -> None:
 
         generate_table(
             offers_wrapper.dataset_name, len(offers_wrapper.offers),
+            pd.Series(len(offer.reviews) for offer in offers_wrapper.offers).mode()[0],
             len([offer for offer in offers_wrapper.offers if offer.is_specified_as_credible is True]),
             len([offer for offer in offers_wrapper.offers if offer.is_specified_as_credible is False]),
         )
@@ -58,14 +59,14 @@ def build_data_frame(offers: List[Offer]) -> pd.DataFrame:
     )
 
 
-def generate_table(
-        dataset_name: str, offers_number: int, credible_offers_number: int, not_credible_offers_number: int
-) -> None:
+def generate_table(dataset_name: str, offers_number: int, reviews_number_mode: int,
+                   credible_offers_number: int, not_credible_offers_number: int) -> None:
     info: pd.DataFrame = pd.DataFrame(
         columns=["Nazwa", "Wartość"],
         data=[
             ["Nazwa katalogowa", dataset_name],
             ["Liczba ofert", str(offers_number)],
+            ["Dominanta liczby recenzji w ofertach", str(reviews_number_mode)],
             ["Liczba ofert określona jako wiarygodna przez eksperta", str(credible_offers_number)],
             ["Liczba ofert określona jako niewiarygodna przez eksperta", str(not_credible_offers_number)],
         ]
@@ -97,7 +98,7 @@ def draw_hists(df: pd.DataFrame, dataset_name: str) -> None:
     for index, fields_group in enumerate(fields_groups):
         draw_hist_2x2(df, fields_group, dataset_name, index, SAVE_CHARTS)
 
-    plt.hist(df[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE, edgecolor="black")
+    plt.hist(df[Fields.REVIEW_MEAN_STARS_NUMBER], range=MIN_MAX_REVIEW_VALUE, color="white", edgecolor="blue")
     set_descriptions(f"{dataset_name} {Fields.REVIEW_MEAN_STARS_NUMBER}", "Wartość", "Liczba ofert")
     show_and_save(f"{dataset_name}_{Fields.REVIEW_MEAN_STARS_NUMBER}", SAVE_CHARTS)
 
@@ -164,7 +165,7 @@ def set_subplot_hist(data: pd.Series, subtitle: str, x_label: str,
     axs[row, column].set_title(subtitle)
     axs[row, column].set_xlabel(x_label)
     axs[row, column].set_ylabel(y_label)
-    axs[row, column].hist(data, edgecolor="black")
+    axs[row, column].hist(data, color="white", edgecolor="blue")
 
 
 # def set_subplot_plot(data_x_axis: pd.Series, data_y_axis: pd.Series, subtitle_x_axis: str,
