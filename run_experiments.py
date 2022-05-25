@@ -73,8 +73,8 @@ def main() -> None:
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
 
-                display_result(combined_offers, statistics, statistics.dataset_name, evaluator_name.__name__)
-                generate_table(combined_offers, statistics, statistics.dataset_name, evaluator_name.__name__)
+                display_result(combined_offers, statistics, evaluator_name.__name__)
+                generate_table(combined_offers, statistics, evaluator_name.__name__)
                 plot_confusion_matrix(statistics, formatted_params, evaluator_name)
 
             plot_offers_results(offers_results, statistics.dataset_name)
@@ -84,10 +84,10 @@ def main() -> None:
 # DEF ------------------------------------------------------------------------ #
 def display_result(
         combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
-        statistics: Statistics, dataset_name: str, evaluator_name: str
+        statistics: Statistics, evaluator_name: str
 ) -> None:
     message: str = "\n--------------------------------------------------\n"
-    message += f"{dataset_name}\n"
+    message += f"{statistics.dataset_name}\n"
     message += f"{evaluator_name}\n"
     message += f"Liczba wszystkich ofert: {statistics.offers_count}\n"
     message += f"Czas wykonania: {round(statistics.execution_time, 3)} sek\n"
