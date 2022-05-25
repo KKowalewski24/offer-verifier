@@ -59,7 +59,7 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_image_url(self, soup: BeautifulSoup) -> Optional[str]:
         image_div = soup.find(attrs=OFFER_IMAGE_ATTRIBUTES)
-        if is_valid_item(image_div):
+        if is_valid_item(str(image_div)):
             return str(image_div.get("src"))
 
         return None
