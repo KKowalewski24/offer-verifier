@@ -1,3 +1,4 @@
+import webbrowser
 from typing import List, Tuple
 
 from module.constants import EBAY_ITEM_PATH, JSON_EXTENSION, OFFERS_PATH, RESULTS_DIRECTORY
@@ -45,13 +46,13 @@ def main() -> None:
         )
 
 
-def display_url_to_offers() -> None:
+def open_offers_in_browser() -> None:
     for offer_name, offer_ids in OFFERS_NAME_IDS:
         print(f"Offer name: {offer_name}")
         for offer_id in offer_ids:
-            print(EBAY_ITEM_PATH + offer_id)
+            webbrowser.open(EBAY_ITEM_PATH + offer_id)
 
 
 if __name__ == "__main__":
-    # display_url_to_offers()
+    # open_offers_in_browser()
     run_main(main)
