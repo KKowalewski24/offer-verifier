@@ -69,7 +69,9 @@ def main() -> None:
                 combined_offers, statistics = offer_verifier.verify_by_local_file()
 
                 evaluator_name, params = evaluator_params
-                formatted_params = f"{evaluator_name.__name__}\n {' '.join([str(params[x]) for x in params])}"
+                formatted_params = (
+                    f"{evaluator_name.__name__}\n {' '.join([f'{x}={params[x]}' for x in params])}"
+                )
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
 
