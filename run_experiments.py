@@ -1,6 +1,5 @@
 import glob
 from argparse import ArgumentParser, Namespace
-from concurrent.futures.process import ProcessPoolExecutor
 from typing import Any, Dict, List, Tuple
 
 import matplotlib.pyplot as plt
@@ -8,7 +7,6 @@ import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay
 
 from module.constants import DATASET_SOURCE_DIRECTORY, JSON_EXTENSION
-from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
 from module.service.OfferVerifier import OfferVerifier
@@ -28,12 +26,9 @@ DATASET_DIR: str = DATASET_SOURCE_DIRECTORY
 EXPERIMENTS_RESULTS_DIR: str = "_experiment_results/"
 LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 NEW_LINE: str = "\n"
-ENABLE_PARALLEL: bool = False
-GENERATE_PDF: bool = False
 SAVE_CHARTS: bool = True
 
 latex_generator: LatexGenerator = LatexGenerator(EXPERIMENTS_RESULTS_DIR)
-pdf_generator: PdfGenerator = PdfGenerator()
 logger = Logger().get_logging_instance()
 
 evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
@@ -57,32 +52,29 @@ def main() -> None:
     dataset_paths = glob.glob(DATASET_DIR + "*" + JSON_EXTENSION)
 
     for dataset_path in dataset_paths:
-        if ENABLE_PARALLEL:
-            run_parallel(dataset_path, evaluators_params)
-        else:
-            offers_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]] = []
-            execution_time_results: List[Tuple[float, str]] = []
+        offers_results: List[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool], str]] = []
+        execution_time_results: List[Tuple[float, str]] = []
 
-            for evaluator_params in evaluators_params:
-                offer_verifier: OfferVerifier = OfferVerifier(
-                    path_to_local_file=dataset_path, evaluator_params=evaluator_params
-                )
-                combined_offers, statistics = offer_verifier.verify_by_local_file()
+        for evaluator_params in evaluators_params:
+            offer_verifier: OfferVerifier = OfferVerifier(
+                path_to_local_file=dataset_path, evaluator_params=evaluator_params
+            )
+            combined_offers, statistics = offer_verifier.verify_by_local_file()
 
-                evaluator_name, params = evaluator_params
-                formatted_params = (
-                    f"{evaluator_name.__name__}\n {' '.join([f'{x}={params[x]}{NEW_LINE}' for x in params])}"
-                )
-                offers_results.append((*combined_offers, formatted_params))
-                execution_time_results.append((statistics.execution_time, formatted_params))
+            evaluator_name, params = evaluator_params
+            formatted_params = (
+                f"{evaluator_name.__name__}\n {' '.join([f'{x}={params[x]}{NEW_LINE}' for x in params])}"
+            )
+            offers_results.append((*combined_offers, formatted_params))
+            execution_time_results.append((statistics.execution_time, formatted_params))
 
-                # display_combined_offers(combined_offers)
-                display_result(combined_offers, statistics, evaluator_name.__name__)
-                generate_table(combined_offers, statistics, evaluator_name.__name__)
-                plot_confusion_matrix(statistics, formatted_params, evaluator_name)
+            # display_combined_offers(combined_offers)
+            display_result(combined_offers, statistics, evaluator_name.__name__)
+            generate_table(combined_offers, statistics, evaluator_name.__name__)
+            plot_confusion_matrix(statistics, formatted_params, evaluator_name)
 
-            plot_offers_results(offers_results, statistics.dataset_name)
-            plot_execution_time(execution_time_results, statistics.dataset_name)
+        plot_offers_results(offers_results, statistics.dataset_name)
+        plot_execution_time(execution_time_results, statistics.dataset_name)
 
 
 # DEF ------------------------------------------------------------------------ #
@@ -103,9 +95,6 @@ def display_result(
         )
     message += "--------------------------------------------------\n"
     print(message)
-
-    if GENERATE_PDF:
-        pdf_generator.generate(combined_offers)
 
 
 def generate_table(
@@ -196,12 +185,11 @@ def get_bar_description(is_credible: bool, evaluator_name: str) -> str:
 def display_combined_offers(
         combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
 ) -> None:
-    for combined_offer in combined_offers[0][0]:
-        print(combined_offers[0][1])
-        print(combined_offer.id)
-    for combined_offer in combined_offers[1][0]:
-        print(combined_offers[1][1])
-        print(combined_offer.id)
+    for i in range(len(combined_offers)):
+        print(combined_offers[i][1])
+        for combined_offer in combined_offers[i][0]:
+            print(combined_offer.id, end=", ")
+        print("--------------------------------------")
 
 
 def set_descriptions(title: str, x_label: str = "", y_label: str = "") -> None:
@@ -216,25 +204,6 @@ def show_and_save(name: str, save: bool = False) -> None:
         plt.savefig(EXPERIMENTS_RESULTS_DIR + filename)
         plt.close()
     plt.show()
-
-
-def run_single_thread(evaluator: Tuple[Any, Dict[str, float]], dataset_path: str) -> Any:
-    offer_verifier: OfferVerifier = OfferVerifier(
-        path_to_local_file=dataset_path, evaluator_params=evaluator
-    )
-
-    combined_offers, statistics = offer_verifier.verify_by_local_file()
-    display_result(combined_offers, statistics, evaluator[0].__name__)
-
-
-def run_parallel(dataset_path: str, evaluators_params: List[Tuple[Any, Dict[str, float]]]) -> None:
-    evaluators_len = len(evaluators_params)
-    with ProcessPoolExecutor() as executor:
-        executor.map(
-            run_single_thread,
-            evaluators_params,
-            [dataset_path] * evaluators_len
-        )
 
 
 def prepare_args() -> Namespace:
