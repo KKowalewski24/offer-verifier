@@ -65,21 +65,28 @@ class MeansEvaluator(Evaluator):
         first_offers, second_offers = combined_offers
         first_average_stars_number: float = self._average_stars_number_for_offers_list(first_offers)
         second_average_stars_number: float = self._average_stars_number_for_offers_list(second_offers)
+        display_and_log_info(self.logger, f"first_average_stars_number: {first_average_stars_number}")
+        display_and_log_info(self.logger, f"second_average_stars_number: {second_average_stars_number}")
 
         if first_average_stars_number > second_average_stars_number:
             result = (first_offers, True), (second_offers, False)
         elif first_average_stars_number < second_average_stars_number:
             result = (second_offers, True), (first_offers, False)
         else:
-            raise ChoosingCredibleOfferNotPossibleException()
+            raise ChoosingCredibleOfferNotPossibleException(
+                f"\nValue of first_average_stars_number: {first_average_stars_number}"
+                f"\nValue of second_average_stars_number: {second_average_stars_number}"
+            )
 
         return result
 
 
     def _average_stars_number_for_offers_list(self, offers: List[Offer]) -> float:
         reviews_mean = [self._calculate_reviews_mean(offer.reviews) for offer in offers]
-        offers_mean_sum = np.sum(pd.Series(reviews_mean).dropna().tolist())
-        return round(offers_mean_sum / len(offers), 2)
+        offers_mean = pd.Series(reviews_mean).dropna().tolist()
+        offers_mean_sum = np.sum(offers_mean)
+        offers_mean_len = len(offers_mean)
+        return round(offers_mean_sum / offers_mean_len, 2)
 
 
     def _calculate_reviews_mean(self, reviews: List[ProductReview]) -> int:
