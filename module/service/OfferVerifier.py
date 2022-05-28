@@ -27,7 +27,8 @@ class OfferVerifier:
             save_offers: bool = False,
             evaluator_params: Tuple[
                 Callable[[List[Offer], Dict[str, float]], Evaluator], Dict[str, float]
-            ] = (KMeansEvaluator, {})
+            ] = (KMeansEvaluator, {}),
+            enable_calculating_confusion_matrix: bool = True
     ) -> None:
         self.logger = Logger().get_logging_instance()
         self.search_phrase = search_phrase
@@ -35,6 +36,7 @@ class OfferVerifier:
         self.save_offers = save_offers
         self.evaluator: Callable[[List[Offer], Dict[str, float]], Evaluator] = evaluator_params[0]
         self.params: Dict[str, float] = evaluator_params[1]
+        self.enable_calculating_confusion_matrix = enable_calculating_confusion_matrix
         self._validate_init_params()
 
 
@@ -71,7 +73,10 @@ class OfferVerifier:
 
         statistics.execution_time = end_time - start_time
         statistics.dataset_name = offers_wrapper.dataset_name
-        statistics.confusion_matrix = self._calculate_confusion_matrix(offers_wrapper.offers, verified_offers)
+        if self.enable_calculating_confusion_matrix:
+            statistics.confusion_matrix = self._calculate_confusion_matrix(
+                offers_wrapper.offers, verified_offers
+            )
 
         return verified_offers, statistics
 
