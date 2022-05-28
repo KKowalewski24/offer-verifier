@@ -40,12 +40,12 @@ evaluators_params: List[Tuple[Any, Dict[str, float]]] = [
     (KMeansEvaluator, {}),
     (FuzzyCMeansEvaluator, {}),
     (BenchmarkEvaluator, {
-        BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 2.8,
-        BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
+        BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 3.4,
+        BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.6
     }),
     (BenchmarkEvaluator, {
-        BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 3.2,
-        BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.4
+        BenchmarkEvaluator.CREDIBILITY_THRESHOLD_PARAM_KEY: 4.2,
+        BenchmarkFeatureExtractor.POLARITY_THRESHOLD_PARAM_KEY: 0.2
     })
 ]
 
@@ -76,6 +76,7 @@ def main() -> None:
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
 
+                # display_combined_offers(combined_offers)
                 display_result(combined_offers, statistics, evaluator_name.__name__)
                 generate_table(combined_offers, statistics, evaluator_name.__name__)
                 plot_confusion_matrix(statistics, formatted_params, evaluator_name)
@@ -190,6 +191,17 @@ def get_bar_description(is_credible: bool, evaluator_name: str) -> str:
         if is_credible
         else f"{not_credible_offer_text} {evaluator_name}"
     )
+
+
+def display_combined_offers(
+        combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]]
+) -> None:
+    for combined_offer in combined_offers[0][0]:
+        print(combined_offers[0][1])
+        print(combined_offer.id)
+    for combined_offer in combined_offers[1][0]:
+        print(combined_offers[1][1])
+        print(combined_offer.id)
 
 
 def set_descriptions(title: str, x_label: str = "", y_label: str = "") -> None:
