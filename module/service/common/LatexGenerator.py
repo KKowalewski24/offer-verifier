@@ -144,7 +144,7 @@ class LatexGenerator:
             if not os.path.exists(self.dir_name):
                 os.makedirs(self.dir_name)
 
-        path += filename + "-" + datetime.now().strftime("%H%M%S") + ".txt"
+        path += filename + "-" + datetime.now().strftime("%H%M%S__%f") + ".txt"
         with open(path, "w", encoding="UTF-8") as file:
             file.write(data)
 
