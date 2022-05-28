@@ -13,7 +13,7 @@ from module.service.evaluator.FeatureExtractor import FeatureExtractor
 
 
 class BenchmarkFeatureExtractor(FeatureExtractor):
-    POLARITY_THRESHOLD_PARAM_KEY: str = "polarity_threshold"
+    POLARITY_THRESHOLD_PARAM_KEY: str = "polarity_thrld"
 
 
     def __init__(self, offers: List[Offer], polarity_threshold: float) -> None:

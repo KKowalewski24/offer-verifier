@@ -27,6 +27,7 @@ from module.utils import create_directory, get_filename, run_main
 DATASET_DIR: str = DATASET_BACKUP_DIRECTORY
 EXPERIMENTS_RESULTS_DIR: str = "_experiment_results/"
 LATEX_IMAGE_FILENAME: str = "latex_images.txt"
+NEW_LINE: str = "\n"
 ENABLE_PARALLEL: bool = False
 GENERATE_PDF: bool = False
 SAVE_CHARTS: bool = True
@@ -70,7 +71,7 @@ def main() -> None:
 
                 evaluator_name, params = evaluator_params
                 formatted_params = (
-                    f"{evaluator_name.__name__}\n {' '.join([f'{x}={params[x]}' for x in params])}"
+                    f"{evaluator_name.__name__}\n {' '.join([f'{x}={params[x]}{NEW_LINE}' for x in params])}"
                 )
                 offers_results.append((*combined_offers, formatted_params))
                 execution_time_results.append((statistics.execution_time, formatted_params))
@@ -108,7 +109,7 @@ def display_result(
 
 def generate_table(
         combined_offers: Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]],
-        statistics: Statistics, dataset_name: str, evaluator_name: str
+        statistics: Statistics, evaluator_name: str
 ) -> None:
     if combined_offers[0][1] == True:
         credible_offers = combined_offers[0][0]
@@ -120,7 +121,7 @@ def generate_table(
     info: pd.DataFrame = pd.DataFrame(
         columns=["Nazwa", "Wartość"],
         data=[
-            ["Nazwa zbioru", dataset_name],
+            ["Nazwa zbioru", statistics.dataset_name],
             ["Nazwa algorytmu", evaluator_name],
             ["Liczba wszystkich ofert", statistics.offers_count],
             ["Czas wykonania (s)", f"{round(statistics.execution_time, 3)}"],
@@ -128,13 +129,13 @@ def generate_table(
             ["Liczba ofert określona jako niewiarogodne", str(len(not_credible_offers))],
         ]
     )
-    latex_generator.generate_vertical_table_df(info, dataset_name)
+    latex_generator.generate_vertical_table_df(info, statistics.dataset_name)
 
 
 def plot_confusion_matrix(statistics: Statistics, formatted_params: str, evaluator_name: str) -> None:
     cmd = ConfusionMatrixDisplay(confusion_matrix=statistics.confusion_matrix, display_labels=[True, False])
     cmd.plot(colorbar=False, cmap="binary")
-    set_descriptions(f"Macierz pomyłek, {formatted_params}")
+    set_descriptions(f"Macierz pomyłek{NEW_LINE} {formatted_params.replace(NEW_LINE, ' ')}")
     show_and_save(f"{statistics.dataset_name}_{evaluator_name.__name__}", SAVE_CHARTS)
 
 
