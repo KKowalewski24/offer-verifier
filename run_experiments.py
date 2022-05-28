@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.metrics import ConfusionMatrixDisplay
 
-from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION
+from module.constants import DATASET_SOURCE_DIRECTORY, JSON_EXTENSION
 from module.interface.PdfGenerator import PdfGenerator
 from module.model.Offer import Offer
 from module.model.Statistics import Statistics
@@ -24,7 +24,7 @@ from module.utils import create_directory, get_filename, run_main
 """
 
 # VAR ------------------------------------------------------------------------ #
-DATASET_DIR: str = DATASET_BACKUP_DIRECTORY
+DATASET_DIR: str = DATASET_SOURCE_DIRECTORY
 EXPERIMENTS_RESULTS_DIR: str = "_experiment_results/"
 LATEX_IMAGE_FILENAME: str = "latex_images.txt"
 NEW_LINE: str = "\n"

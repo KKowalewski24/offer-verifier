@@ -5,7 +5,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from module.constants import DATASET_BACKUP_DIRECTORY, JSON_EXTENSION, MIN_MAX_REVIEW_VALUE
+from module.constants import DATASET_SOURCE_DIRECTORY, JSON_EXTENSION, MIN_MAX_REVIEW_VALUE
 from module.model.Offer import Offer
 from module.model.OffersWrapper import OffersWrapper
 from module.model.ProductReview import ProductReview
@@ -18,7 +18,7 @@ from module.utils import create_directory, get_filename, read_json_from_file, ru
 """
 
 # VAR ------------------------------------------------------------------------ #
-DATASET_DIR: str = DATASET_BACKUP_DIRECTORY
+DATASET_DIR: str = DATASET_SOURCE_DIRECTORY
 ANALYSIS_RESULTS_DIR: str = "_analysis_results/"
 
 logger = Logger().get_logging_instance()
