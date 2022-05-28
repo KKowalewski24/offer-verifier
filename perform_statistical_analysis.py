@@ -66,7 +66,7 @@ def generate_table(dataset_name: str, offers_number: int, reviews_number_mode: i
         data=[
             ["Nazwa katalogowa", dataset_name],
             ["Liczba ofert", str(offers_number)],
-            ["Dominanta liczby recenzji w ofertach", str(reviews_number_mode)],
+            # ["Dominanta liczby recenzji w ofertach", str(reviews_number_mode)],
             ["Liczba ofert określona jako wiarygodna przez eksperta", str(credible_offers_number)],
             ["Liczba ofert określona jako niewiarygodna przez eksperta", str(not_credible_offers_number)],
         ]
