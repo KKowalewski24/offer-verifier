@@ -5,6 +5,7 @@ from module.constants import EBAY_ITEM_PATH, JSON_EXTENSION, OFFERS_PATH, RESULT
 from module.model.OffersWrapper import OffersWrapper
 from module.service.RequestProvider import RequestProvider
 from module.service.common.Logger import Logger
+from module.service.request.OfferIdProvider import OfferIdProvider
 from module.utils import create_directory, display_and_log_info, get_filename, run_main, save_json_to_file
 
 OFFERS_NAME_IDS: List[Tuple[str, List[str]]] = [
@@ -26,6 +27,22 @@ OFFERS_NAME_IDS: List[Tuple[str, List[str]]] = [
             "174789972980",
             "185278620718",
             "115396323255",
+        ]
+    ),
+    (
+        "Logitech m330 silent plus wireless mouse",
+        [
+            "274397880702",
+            "265057665735",
+            "173866245760",
+            "403260420231",
+            "334450553087",
+            "115359467945",
+            "183914161172",
+            "294954877695",
+            "154748368545",
+            "165486728404",
+            "224521087043",
         ]
     ),
 ]
@@ -54,5 +71,6 @@ def open_offers_in_browser() -> None:
 
 
 if __name__ == "__main__":
+    # print(OfferIdProvider("")._create_url(1))
     # open_offers_in_browser()
     run_main(main)
