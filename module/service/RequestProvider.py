@@ -23,6 +23,10 @@ class RequestProvider:
 
     def get_offers(self, search_phrase: str) -> List[Offer]:
         offers_id: List[str] = OfferIdProvider(search_phrase).get_offers_id()
+        return self.get_offers_by_ids(offers_id)
+
+
+    def get_offers_by_ids(self, offers_id: List[str]) -> List[Offer]:
         display_and_log_info(self.logger, f"Offers to download: {len(offers_id)} ...")
         return remove_none_items([self._prepare_offer(offer_id) for offer_id in tqdm(offers_id)])
 

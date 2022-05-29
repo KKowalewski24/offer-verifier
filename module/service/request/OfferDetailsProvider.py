@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from bs4 import BeautifulSoup, Tag
 
@@ -59,7 +59,7 @@ class OfferDetailsProvider(BaseProvider):
 
     def _get_image_url(self, soup: BeautifulSoup) -> Optional[str]:
         image_div = soup.find(attrs=OFFER_IMAGE_ATTRIBUTES)
-        if is_valid_item(image_div):
+        if is_valid_item(str(image_div)):
             return str(image_div.get("src"))
 
         return None
@@ -203,8 +203,11 @@ class OfferDetailsProvider(BaseProvider):
         stars: int = int(float(review_div.div.div.get("title").split()[0]))
 
         review_section: Tag = review_div.find_all("div")[2]
-        text_content: str = (f"{normalize_text(review_section.find('h3').get_text(strip=True))}."
-                             f" {normalize_text(review_section.find('p').get_text(strip=True))}")
+        p_element = review_section.find('p')
+        text_content: str = (
+            f"{normalize_text(review_section.find('h3').get_text(strip=True))}."
+            f" {normalize_text(p_element.get_text(strip=True)) if p_element is not None else ''}"
+        )
         text_content = text_content.replace(READ_FULL_REVIEW, "")
 
         positive_votes = review_div.find(attrs=REVIEW_POSITIVE_VOTE).get_text(strip=True)

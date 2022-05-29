@@ -8,7 +8,7 @@ from module.utils import display_and_log_error, display_and_log_info
 
 
 class BenchmarkEvaluator(Evaluator):
-    CREDIBILITY_THRESHOLD_PARAM_KEY: str = "credibility_threshold"
+    CREDIBILITY_THRESHOLD_PARAM_KEY: str = "credibility_thrld"
 
 
     def __init__(self, offers: List[Offer], params: Dict[str, float]) -> None:

@@ -47,7 +47,7 @@ class FeatureExtractor(ABC):
     def _normalize_columns(self, dataset: pd.DataFrame) -> pd.DataFrame:
         dataset = dataset.astype(float)
         return pd.DataFrame(
-            data=preprocessing.normalize(dataset, axis=0),
+            data=preprocessing.normalize(dataset, axis=1),
             columns=dataset.columns
         )
 
