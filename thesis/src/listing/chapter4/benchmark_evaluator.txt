@@ -1,0 +1,11 @@
+def evaluate(self) -> Tuple[Tuple[Tuple[List[Offer], bool], Tuple[List[Offer], bool]], Statistics]:
+    credible_offers: Tuple[List[Offer], bool] = ([], True)
+    not_credible_offers: Tuple[List[Offer], bool] = ([], False)
+    for offer, score in self.dataset:
+        if score > self.credibility_threshold:
+            credible_offers[0].append(offer)
+        else:
+            not_credible_offers[0].append(offer)
+    result = (credible_offers, not_credible_offers)
+    offers_count: int = len(credible_offers[0]) + len(not_credible_offers[0])
+    return result, Statistics(offers_count)

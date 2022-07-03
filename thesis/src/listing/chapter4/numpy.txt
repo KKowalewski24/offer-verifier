@@ -1,0 +1,6 @@
+>>> import numpy as np
+>>> x = np.arange(4).reshape((2,2))
+>>> x
+array([[0, 1], [2, 3]])
+>>> np.transpose(x)
+array([[0, 2], [1, 3]])

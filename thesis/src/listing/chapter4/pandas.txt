@@ -1,0 +1,15 @@
+>>> import pandas as pd
+>>> df = pd.read_csv('data.csv')
+>>> df
+  Name  Score
+0    a     90
+1    b     80
+2    c     95
+>>> df.max()
+Name      d
+Score    95
+dtype: object
+>>> df.count()
+Name     3
+Score    3
+dtype: int64

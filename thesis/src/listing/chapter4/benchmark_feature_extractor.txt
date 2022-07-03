@@ -1,0 +1,24 @@
+def calculate_score(self) -> BenchmarkFeatureExtractor:
+    self._fix_not_valid_reviews()
+    for offer in self.offers:
+        normalized_stars_numbers = self._normalize_array(
+            np.array([review.stars_number for review in offer.reviews]),
+            MIN_MAX_REVIEW_VALUE[0], MIN_MAX_REVIEW_VALUE[1]
+        )
+        credible_reviews: List[ProductReview] = [
+            review for stars_number, review in zip(normalized_stars_numbers, offer.reviews)
+            if self._is_credible_review(stars_number, review.text_content)
+        ]
+        offer.reviews = credible_reviews
+        score = pd.Series([review.stars_number for review in offer.reviews]).mean()
+        self.dataset.append((offer, score))
+    return self
+
+def _is_credible_review(self, normalized_stars_number: int, text_content: str) -> bool:
+    if text_content == "":
+        return True
+    polarity: float = TextBlob(self._prepare_text(text_content)).sentiment.polarity
+    normalized_polarity: float = self._normalize_single_value_on_range(polarity, -1, 1)
+    left_side = normalized_polarity - self.polarity_threshold
+    right_side = normalized_polarity + self.polarity_threshold
+    return left_side < normalized_stars_number < right_side

@@ -1,0 +1,89 @@
+\documentclass[../Kamil_Kowalewski_Main.tex]{subfiles}
+\usepackage{subfiles}
+
+\begin{document} {
+
+    W~ramach niniejszej pracy magisterskiej zostały przeprowadzone badania w~formie
+    eksperymentów. Celem tego było określenie skuteczności stworzonej metody w~stosunku
+    do zaimplementowanej metody z~literatury opisanej w~sekcji
+    \ref{chapter4:srodowisko_eksperymentalne:impl_literaturowej_metody}. Do tego celu
+    zostały wykorzystane zbiory danych opisane w~sekcji
+    \ref{chapter4:srodowisko_eksperymentalne:zbiory_danych}. Dla każdej oferty ze
+    wszystkich zbiorów danych została przeprowadzona ręczna oceną wiarygodności oferty
+    przez człowieka. Krokami, jakie zostały wykonane w~ramach eksperymentów są:
+
+    \begin{enumerate}[noitemsep,topsep=1pt]
+        \item Wybór zbioru danych, w tym przypadku od \#1 do \#4
+        \item Przeprowadzanie eksperymentów dla każdego z poniższych metod celem oceny
+        wiarygodności ofert
+        \begin{enumerate}[noitemsep,topsep=1pt]
+            \item KMeansEvaluator - brak parametryzacji
+            \item FuzzyCMeansEvaluator - brak parametryzacji
+            \item BenchmarkEvaluator - parametry określone w nagłówku macierzy pomyłek
+            \item BenchmarkEvaluator - parametry określone w nagłówku macierzy pomyłek
+        \end{enumerate}
+        \item W ramach każdego eksperymentu był mierzony czas wykonania oraz były
+        uzyskiwane wyniki o~liczbie ofert wiarygodnych oraz niegodnych zaufania
+        \item Uzyskane wyniki są porównywane z~wartościami ręcznej oceny
+        wiarygodności i na tej podstawie jest tworzona macierz pomyłek.
+    \end{enumerate}
+
+    \section{Zbiór danych \#1}
+    \label{chapter5:eksperymenty:zbior:1} {
+        \subfile{experiment/dataset1.tex}
+    }
+
+    \section{Zbiór danych \#2}
+    \label{chapter5:eksperymenty:zbior:2} {
+        \subfile{experiment/dataset2.tex}
+    }
+
+    \section{Zbiór danych \#3}
+    \label{chapter5:eksperymenty:zbior:3} {
+        \subfile{experiment/dataset3.tex}
+    }
+
+    \section{Zbiór danych \#4}
+    \label{chapter5:eksperymenty:zbior:4} {
+        \subfile{experiment/dataset4.tex}
+    }
+
+    \section{Podsumowanie eksperymentów}
+    \label{chapter5:eksperymenty:podsumowanie} {
+        Po przeanalizowaniu wyników uzyskanych w~ramach eksperymentów dla wszystkich
+        zbiorów można zauważyć tendencje, że opracowana metoda wykazuję się lepszą
+        skutecznością niż ta zaimplementowana na podstawie literatury. Autor określił
+        to po obserwacji macierzy pomyłek, metoda z~literatury popełniała więcej błędów
+        pierwszego i~drugiego rodzaju. Oczywiście zaproponowana metoda również
+        popełniała błędy i~w~niektórych przypadkach była ich niemała liczba. Nie mniej
+        i~tak było ich zauważalnie mniej niż w~przypadku metody literaturowej. Warto
+        dodać, że wartości określone przez człowieka są w~większości przypadków
+        poprawne, lecz człowiek też może podejmować różne decyzje stąd mogą występować
+        rozbieżności. Ocenę człowieka nigdy nie można traktować jako prawdę absolutną
+        lecz informacje te są niezwykle przydatne przy badaniu takich algorytmów
+        i~właśnie z~nimi można porównywać uzyskane wyniki.
+
+        W~przypadku metody literaturowej były przeprowadzane badania dla różnych
+        wartości parametrów progów, które zostały opisane w~sekcji
+        \ref{chapter4:srodowisko_eksperymentalne:impl_literaturowej_metody}, lecz do
+        niniejszej pracy magisterskiej autor wybierał dwa najlepsze wyniki dla parametrów.
+
+        Po analizie autorskiej metody można zauważyć ciekawą kwestię, że dokonuje ona
+        takich samych decyzji i~popełnia takie same błędy. Warto jednak spojrzeć na
+        różnice w~czasach wykonania. Są one dosyć spore, w~niektórych przypadkach nawet
+        kilkukrotnie mniejsze, oczywiście na korzyść wersji wykorzystującej C-Means.
+        Może wynikach to z~różnic w~implementacji wykorzystanych bibliotek i~modułów.
+        Jedynym zadziwiającym przypadkiem są wyniki wykonania algorytmów dla zbioru
+        danych \#2 przedstawionego w~sekcji \ref{chapter5:eksperymenty:zbior:2}, może
+        to wynikać z~kwestii sprzętowych lub jakieś ukrytej optymalizacji interpretera
+        języka Python, na którą autor pracy nie ma wpływu.
+
+        W~przypadku zbiorów danych o~niewielkiej liczbie rekordów tak jak w~przypadku
+        przeprowadzanych eksperymentów, nie ma to praktycznie znaczenia w~realnym
+        użyciu. Duża różnica mogłaby być, gdyby zbiory miały, chociażby jeden milion
+        rekordów. Nie mniej taka sytuacji raczej nie miałaby miejsca, gdyż na portalach
+        ogłoszeniowych konkretny produkt katalogowy raczej nie występuję w~tylu ofertach.
+    }
+
+}
+\end{document}

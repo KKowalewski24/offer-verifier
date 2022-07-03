@@ -1,0 +1,18 @@
+def _get_emotions_from_text_content(self) -> Tuple[List[str], List[List[float]]]:
+        emotions_columns: List[List[float]] = []
+        for offer in self.offers:
+            reviews_emotions: List[Dict] = [
+                NRCLex(self._prepare_text(review.text_content)).affect_frequencies
+                for review in offer.reviews
+            ]
+            if len(reviews_emotions) == 0:
+                emotions_columns.append(list(np.zeros(len(AFFECT_FREQUENCIES_KEY))))
+                continue
+            mean: pd.Series = pd.DataFrame(data=[emotions.values() for emotions in reviews_emotions]).mean()
+            emotions_columns.append(mean.to_list())
+        emotions_columns_ndarray = np.array(emotions_columns)
+        rotated_emotions_columns = [
+            list(emotions_columns_ndarray[:, index])
+            for index in range(emotions_columns_ndarray.shape[1])
+        ]
+        return AFFECT_FREQUENCIES_KEY, rotated_emotions_columns
